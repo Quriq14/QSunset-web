@@ -6,31 +6,17 @@ require_once("content/Hidden.php");
 require_once("content/Comment.php");
 require_once("content/Language.php");
 
-// FALSE if failed
-// get or create an element
-function GetFormatByName($name)
-  {
-  if (!isset($name) || $name === "")
-    return FALSE;
-
-  static $status = array(); // cache the formats (they MUST be all stateless)
-
-  if (!isset($status[$name]))
-    {
-    $newobj = FormatFactory($name);
-    if ($newobj === FALSE)
-      return FALSE;
-
-    $status[$name] = $newobj;
-    }
-
-  return $status[$name];
-  }
-
 function FormatFactory($name)
   {
   if (!isset($name) || !is_string($name) || $name === "")
     return FALSE;
+
+  static $status = array();  // cache the formats (they MUST be all stateless)
+
+  if (isset($status[$name]))
+    {
+    return $status[$name];
+    }
 
   switch (strtoupper($name))
     {

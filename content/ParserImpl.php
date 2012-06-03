@@ -175,6 +175,8 @@ class NParserImpl
     if (!isset($paramArray) || count($paramArray) === 0)
       return;
 
+    $paramArray[0] = strtoupper($paramArray[0]);
+
     if (!isset($info->symbols[$paramArray[0]])) // if not existing, create it
       $info->symbols[$paramArray[0]] = new TSymbol($paramArray[0]);
 
@@ -214,7 +216,7 @@ class NParserImpl
       case PARAMETER_BEGIN:
         // is this a script?
         if (isset($info->symbols[$paramArray[0]]) && $info->symbols[$paramArray[0]]->NeedChild($info,array()))
-          $info->symbols[$paramArray[0]]->Child($info);
+          $info->symbols[$paramArray[0]]->Child($info,array());
           else 
             $info->activeSymbols[$paramArray[0]] = TRUE;
         break;
