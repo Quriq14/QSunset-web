@@ -46,7 +46,7 @@ class TCommentScriptFormat extends TFormatStatus
 
     if ($scriptend === FALSE) // it's all a script
       {
-      $scriptend = strlen($content);
+      $scriptend = strlen($info->content);
       $emlength = 0; // there is no script ending
       }
 

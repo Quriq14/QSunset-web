@@ -30,10 +30,24 @@ class TContentParserInfo
     if ($stateless !== FALSE)
       return $stateless;
 
-    if (isset($symbols[$name]))
-      return $symbols[$name]; // a symbol was defined with this name
+    if (isset($this->symbols[$name]))
+      return $this->symbols[$name]; // a symbol was defined with this name
 
     return FALSE;
+    }
+
+  // returns a TFormatStatus or FALSE if invalid name
+  public function GetOrCreateFormatByName($name)
+    {
+    if (!isset($name) || $name === "")
+      return FALSE;
+
+    $maybeExists = $this->GetFormatByName($name);
+    if ($maybeExists !== FALSE)
+      return $maybeExists;
+
+    $this->symbols[$name] = new TSymbol($name); // if not existing, create it
+    return $this->symbols[$name];
     }
   }
 

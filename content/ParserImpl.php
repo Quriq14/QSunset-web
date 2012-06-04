@@ -46,8 +46,8 @@ class NParserImpl
     $tf = new TTextHolder($text);
     
     foreach($info->activeSymbols as $k => $useless)
-      if (isset($info->symbols[$k]))
-        $tf->AddSymbol($info->symbols[$k]);
+      if (($symb = $info->GetFormatByName($k)) !== FALSE)
+        $tf->AddSymbol($symb);
     
     $info->resultChain[$info->producedObjects++] = $tf;
     }
@@ -57,8 +57,8 @@ class NParserImpl
     $tf = new TSymbolHolder($symbol);
     
     foreach($info->activeSymbols as $k => $useless)
-      if (isset($info->symbols[$k]))
-        $tf->AddSymbol($info->symbols[$k]);
+      if (($symb = $info->GetFormatByName($k)) !== FALSE)
+        $tf->AddSymbol($symb);
     
     $info->resultChain[$info->producedObjects++] = $tf;
     }
@@ -119,7 +119,7 @@ class NParserImpl
             $buffer = "";
             $info->processed++;
             self::ExecuteSymbol(array(0 => PREFIX_BEGIN_SHORTCUT.$strangechar,1 => PARAMETER_BEGIN),$info);
-              // simple PULSE command
+              // BEGIN command
             break;
             }
 
@@ -130,7 +130,7 @@ class NParserImpl
             $buffer = "";
             $info->processed++;
             self::ExecuteSymbol(array(0 => PREFIX_END_SHORTCUT.$strangechar,1 => PARAMETER_END),$info);
-              // simple PULSE command
+              // END command
             break;
             }
 
@@ -175,10 +175,9 @@ class NParserImpl
     if (!isset($paramArray) || count($paramArray) === 0)
       return;
 
-    $paramArray[0] = strtoupper($paramArray[0]);
+    $paramArray[0] = strtoupper($paramArray[0]); // symbol name is case-insensitive
 
-    if (!isset($info->symbols[$paramArray[0]])) // if not existing, create it
-      $info->symbols[$paramArray[0]] = new TSymbol($paramArray[0]);
+    $symbol = $info->GetOrCreateFormatByName($paramArray[0]);
 
     $paramCount = count($paramArray);
 
@@ -203,7 +202,7 @@ class NParserImpl
       {
       $values = self::ExplodeSingleParam($paramArray[$i]);
 
-      $info->symbols[$paramArray[0]]->AddSubSymbol($values[0],$values);
+      $symbol->AddSubSymbol($values[0],$values);
       }
 
     // execute the command depending on the command type
@@ -215,8 +214,8 @@ class NParserImpl
         break;
       case PARAMETER_BEGIN:
         // is this a script?
-        if (isset($info->symbols[$paramArray[0]]) && $info->symbols[$paramArray[0]]->NeedChild($info,array()))
-          $info->symbols[$paramArray[0]]->Child($info,array());
+        if ($symbol->NeedChild($info,array()))
+          $symbol->Child($info,array());
           else 
             $info->activeSymbols[$paramArray[0]] = TRUE;
         break;
@@ -231,7 +230,7 @@ class NParserImpl
         break;
       case PARAMETER_PULSE:
       default: // the pulse is the default
-        self::ProducePulse($info,$info->symbols[$paramArray[0]]); // add to the result chain
+        self::ProducePulse($info,$symbol); // add to the result chain
         break;
       }
     }
