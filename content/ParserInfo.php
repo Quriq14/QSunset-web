@@ -49,6 +49,43 @@ class TContentParserInfo
     $this->symbols[$name] = new TSymbol($name); // if not existing, create it
     return $this->symbols[$name];
     }
+
+  public function ActivateSymbol($name)
+    {
+    if (!is_string($name) || $name === "")
+      return;
+
+    $this->activeSymbols[$name] = TRUE;
+    }
+
+  public function DeActivateSymbol($name)
+    {
+    if (isset($this->activeSymbols[$name]))
+      unset($this->activeSymbols[$name]);
+    }
+
+  public function IsSymbolActive($name)
+    {
+    return isset($this->activeSymbols[$name]);
+    }
+
+  // returns an array of TFormatStatus, ordered from 0 to n
+  public function GetActiveSymbolList()
+    {
+    $result = array();
+    $resultidx = 0;
+
+    foreach($this->activeSymbols as $k => $useless)
+      if (($symb = $this->GetFormatByName($k)) !== FALSE)
+        $result[$resultidx++] = $symb;
+
+    return $result;
+    }
+
+  public function AddToResultChain($obj)
+    {
+    $this->resultChain[$this->producedObjects++] = $obj;
+    }
   }
 
 ?>

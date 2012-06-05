@@ -16,12 +16,12 @@ class NContentParser
     if (!isset($content) || !isset($info))
       return ""; // invalid
 
-    $info->content = $content; // TODO: this would be unnecessary in a perfect world
+    $info->content = $content;
 
     $chainDOM = NParserImpl::Parse($info);
     $result = "";
     for ($i = 0; $i < count($chainDOM); $i++)
-      $result .= $chainDOM[$i]->Produce($info); // TODO: a way to disable this?
+      $result .= $chainDOM[$i]->Produce($info); // NOTE: if you don't want this processing, use NParserImpl::Parse instead
 
     $info->result = $result;
 
@@ -30,17 +30,17 @@ class NContentParser
 
   static function ParseArray($carray,$info)
     {
-    $carraycount = count($carray);
     $content = "";
 
-    if ($carraycount > 0)
-      {
-      for ($i = 0; $i < ($carraycount-1); $i++)
-        $content .= $carray[$i]."\n";
-      $content .= $carray[$i]; // do not add \n at the end of the content
-      }
+    if (count($carray))
+      $content = self::ArrayToString($carray);
 
     return self::Parse($content,$info);
+    }
+
+  static function ArrayToString($carray)
+    {
+    return implode("\n",$carray); // concat the array of lines with "\n"
     }
 
   static private $infoStackCount = 0;

@@ -2,6 +2,8 @@
 
 require_once("html/htmlutils.php");
 
+require_once("element/defines.php");
+
 class TContentData
   {
   public $toRight = FALSE;        // if TRUE, the class bodycontentright wil be added to the div "bodycontent"
@@ -17,7 +19,7 @@ class TContentData
   public $HScontent = "<p></p>";  // a string, that will be written directly inside the div (must be HTML-SAFE)
   public $HSautointros = array(); // automatic index introduction, ignored if not set (index is TElementType::SECTION, TElementType::DIRECTORY)
 
-  public $linklanguage = "it";
+  public $linklanguage = NLanguages::LANGUAGE_DEFAULT;
   }
 
 function WriteContent($data)

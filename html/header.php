@@ -1,7 +1,8 @@
 <?php
 require_once("html/htmlutils.php");
-
 require_once("html/language.php");
+
+require_once("element/defines.php");
 
 class THeaderTreeElem
   {
@@ -18,7 +19,7 @@ class THeaderData
   public $rootPath = "";       // path of the root directory
   public $fileLists = array(); // array of THeaderTreeElem
 
-  public $linklanguage = "it";
+  public $linklanguage = NLanguages::LANGUAGE_DEFAULT;
   }
 
 function WriteHeader($data,$langdata)

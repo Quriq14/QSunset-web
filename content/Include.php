@@ -4,7 +4,7 @@
 
 require_once("element/ElementFactory.php");
 
-require_once("content/ParseContent.php");
+require_once("content/ParserImpl.php");
 
 class NInclude
   {
@@ -23,9 +23,9 @@ class NInclude
       $oldProcessed = $info->processed;
       
       $info->processed = 0;
-      $info->content = $content;
+      $info->content = NContentParser::ArrayToString($content);
       
-      NContentParser::ParseArray($content,$info);
+      NParserImpl::Parse($info);
 
       $info->processed = $oldProcessed;
       $info->content = $oldContent;

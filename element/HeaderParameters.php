@@ -1,6 +1,8 @@
 <?php
 // use ONLY require/include_once for this file
 
+require_once("element/defines.php");
+
 class TParam
   {
   public function __construct($sourceElement,$paramName,$value = FALSE)
@@ -112,8 +114,8 @@ class NParams
   const AUTO_STR           = "AUTO";
 
   private static $DEFAULTS = array(
-    self::LANG_ORIG                => "it",
-    self::LANG_AVAIL               => "it",
+    self::LANG_ORIG                => NLanguages::LANGUAGE_DEFAULT,
+    self::LANG_AVAIL               => NLanguages::LANGUAGE_DEFAULT,
     self::FOOTER                   => "",
     self::SHOW_CONT_TITLE          => self::TRUE_STR,
     self::SHOW_CONT_SUBTITLE       => self::FALSE_STR,
@@ -128,7 +130,7 @@ class NParams
     self::NEXT                     => self::AUTO_STR,
     self::PREV                     => self::AUTO_STR,
     self::HTTP_STATUS_CODE         => "",
-    self::READABLE_ERROR           => "|[LANG it BEGIN]Errore: il contenuto di questa pagina è nascosto.[END][LANG en BEGIN]Error: the content of this page is hidden.[END]|",
+    self::READABLE_ERROR           => "<INCLUDE|LANGS>[IT BEGIN]Errore: il contenuto di questa pagina è nascosto.[IT END][EN BEGIN]Error: the content of this page is hidden.[EN END]|",
     );
 
   // returns "" if failed

@@ -45,22 +45,22 @@ class NParserImpl
 
     $tf = new TTextHolder($text);
     
-    foreach($info->activeSymbols as $k => $useless)
-      if (($symb = $info->GetFormatByName($k)) !== FALSE)
-        $tf->AddSymbol($symb);
+    $sl = $info->GetActiveSymbolList();
+    foreach($sl as $symb)
+      $tf->AddSymbol($symb);
     
-    $info->resultChain[$info->producedObjects++] = $tf;
+    $info->AddToResultChain($tf);
     }
 
   public static function ProducePulse($info,$symbol)
     {
     $tf = new TSymbolHolder($symbol);
     
-    foreach($info->activeSymbols as $k => $useless)
-      if (($symb = $info->GetFormatByName($k)) !== FALSE)
-        $tf->AddSymbol($symb);
+    $sl = $info->GetActiveSymbolList();
+    foreach($sl as $symb)
+      $tf->AddSymbol($symb);
     
-    $info->resultChain[$info->producedObjects++] = $tf;
+    $info->AddToResultChain($tf);
     }
 
   // returns an array if success (a chainDOM)
@@ -209,21 +209,20 @@ class NParserImpl
     switch (strtoupper($lastParam))
       {
       case PARAMETER_END:
-        if (isset($info->activeSymbols[$paramArray[0]]))
-          unset($info->activeSymbols[$paramArray[0]]);
+        $info->DeActivateSymbol($paramArray[0]);
         break;
       case PARAMETER_BEGIN:
         // is this a script?
         if ($symbol->NeedChild($info,array()))
           $symbol->Child($info,array());
           else 
-            $info->activeSymbols[$paramArray[0]] = TRUE;
+            $info->ActivateSymbol($paramArray[0]);
         break;
       case PARAMETER_TOGGLE:
-        if (isset($info->activeSymbols[$paramArray[0]]))
-          unset($info->activeSymbols[$paramArray[0]]);
+        if ($info->IsSymbolActive($paramArray[0]))
+          $info->DeActivateSymbol($paramArray[0]);
           else
-            $info->activeSymbols[$paramArray[0]] = TRUE;
+            $info->ActivateSymbol($paramArray[0]);
         break;
       case PARAMETER_DECL:
         // nothing to do

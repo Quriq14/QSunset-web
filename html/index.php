@@ -2,6 +2,8 @@
 
 include_once("html/htmlutils.php");
 
+require_once("element/defines.php");
+
 class TIndexTreeElem
   {
   public $name = "";
@@ -11,7 +13,7 @@ class TIndexTreeElem
   public $titleonly = FALSE; // if TRUE, the title won't be a link
   public $directory = FALSE; // if TRUE, the link will be highlighted as directory
   public $childs = array(); // array of TIndexTreeElem
-  public $linklanguage = "it"; // language parameters for the links
+  public $linklanguage = NLanguages::LANGUAGE_DEFAULT; // language parameters for the links
   }
 
 define("WRITE_INDEX_MAX_DEPTH",10);    // prevent infinite recursion
