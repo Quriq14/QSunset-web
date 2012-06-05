@@ -4,7 +4,7 @@ require_once("content/FormatStatus.php");
 
 class TBoldFormat extends TFormatStatus
   {
-  public function TBoldFormat()
+  public function __construct()
     {
     }
 
@@ -31,7 +31,7 @@ class TBoldFormat extends TFormatStatus
 
 class TItalicFormat extends TFormatStatus
   {
-  public function TItalicFormat()
+  public function __construct()
     {
     }
 
@@ -58,7 +58,7 @@ class TItalicFormat extends TFormatStatus
 
 class TUnderlineFormat extends TFormatStatus
   {
-  public function TUnderlineFormat()
+  public function __construct()
     {
     }
 

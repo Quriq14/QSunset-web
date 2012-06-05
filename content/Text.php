@@ -22,7 +22,7 @@ class TTextHolder extends THtmlProducer
 
     $result .= $this->ApplyAll($info,$this->text);
 
-    $result .= $this->text;
+    $result .= TrueHtmlEntities($this->text);
 
     $result .= $this->UnApplyAll($info,$this->text);
 

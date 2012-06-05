@@ -20,7 +20,7 @@ class TContentParserInfo
   public $cElement = FALSE;
   public $content  = "";
 
-  // returns a TFormatStatus or FALSE if failed
+  // returns a TFormatStatus or FALSE if not existing
   public function GetFormatByName($name)
     {
     if (!isset($name) || $name === "")

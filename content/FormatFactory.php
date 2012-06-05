@@ -5,6 +5,7 @@ require_once("content/Paragraph.php");
 require_once("content/Hidden.php");
 require_once("content/Comment.php");
 require_once("content/Language.php");
+require_once("content/Write.php");
 
 function FormatFactory($name)
   {
@@ -34,6 +35,8 @@ function FormatFactory($name)
       return new TCommentScriptFormat();
     case PARAMETER_LANGUAGE:
       return new TLanguageFormat();
+    case PARAMETER_WRITE_CHARS:
+      return new TCharWriterFormat();
     default:
       return FALSE;
     }

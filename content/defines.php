@@ -17,7 +17,8 @@ define("PARAMETER_UNDERLINE","UNDERLINE");
 define("PARAMETER_LINEBREAK","LINEBREAK");
 define("PARAMETER_HIDDEN","HIDDEN");
 define("PARAMETER_COMMENT","COMMENT");
-define("PARAMETER_LANGUAGE","LANG");     // show if language equals lang1 or lang2 or... : lang=lang1=lang2=...
+define("PARAMETER_LANGUAGE","LANG");         // show if language equals lang1 or lang2 or... : lang=lang1=lang2=...
+define("PARAMETER_WRITE_CHARS","WRITECHAR"); // writechar=ab writes "ab" when his PULSE event is called
 
 define("PREFIX_TOGGLE_SHORTCUT","SCT:"); // [SC:/ BEGIN] is equivalent to opening /, [SC:| BEGIN] is equivalent to opening |
                                         // you may use [SC:symbol params] to define new shortcuts. They trigger always the action TOGGLE.
