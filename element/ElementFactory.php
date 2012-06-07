@@ -5,7 +5,7 @@ require_once("element/secutils.php");
 
 // produces an invalid object if failed
 // set $maybeInfo to FALSE if not needed
-// CHECK the created element with IsValid before usage
+// CHECK the created element with IsValid before use
 function ElementFactory($string,$physicalPath = FALSE)
   {
   // if cached, return it

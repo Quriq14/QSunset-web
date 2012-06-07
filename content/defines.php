@@ -20,6 +20,16 @@ define("PARAMETER_COMMENT","COMMENT");
 define("PARAMETER_LANGUAGE","LANG");         // show if language equals lang1 or lang2 or... : lang=lang1=lang2=...
 define("PARAMETER_WRITE_CHARS","WRITECHAR"); // writechar=ab writes "ab" when his PULSE event is called
 
+define("PARAMETER_REF","REF");               // reference to other page on same site
+define("PARAMETER_RELATIVE_REF","RREF");     // same as REF but if attribute is:
+                                             //   :PATH absolute path
+                                             //   +PATH append to current path
+                                             //   . means "current path"
+                                             //   -PATH go to parent, remove the minus sign and evaluate PATH again
+                                             // EXAMPLES: . (current path), -. (parent), +|EX (section EX if current is a directory),
+                                             //           -+|EX (go to parent and enter section EX)
+define("PARAMETER_FAR_REF","XREF");          // reference to other site
+
 define("PREFIX_TOGGLE_SHORTCUT","SCT:"); // [SC:/ BEGIN] is equivalent to opening /, [SC:| BEGIN] is equivalent to opening |
                                         // you may use [SC:symbol params] to define new shortcuts. They trigger always the action TOGGLE.
 define("PREFIX_PULSE_SHORTCUT","SCP:"); // like the previous, but this triggers the action PULSE.

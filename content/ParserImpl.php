@@ -252,5 +252,21 @@ class NParserImpl
 
     NInclude::DoInclude($info,$include);
     }
+
+  // returns the position of the first character of $string (starting from $firstpos) equal to one of the characters of $chars
+  // or FALSE if none
+  public function FindFirstOf($string,$firstpos,$chars)
+    {
+    $stringlen = strlen($string);
+
+    $relativePos = strcspn($string,$chars,$firstpos);
+    if ($relativePos === FALSE) // error occurred
+      return FALSE;
+
+    if ($relativePos >= $stringlen)
+      return FALSE; // EOS reached
+
+    return $relativePos + 1;
+    }
   }
 ?>

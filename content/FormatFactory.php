@@ -6,6 +6,7 @@ require_once("content/Hidden.php");
 require_once("content/Comment.php");
 require_once("content/Language.php");
 require_once("content/Write.php");
+require_once("content/Ref.php");
 
 function FormatFactory($name)
   {
@@ -37,6 +38,12 @@ function FormatFactory($name)
       return new TLanguageFormat();
     case PARAMETER_WRITE_CHARS:
       return new TCharWriterFormat();
+    case PARAMETER_REF:
+      return new TRefFormat();
+    case PARAMETER_RELATIVE_REF:
+      return new TRelativeRefFormat();
+    case PARAMETER_FAR_REF:
+      return new TFarRefFormat();
     default:
       return FALSE;
     }
