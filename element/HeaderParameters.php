@@ -84,7 +84,7 @@ class NParams
   const REACHABLE          = "Reachable";                // if set to NO, section won't be reachable unless explicitly typed in address bar
   const READABLE           = "Readable";                 // if set to NO, section content will be hidden
   const READABLE_ERROR     = "Readable-error";           // if unreadable section is attempted, this message will be returned
-  const INVISIBLE          = "Invisible";                // if set to YES, section will return 404 on access
+  const VISIBLE            = "Visible";                  // if set to NO, section will return 404 on access
 
   // redirect
   const REDIRECT_NEAR      = "Redirect-near";            // if set, the page will redirect to other page
@@ -119,18 +119,18 @@ class NParams
     self::FOOTER                   => "",
     self::SHOW_CONT_TITLE          => self::TRUE_STR,
     self::SHOW_CONT_SUBTITLE       => self::FALSE_STR,
-    self::HEADER_TITLE             => "[IMG BEGIN][ADDR BEGIN]dado.gif[END]undado[END]Q.NET",
+    self::HEADER_TITLE             => "<INCLUDE|DEFAULTHEADER>",
     self::CONT_SUBTITLE            => "",
     self::REDIRECT_NEAR            => "",
     self::REDIRECT_SILENT          => "",
     self::REDIRECT_FAR             => "",
     self::READABLE                 => self::TRUE_STR,
     self::REACHABLE                => self::TRUE_STR,
-    self::INVISIBLE                => self::FALSE_STR,
+    self::VISIBLE                  => self::TRUE_STR,
     self::NEXT                     => self::AUTO_STR,
     self::PREV                     => self::AUTO_STR,
     self::HTTP_STATUS_CODE         => "",
-    self::READABLE_ERROR           => "<INCLUDE|LANGS>[IT BEGIN]Errore: il contenuto di questa pagina è nascosto.[IT END][EN BEGIN]Error: the content of this page is hidden.[EN END]|",
+    self::READABLE_ERROR           => "<ERRORS/VISIBILITY|HIDDEN>",
     );
 
   // returns "" if failed

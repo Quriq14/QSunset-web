@@ -63,7 +63,7 @@ function WriteHeader($data,$langdata)
               if (!$fl->titleonly[$i])
                 echo AHrefBegin("bodyheaderhref".($marked ? " bodyheaderselhref" : ""),$fl->paths[$i],$data->linklanguage);
 
-              echo TrueHtmlEntities($fl->names[$i]);
+              echo $fl->names[$i];
 
               if (!$fl->titleonly[$i])
                 echo ANCHOR_END;

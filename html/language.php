@@ -2,9 +2,12 @@
 
 require_once("html/htmlutils.php");
 
+require_once("content/ParseContent.php");
+
 class TLanguageSelectorData
   {
   public $status   = self::NOT_FOUND;
+  public $errorStr = "";      // error to display on top of the page
   public $hrefs    = array(); // array of strings
   public $labels   = array(); // array of strings
   public $ids      = array(); // language ids (NLanguages::$LANGUAGE_ARRAY)
@@ -65,31 +68,13 @@ function WriteLanguageSelector($data)
 // uses the same data format of WriteLanguageSelector
 function WriteLanguageErr($data)
   {
-  $errString = "";
-
-  switch ($data->status)
-    {
-    case TLanguageSelectorData::NOT_FOUND:
-      $errString = "This site was unable to determine your preferred language.".
-                   " You may leave it or select another language from the box in the upper right corner, if available.<br />".
-                   "Il sito non &egrave; stato capace di determinare la vostra lingua preferita.".
-                   " Potete abbandonarla o selezionare un'altra lingua dal riquadro in alto a destra, se disponibile.";
-      break;
-    case TLanguageSelectorData::NOT_AVAILABLE:
-      $errString = "We're sorry, but this page is not available in the language you requested.".
-                   " You may leave it or select another language from the box in the upper right corner.<br />".
-                   "Siamo spiacenti, ma questa pagina non &egrave; disponibile nella lingua che avete richiesto.".
-                   " Potete abbandonarla o selezionare un'altra lingua dal riquadro in alto a destra.";
-      break;
-    }
-
-  if ($errString !== "")
+  if ($data->errorStr !== "")
     {
     ?>
     <div class="bodylangerr">
       <div class="bodylangerrborder">
         <p class="bodylangerrp">
-          <?php echo $errString; ?>
+          <?php echo $data->errorStr; ?>
         </p>
       </div>
     </div>

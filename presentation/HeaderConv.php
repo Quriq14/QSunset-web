@@ -29,6 +29,7 @@ function PrepareLanguageData($view,$autoLang)
     {
     case TAutoLangResult::FAILED_DETECT:
       $langdata->status = TLanguageSelectorData::NOT_FOUND;
+      $langdata->errorStr = NContentParser::Parse("<ERRORS/LANGUAGE|NOTFOUND>",$view->GetContentParserInfo());
       break;
     case TAutoLangResult::REQUESTED_LANG:
       $langdata->status = TLanguageSelectorData::SELECTED_BY_USER;
@@ -38,6 +39,7 @@ function PrepareLanguageData($view,$autoLang)
       break;
     case TAutoLangResult::NOT_AVAIL_LANG:
       $langdata->status = TLanguageSelectorData::NOT_AVAILABLE;
+      $langdata->errorStr = NContentParser::Parse("<ERRORS/LANGUAGE|NOTAVAIL>",$view->GetContentParserInfo());
       break;
     }
 
@@ -56,7 +58,7 @@ function PrepareHeaderData($view)
     $oldelement = $view->GetElement();
     // at each cycle, $oldelement becomes $cparent
     // and $cparent becomes his parent
-    // in this way, comparing $oldelement with the elements in the index of $cparent
+    // this way, comparing $oldelement with the elements in the index of $cparent
     // we may find which element should be highlighted in the index
 
     $pcounter = 0;

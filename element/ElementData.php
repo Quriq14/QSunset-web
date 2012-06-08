@@ -42,10 +42,10 @@ abstract class TElementData
     return $this->GetParamDefault(NParams::READABLE)->ToBool() && $this->IsVisible();
     }
 
-  // the page behaves as if it not exists
+  // the page behaves as if it does not exist
   public function IsVisible()
     {
-    return !$this->GetParamDefault(NParams::INVISIBLE)->ToBool();
+    return $this->GetParamDefault(NParams::VISIBLE)->ToBool();
     }
 
   // "" if none

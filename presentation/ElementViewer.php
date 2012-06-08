@@ -63,7 +63,7 @@ class TElementViewer
 
   public function GetNotReadableError()
     {
-    return $this->Top()->GetParamDefault(NParams::READABLE_ERROR)->ToString();
+    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::READABLE_ERROR)->ToString(),$this->GetContentParserInfo());
     }
 
   // no links to this page should be created
