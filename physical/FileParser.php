@@ -138,27 +138,44 @@ class TFileParser
   // returns an array of strings, empty if failed
   public function GetContent($section)
     {
-    $result = array();
-    $rcounter = 0;
-
     if (!isset($section) || !$this->IsValid())
-      return $result;
+      return array();
+
+    if (isset($this->contentCache[$section]))
+      return $this->contentCache[$section]; // was cached
+
+    if ($this->contentCache !== FALSE) // cache is already initialized, but the section is not found.
+      return array();
+
+    // Not cached and it may exist. We need to load it, then.
+    $counters = array(); // number of lines for each section
+    $this->contentCache = array();
 
     $this->Reset();
 
     do {
       $info = $this->Scan();
 
-      if ($info->type === TFileParseInfo::CONTENT && $info->section === $section)
-        $result[$rcounter++] = $info->content;      
+      if ($info->type === TFileParseInfo::CONTENT)
+        {
+        if (!isset($this->contentCache[$info->section])) // new section, create new cache entry
+          {
+          $this->contentCache[$info->section] = array();
+          $counters[$info->section] = 0;
+          }
+
+        $this->contentCache[$info->section][$counters[$info->section]++] = $info->content; 
+        }     
 
       } while ($info->type !== TFileParseInfo::ERROR && $info->type !== TFileParseInfo::EOF);
 
-    return $result;
+    if (!isset($this->contentCache[$section]))
+      return array(); // requested section is not found
+
+    return $this->contentCache[$section];
     }
 
   // TRUE or FALSE
-  // mode may be SECTION or SUBSECTION or SECTION | SUBSECTION
   public function HasSection($section,$mode)
     {
     if (!$this->IsValid())
@@ -220,7 +237,6 @@ class TFileParser
             $result->content = $line;
             
             $result->section = $this->csection = $line; // save last section name
-
             break;
 
           case 1: // TITLE
@@ -276,6 +292,9 @@ class TFileParser
   private $inHeaderArea; // only Scan and Reset can access this
   private $linecounter;  // only Scan and Reset can access this
   private $csection;     // only Scan and Reset can access this
+
+  private $contentCache = FALSE; // cache for the content: array(section_id => array(0 => line1, 1 => line2...), ...)
+                                 // false when not initialized yet
   }
 
 function FileParserFactory($absoluteFile)

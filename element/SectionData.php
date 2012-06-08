@@ -166,21 +166,18 @@ class TSectionData extends TElementData
   // empty if failed
   public function GetContent()
     {    
-    if ($this->contentCache !== FALSE)
-      return $this->contentCache;
-
-    $this->contentCache = array();
+    $result = array();
 
     if (!$this->IsValid())
-      return $this->contentCache;
+      return $result;
 
     $scanner = FileParserFactory($this->sPhysicalPath->Get());
     if (!$scanner->IsValid())
-      return $this->contentCache;
+      return $result;
 
-    $this->contentCache = $scanner->GetContent($this->section);
+    $result = $scanner->GetContent($this->section);
 
-    return $this->contentCache;
+    return $result;
     }
 
   public function IsValid()
@@ -272,7 +269,5 @@ class TSectionData extends TElementData
   private $childs; // array of child sections (FALSE if "not loaded yet")
 
   private $myIndexEntry; // index entry form the directory element. FALSE if not loaded yet
-
-  private $contentCache = FALSE; // content cache
   }
 ?>
