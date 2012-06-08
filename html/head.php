@@ -8,9 +8,9 @@ function WriteHead($title)
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="UTF-8" />
-    <title><?php echo $title ?></title>
+    <title><?php echo $title; ?></title>
     <link rel="shortcut icon" href="aux/q.ico" />
-    <link rel="stylesheet" type="text/css" href="aux/ric.css" />
+    <link rel="stylesheet" type="text/css" href="aux/qsunset.css" />
   </head>
 <?php
   }
