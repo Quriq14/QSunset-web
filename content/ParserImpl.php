@@ -74,6 +74,21 @@ class NParserImpl
 
     for ($info->processed; $info->processed < $contentlength; $info->processed)
       {
+      // skip characters (and put to the buffer) until a special character is found
+      $nextSpecialChar = self::FindFirstOf($info->content,$info->processed,$info->specialChars);
+      if ($nextSpecialChar === FALSE) // no more special chars found
+        {
+        $buffer .= substr($info->content,$info->processed);
+        $info->processed = $contentlength; // this will cause the for to exit
+        continue; 
+        }
+
+      if ($nextSpecialChar > $info->processed) // if $nextSpecialChar = $info->processed, no characters were skipped (speedup test)
+        {
+        $buffer .= substr($info->content,$info->processed,$nextSpecialChar - $info->processed);
+        $info->processed = $nextSpecialChar;
+        }
+
       switch ($info->content[$info->processed])// are we going inside some bracket?
         {
         case CHAR_OPEN_SQUARE: // going inside squares: beginning command
@@ -134,7 +149,7 @@ class NParserImpl
             break;
             }
 
-          $buffer .= $info->content[$info->processed++]; // else add to buffer              
+          $buffer .= $info->content[$info->processed++]; // it was a special character, but no action triggered. Output it to the buffer. 
           break;
         }
       }
@@ -263,10 +278,11 @@ class NParserImpl
     if ($relativePos === FALSE) // error occurred
       return FALSE;
 
-    if ($relativePos >= $stringlen)
+    $pos = $relativePos + $firstpos;
+    if ($pos >= $stringlen)
       return FALSE; // EOS reached
 
-    return $relativePos + 1;
+    return $pos;
     }
   }
 ?>

@@ -30,11 +30,13 @@ define("PARAMETER_RELATIVE_REF","RREF");     // same as REF but if attribute is:
                                              //           -+|EX (go to parent and enter section EX)
 define("PARAMETER_FAR_REF","XREF");          // reference to other site
 
-define("PREFIX_TOGGLE_SHORTCUT","SCT:"); // [SC:/ BEGIN] is equivalent to opening /, [SC:| BEGIN] is equivalent to opening |
-                                        // you may use [SC:symbol params] to define new shortcuts. They trigger always the action TOGGLE.
-define("PREFIX_PULSE_SHORTCUT","SCP:"); // like the previous, but this triggers the action PULSE.
-define("PREFIX_BEGIN_SHORTCUT","SCB:");
-define("PREFIX_END_SHORTCUT","SCE:");
+define("PREFIX_SHORTCUT","SC");
+define("PREFIX_SHORTCUT_TOTAL_LENGTH",4); // number of character of the prefixes below (to drop the prefix faster)
+define("PREFIX_TOGGLE_SHORTCUT",PREFIX_SHORTCUT."T:"); // [SCT:/ TOGGLE] is equivalent to /, [SCT:| TOGGLE] is equivalent to |
+                                      // you may use [SCT:symbol params] to define new shortcuts. They always trigger the action TOGGLE.
+define("PREFIX_PULSE_SHORTCUT", PREFIX_SHORTCUT."P:"); // like the previous, for action PULSE.
+define("PREFIX_BEGIN_SHORTCUT", PREFIX_SHORTCUT."B:"); // action BEGIN
+define("PREFIX_END_SHORTCUT",   PREFIX_SHORTCUT."E:"); // action END
 
 define("CHAR_OPEN_SQUARE","[");     // [tag]
 define("CHAR_CLOSE_SQUARE","]");
