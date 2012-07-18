@@ -30,6 +30,8 @@ define("PARAMETER_RELATIVE_REF","RREF");     // same as REF but if attribute is:
                                              //           -+|EX (go to parent and enter section EX)
 define("PARAMETER_FAR_REF","XREF");          // reference to other site
 
+define("PARAMETER_HTML","RAWHTML");          // raw HTML inside [HT rawhtml=-end-]<i>raw</i>-end-
+
 define("PREFIX_SHORTCUT","SC");
 define("PREFIX_SHORTCUT_TOTAL_LENGTH",4); // number of character of the prefixes below (to drop the prefix faster)
 define("PREFIX_TOGGLE_SHORTCUT",PREFIX_SHORTCUT."T:"); // [SCT:/ TOGGLE] is equivalent to /, [SCT:| TOGGLE] is equivalent to |

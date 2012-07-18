@@ -7,6 +7,7 @@ require_once("content/Comment.php");
 require_once("content/Language.php");
 require_once("content/Write.php");
 require_once("content/Ref.php");
+require_once("content/Html.php");
 
 function FormatFactory($name)
   {
@@ -44,6 +45,8 @@ function FormatFactory($name)
       return new TRelativeRefFormat();
     case PARAMETER_FAR_REF:
       return new TFarRefFormat();
+    case PARAMETER_HTML:
+      return new THtmlFormat();
     default:
       return FALSE;
     }
