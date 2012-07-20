@@ -8,6 +8,7 @@ require_once("content/Language.php");
 require_once("content/Write.php");
 require_once("content/Ref.php");
 require_once("content/Html.php");
+require_once("content/Snippet.php");
 
 function FormatFactory($name)
   {
@@ -47,6 +48,8 @@ function FormatFactory($name)
       return new TFarRefFormat();
     case PARAMETER_HTML:
       return new THtmlFormat();
+    case PARAMETER_SNIPPET:
+      return new TSnippetFormat();
     default:
       return FALSE;
     }

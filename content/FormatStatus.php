@@ -30,7 +30,7 @@ abstract class TFormatStatus
     }
 
   // a producer is created within BEGIN-END of this symbol
-  public function AddedProducer($info,$producer)
+  public function AddedProducer($info,$producer,$attribs)
     {
     }
   }

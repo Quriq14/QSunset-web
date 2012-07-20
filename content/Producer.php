@@ -8,7 +8,7 @@ abstract class THtmlProducer
   public function AddSymbol($info,$symbol)
     {
     $this->symbols[count($this->symbols)] = $symbol;
-    $symbol->AddedProducer($info,$this);
+    $symbol->AddedProducer($info,$this,array());
     }
 
   public function VisibleAll($info,$text)
