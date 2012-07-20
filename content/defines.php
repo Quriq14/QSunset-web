@@ -31,9 +31,9 @@ define("PARAMETER_RELATIVE_REF","RREF");     // same as REF but if attribute is:
 define("PARAMETER_FAR_REF","XREF");          // reference to other site
 
 define("PARAMETER_HTML","RAWHTML");          // raw HTML inside [HT rawhtml=-end-]<i>raw</i>-end-
-define("PARAMETER_SNIPPET","SNIPPET");       // parts of (formatted) text inside BEGIN-END of a snippet can be repeated with
+define("PARAMETER_SNIPPET","SNIPPET");       // parts of (formatted) text within BEGIN-END of a snippet can be written with
                                              // the PULSE of the same snippet. A snippet requires an unique name: snippet=name
-                                             // example: [LOREM snippet=lorem BEGIN]Lorem ipsum[LOREM END] [LOREM] 
+                                             // example: [LOREM snippet=lorem BEGIN]Lorem ipsum[LOREM END] [LOREM] [LOREM]
                                              //          will print "Lorem ipsum" two times.
 
 define("PREFIX_SHORTCUT","SC");

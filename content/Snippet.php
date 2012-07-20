@@ -26,7 +26,7 @@ class TSnippetFormat extends TFormatStatus
 
   public function IsVisible($info,$content,$status)
     {
-    return TRUE;
+    return $info->produceSource !== FALSE;
     }
 
   public function Pulse($info,$status)
@@ -39,10 +39,15 @@ class TSnippetFormat extends TFormatStatus
     if (!is_array($plist)) // not created
       return "";
     
+    $storedSource = $info->produceSource;
+    $info->produceSource = $this;
+
     $result = "";
     $plistcount = count($plist);
     for ($i = 0; $i < $plistcount; $i++)
       $result .= $plist[$i]->Produce($info);
+
+    $info->produceSource = $storedSource;
 
     return $result;
     }

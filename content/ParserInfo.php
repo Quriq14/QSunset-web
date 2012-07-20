@@ -18,6 +18,8 @@ class TContentParserInfo
   public $specialChars;             // every characters not in here will be skipped 
                                     // and considered text even before processing (see NParserImpl::Parse)
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
+  public $produceSource = FALSE;    // this a pointer to a symbol. A symbol that requires something to be Produce()d,
+                                    // must set this variable to himself and then reset it to the previous value afterwards
   
   // INPUT
   public $language = NLanguages::LANGUAGE_DEFAULT;
