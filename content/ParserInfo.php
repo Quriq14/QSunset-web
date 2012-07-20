@@ -17,6 +17,7 @@ class TContentParserInfo
   public $producedObjects = 0;      // length of the resultChain
   public $specialChars;             // every characters not in here will be skipped 
                                     // and considered text even before processing (see NParserImpl::Parse)
+  private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
   
   // INPUT
   public $language = NLanguages::LANGUAGE_DEFAULT;
@@ -109,6 +110,39 @@ class TContentParserInfo
   public function RemoveSpecialChar($char)
     {
     $this->specialChars = str_replace($char,"",$this->specialChars);
+    }
+
+  // FORMAT DATA ACCESS
+  // store data in key "key"
+  // NULL not allowed
+  public function SetFormatData($key,$value)
+    {
+    if ($value === NULL)
+      return;
+
+    $this->data[$key] = $value;
+    }
+
+  // remove data
+  public function UnSetFormatData($key)
+    {
+    if (isset($this->data[$key]))
+      unset($this->data[$key]);
+    }
+
+  // check data existence
+  public function IsFormatData($key)
+    {
+    return isset($this->data[$key]);
+    }
+
+  // retrieve data, FALSE if failed
+  public function GetFormatData($key)
+    {
+    if (isset($this->data[$key]))
+      return $this->data[$key];
+
+    return FALSE;
     }
   }
 
