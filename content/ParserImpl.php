@@ -47,7 +47,7 @@ class NParserImpl
     
     $sl = $info->GetActiveSymbolList();
     foreach($sl as $symb)
-      $tf->AddSymbol($symb);
+      $tf->AddSymbol($info,$symb);
     
     $info->AddToResultChain($tf);
     }
@@ -58,7 +58,7 @@ class NParserImpl
     
     $sl = $info->GetActiveSymbolList();
     foreach($sl as $symb)
-      $tf->AddSymbol($symb);
+      $tf->AddSymbol($info,$symb);
     
     $info->AddToResultChain($tf);
     }

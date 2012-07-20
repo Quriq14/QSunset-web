@@ -28,6 +28,11 @@ abstract class TFormatStatus
     {
     error_log("TFormatStatus::AddSubSymbol called.");
     }
+
+  // a producer is created within BEGIN-END of this symbol
+  public function AddedProducer($info,$producer)
+    {
+    }
   }
 
 ?>

@@ -138,6 +138,16 @@ class TSymbol extends TFormatStatus
     $this->UnLock($this->childLock);
     }
 
+  public function AddedProducer($info,$producer)
+    {
+    foreach($this->subsymbols as $name => $attr) // only propagate to symbols
+      {
+      $format = $info->GetFormatByName($name);
+      if ($format !== FALSE)
+        $format->AddedProducer($info,$producer);
+      }
+    }
+
   private $name = "";
   private $subsymbols = array(); // an array attribute_name => attribute_params[]
 

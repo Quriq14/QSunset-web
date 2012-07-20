@@ -5,9 +5,10 @@ abstract class THtmlProducer
   abstract public function Produce($info);
 
   // add a symbol that was active when the item was created
-  public function AddSymbol($symbol)
+  public function AddSymbol($info,$symbol)
     {
     $this->symbols[count($this->symbols)] = $symbol;
+    $symbol->AddedProducer($info,$this);
     }
 
   public function VisibleAll($info,$text)
