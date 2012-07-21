@@ -1,14 +1,14 @@
 <?php
 
-require_once("content/BoldItalicUnderline.php");
-require_once("content/Paragraph.php");
-require_once("content/Hidden.php");
-require_once("content/Comment.php");
-require_once("content/Language.php");
-require_once("content/Write.php");
-require_once("content/Ref.php");
-require_once("content/Html.php");
-require_once("content/Snippet.php");
+require_once("content/formats/BoldItalicUnderline.php");
+require_once("content/formats/Paragraph.php");
+require_once("content/formats/Hidden.php");
+require_once("content/formats/Comment.php");
+require_once("content/formats/Language.php");
+require_once("content/formats/Write.php");
+require_once("content/formats/Ref.php");
+require_once("content/formats/Html.php");
+require_once("content/formats/Snippet.php");
 
 function FormatFactory($name)
   {
