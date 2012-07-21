@@ -9,6 +9,7 @@ require_once("content/formats/Write.php");
 require_once("content/formats/Ref.php");
 require_once("content/formats/Html.php");
 require_once("content/formats/Snippet.php");
+require_once("content/formats/HorizontalLine.php");
 
 function FormatFactory($name)
   {
@@ -50,6 +51,8 @@ function FormatFactory($name)
       return new THtmlFormat();
     case PARAMETER_SNIPPET:
       return new TSnippetFormat();
+    case PARAMETER_HORIZONTAL_LINE:
+      return new THorizontalLineFormat();
     default:
       return FALSE;
     }

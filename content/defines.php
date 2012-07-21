@@ -35,6 +35,7 @@ define("PARAMETER_SNIPPET","SNIPPET");       // parts of (formatted) text within
                                              // the PULSE of the same snippet. A snippet requires an unique name: snippet=name
                                              // example: [LOREM snippet=lorem BEGIN]Lorem ipsum[LOREM END] [LOREM] [LOREM]
                                              //          will print "Lorem ipsum" two times.
+define("PARAMETER_HORIZONTAL_LINE","HORIZONTALLINE");
 
 define("PREFIX_SHORTCUT","SC");
 define("PREFIX_SHORTCUT_TOTAL_LENGTH",4); // number of character of the prefixes below (to drop the prefix faster)
