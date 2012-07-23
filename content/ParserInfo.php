@@ -2,6 +2,7 @@
 
 require_once("content/FormatFactory.php");
 require_once("content/defines.php");
+require_once("content/SpecialString.php");
 
 // send this info to the parser, its output variables will be changed
 class TContentParserInfo
@@ -17,6 +18,7 @@ class TContentParserInfo
   public $producedObjects = 0;      // length of the resultChain
   public $specialChars;             // every characters not in here will be skipped 
                                     // and considered text even before processing (see NParserImpl::Parse)
+  public $specialStrings;           // for multi-character shortcuts
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
   public $produceSource = FALSE;    // this a pointer to a symbol. A symbol that requires something to be Produce()d,
                                     // must set this variable to himself and then reset it to the previous value afterwards
@@ -28,6 +30,7 @@ class TContentParserInfo
 
   public function __construct()
     {
+    $this->specialStrings = new TSpecialStringTree();
     $this->specialChars = CHAR_OPEN_SQUARE.CHAR_OPEN_ANGLED;
     }
 
@@ -59,9 +62,7 @@ class TContentParserInfo
 
     $this->symbols[$name] = new TSymbol($name); // if not existing, create it
 
-    if (isset($name[PREFIX_SHORTCUT_TOTAL_LENGTH]))
-      if (strtoupper(substr($name,0,2)) === PREFIX_SHORTCUT) // if it's a shortcut, its first character is now a special character
-        $this->AddSpecialChar($name[PREFIX_SHORTCUT_TOTAL_LENGTH]);
+    $this->AddIfShortcutSymbol($name); // add to the special strings if it's a shortcut
 
     return $this->symbols[$name];
     }
@@ -103,15 +104,44 @@ class TContentParserInfo
     $this->resultChain[$this->producedObjects++] = $obj;
     }
 
-  public function AddSpecialChar($char)
+  // if $name is a shortcut symbol, it will be added to the special strings, otherwise nothing happens
+  public function AddIfShortcutSymbol($name)
     {
-    if (strpos($this->specialChars,$char) === FALSE) // avoid duplicates
-      $this->specialChars .= $char;
+    if (!isset($name[PREFIX_SHORTCUT_TOTAL_LENGTH]))
+      return; // too short: not a shortcut
+
+    $scprefix = strtoupper(substr($name,0,PREFIX_SHORTCUT_TOTAL_LENGTH));
+    switch ($scprefix)
+      {
+      case PREFIX_TOGGLE_SHORTCUT:
+      case PREFIX_PULSE_SHORTCUT:
+      case PREFIX_BEGIN_SHORTCUT:
+      case PREFIX_END_SHORTCUT:
+        break;
+      default:
+        return; // not a valid shortcut prefix
+      }
+
+    $sc = substr($name,PREFIX_SHORTCUT_TOTAL_LENGTH);
+    if ($sc === FALSE || $sc === "")
+      return; // shortcut string is empty
+    
+    $this->AddSpecialString($sc,$scprefix);
     }
 
-  public function RemoveSpecialChar($char)
+  // shortcuts
+  public function AddSpecialString($sc,$type)
     {
-    $this->specialChars = str_replace($char,"",$this->specialChars);
+    if ($sc === "")
+      return;
+
+    // add first char to specialchars
+    if (strpos($this->specialChars,$sc[0]) === FALSE) // avoid duplicates
+      $this->specialChars .= $sc[0];
+
+    $data = array(0 => $sc,1 => $type);
+    
+    $this->specialStrings->Add($sc,$data);
     }
 
   // FORMAT DATA ACCESS

@@ -104,52 +104,39 @@ class NParserImpl
           self::ParseInclude($info);
           break;
         default:
-          // it's a common character. See if it's a TOGGLE SHORTCUT:
-          $strangechar = $info->content[$info->processed];
-          if (isset($info->symbols[PREFIX_TOGGLE_SHORTCUT.$strangechar]))
+          // it's a common character. What action will be taken?
+          $specialFinding = $info->specialStrings->Find($info->processed,$info->content);
+          $actionParam = FALSE;
+          if ($specialFinding !== FALSE) // a special string is found
             {
-            self::ProduceText($info,$buffer);          // flush the buffer and clear it (like a command)
-            $buffer = "";
-            $info->processed++;
-            self::ExecuteSymbol(array(0 => PREFIX_TOGGLE_SHORTCUT.$strangechar,1 => PARAMETER_TOGGLE),$info);
-              // simple TOGGLE command
-            break;
+            switch ($specialFinding[1])  // find the action parameter from the shortcut prefix
+              {
+              case PREFIX_TOGGLE_SHORTCUT:
+                $actionParam = PARAMETER_TOGGLE;
+                break;
+              case PREFIX_PULSE_SHORTCUT:
+                $actionParam = PARAMETER_PULSE;
+                break;
+              case PREFIX_BEGIN_SHORTCUT:
+                $actionParam = PARAMETER_BEGIN;
+                break;
+              case PREFIX_END_SHORTCUT:
+                $actionParam = PARAMETER_END;
+                break;
+              }
             }
-
-          // is it a PULSE SHORTCUT?
-          if (isset($info->symbols[PREFIX_PULSE_SHORTCUT.$strangechar]))
+              
+          if ($actionParam !== FALSE) // the action exists
             {
-            self::ProduceText($info,$buffer);          // flush the buffer and clear it (like a command)
+            self::ProduceText($info,$buffer);          // flush the buffer and clear it (a command is being executed)
             $buffer = "";
-            $info->processed++;
-            self::ExecuteSymbol(array(0 => PREFIX_PULSE_SHORTCUT.$strangechar,1 => PARAMETER_PULSE),$info);
-              // simple PULSE command
-            break;
+            $info->processed += strlen($specialFinding[0]);
+            self::ExecuteSymbol(array(0 => $specialFinding[1].$specialFinding[0],1 => $actionParam),$info);
+              // build simple command
             }
-
-          // is it a BEGIN SHORTCUT?
-          if (isset($info->symbols[PREFIX_BEGIN_SHORTCUT.$strangechar]))
-            {
-            self::ProduceText($info,$buffer);          // flush the buffer and clear it (like a command)
-            $buffer = "";
-            $info->processed++;
-            self::ExecuteSymbol(array(0 => PREFIX_BEGIN_SHORTCUT.$strangechar,1 => PARAMETER_BEGIN),$info);
-              // BEGIN command
-            break;
-            }
-
-          // is it an END SHORTCUT?
-          if (isset($info->symbols[PREFIX_END_SHORTCUT.$strangechar]))
-            {
-            self::ProduceText($info,$buffer);          // flush the buffer and clear it (like a command)
-            $buffer = "";
-            $info->processed++;
-            self::ExecuteSymbol(array(0 => PREFIX_END_SHORTCUT.$strangechar,1 => PARAMETER_END),$info);
-              // END command
-            break;
-            }
-
-          $buffer .= $info->content[$info->processed++]; // it was a special character, but no action triggered. Output it to the buffer. 
+            else
+              $buffer .= $info->content[$info->processed++]; // it was a special character, but no action triggered. 
+                                                             // Output it to the buffer.
           break;
         }
       }
@@ -249,7 +236,7 @@ class NParserImpl
       }
     }
 
-  public function ParseInclude($info)
+  public static function ParseInclude($info)
     {
     $includeendidx = strpos($info->content,CHAR_CLOSE_ANGLED,$info->processed);
     
@@ -270,7 +257,7 @@ class NParserImpl
 
   // returns the position of the first character of $string (starting from $firstpos) equal to one of the characters of $chars
   // or FALSE if none
-  public function FindFirstOf($string,$firstpos,$chars)
+  public static function FindFirstOf($string,$firstpos,$chars)
     {
     $stringlen = strlen($string);
 
