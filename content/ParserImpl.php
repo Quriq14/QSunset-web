@@ -5,38 +5,12 @@ require_once("content/Symbol.php");
 require_once("content/ParserInfo.php");
 require_once("content/Text.php");
 require_once("content/Include.php");
+require_once("content/CommandParser.php");
 
 require_once("html/htmlutils.php");
 
 class NParserImpl
   {
-  // same as "explode", but removes empty parameters
-  public static function ExplodeParams($string)
-    {
-    if (!isset($string))
-      return array();
-
-    $exploded = explode(PARAMETER_SEPARATOR,$string);
-    
-    // remove empty params
-    $necount = 0;
-    $noempty = array();
-    foreach ($exploded as $t)
-      if ($t !== "")
-        $noempty[$necount++] = $t;
-        
-    return $noempty;
-    }
-
-  // returns an array with the name in position 0 and the values in position 1..n
-  public static function ExplodeSingleParam($string)
-    {
-    if (!isset($string))
-      return array();
-
-    return explode(PARAMETER_VALUE_BEGIN,$string);
-    }
-
   // creates a TTextHolder object and appends it to $info->resultChain
   public static function ProduceText($info,$text)
     {
@@ -75,10 +49,12 @@ class NParserImpl
     for ($info->processed; $info->processed < $contentlength; $info->processed)
       {
       // skip characters (and put to the buffer) until a special character is found
-      $nextSpecialChar = self::FindFirstOf($info->content,$info->processed,$info->specialChars);
-      if ($nextSpecialChar === FALSE) // no more special chars found
+      $nextSpecialChar = NCommandParser::FindFirstOf($info->content,$info->processed,$info->specialChars);
+      if ($nextSpecialChar >= $contentlength) // no more special chars found
         {
-        $buffer .= substr($info->content,$info->processed);
+        $ma = substr($info->content,$info->processed);
+        if ($ma !== FALSE)
+          $buffer .= $ma;
         $info->processed = $contentlength; // this will cause the for to exit
         continue; 
         }
@@ -131,8 +107,8 @@ class NParserImpl
             self::ProduceText($info,$buffer);          // flush the buffer and clear it (a command is being executed)
             $buffer = "";
             $info->processed += strlen($specialFinding[0]);
-            self::ExecuteSymbol(array(0 => $specialFinding[1].$specialFinding[0],1 => $actionParam),$info);
-              // build simple command
+            self::ExecuteSymbol(array(0 => array(0 => $specialFinding[1].$specialFinding[0]),1 => array(0 => $actionParam)),$info);
+              // simulate simple command
             }
             else
               $buffer .= $info->content[$info->processed++]; // it was a special character, but no action triggered. 
@@ -148,83 +124,68 @@ class NParserImpl
 
   public static function ParseCommand($info)
     {
-    if ($info->content === "")
-      return;
+    if ($info->processed >= strlen($info->content))
+      return; // end of file reached
 
-    $commandendidx = strpos($info->content,CHAR_CLOSE_SQUARE,$info->processed);
-    
-    if ($commandendidx === FALSE)
-      {
-      error_log("END OF COMMAND not found.");
-      $info->processed = strlen($info->content);
-      return; // command not closed
-      }
+    $splitCommand = NCommandParser::Parse($info->content,$info->processed);
 
-    $command = substr($info->content,$info->processed,$commandendidx - $info->processed); // get the command
-    $command = trim($command);
-
-    $splitCommand = self::ExplodeParams($command);
-
-    $info->processed = $commandendidx + 1; // continue from the end of the command
-
-    if (count($splitCommand) !== 0)
-      self::ExecuteSymbol($splitCommand,$info);
+    self::ExecuteSymbol($splitCommand,$info);
     }
 
   // returns a string to be added to the buffer (because of a PULSE command) or an empty string
   public static function ExecuteSymbol($paramArray,$info)
     {
-    if (!isset($paramArray) || count($paramArray) === 0)
+    if (!is_array($paramArray) || count($paramArray) === 0 || !isset($paramArray[0][0]))
       return;
 
-    $paramArray[0] = strtoupper($paramArray[0]); // symbol name is case-insensitive
+    $symbolName = $paramArray[0][0];
+    if ($symbolName === "")
+      return; // symbol name is empty
 
-    $symbol = $info->GetOrCreateFormatByName($paramArray[0]);
+    $symbolName = strtoupper($symbolName); // symbol name is case-insensitive
+
+    $symbol = $info->GetOrCreateFormatByName($symbolName);
 
     $paramCount = count($paramArray);
 
     $lastParam = "";
 
     // if the last parameter is an action, save it and remove it from the parameter array
-    if ($paramCount > 1) // do it only if it's not the command name
-      switch (strtoupper($paramArray[$paramCount-1]))
+    if ($paramCount > 1) // do it only if it's not the symbol name
+      switch (strtoupper($paramArray[$paramCount-1][0]))
         {
         case PARAMETER_END:
         case PARAMETER_BEGIN:
         case PARAMETER_TOGGLE:
         case PARAMETER_PULSE:
         case PARAMETER_DECL:
-          $lastParam = $paramArray[$paramCount-1];
+          $lastParam = $paramArray[$paramCount-1][0];
           unset($paramArray[$paramCount-1]);
           $paramCount--;
           break;
         }
 
     for ($i = 1; $i < $paramCount; $i++)
-      {
-      $values = self::ExplodeSingleParam($paramArray[$i]);
-
-      $symbol->AddSubSymbol($values[0],$values);
-      }
+      $symbol->AddSubSymbol($paramArray[$i][0],$paramArray[$i]);
 
     // execute the command depending on the command type
     switch (strtoupper($lastParam))
       {
       case PARAMETER_END:
-        $info->DeActivateSymbol($paramArray[0]);
+        $info->DeActivateSymbol($symbolName);
         break;
       case PARAMETER_BEGIN:
         // is this a script?
         if ($symbol->NeedChild($info,array()))
           $symbol->Child($info,array());
           else 
-            $info->ActivateSymbol($paramArray[0]);
+            $info->ActivateSymbol($symbolName);
         break;
       case PARAMETER_TOGGLE:
-        if ($info->IsSymbolActive($paramArray[0]))
-          $info->DeActivateSymbol($paramArray[0]);
+        if ($info->IsSymbolActive($symbolName))
+          $info->DeActivateSymbol($symbolName);
           else
-            $info->ActivateSymbol($paramArray[0]);
+            $info->ActivateSymbol($symbolName);
         break;
       case PARAMETER_DECL:
         // nothing to do
@@ -253,23 +214,6 @@ class NParserImpl
     $info->processed = $includeendidx + 1;
 
     NInclude::DoInclude($info,$include);
-    }
-
-  // returns the position of the first character of $string (starting from $firstpos) equal to one of the characters of $chars
-  // or FALSE if none
-  public static function FindFirstOf($string,$firstpos,$chars)
-    {
-    $stringlen = strlen($string);
-
-    $relativePos = strcspn($string,$chars,$firstpos);
-    if ($relativePos === FALSE) // error occurred
-      return FALSE;
-
-    $pos = $relativePos + $firstpos;
-    if ($pos >= $stringlen)
-      return FALSE; // EOS reached
-
-    return $pos;
     }
   }
 ?>

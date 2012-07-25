@@ -6,10 +6,6 @@ define("PARAMETER_TOGGLE","TOGGLE"); // toggle area of effect
 define("PARAMETER_PULSE","PULSE");   // send a pulse to the symbol (useful for displaying text) DEFAULT
 define("PARAMETER_DECL","DECL");     // declaration only (no effect, but defines the symbol)
 
-define("PARAMETER_SEPARATOR"," ");
-define("PARAMETER_VALUE_BEGIN","="); // the equal in "parameter=value" (value can't contain PARAMETER_SEPARATOR)
-                                     // multiple values may be added: parameter=value1=value2=value3=...
-
 define("PARAMETER_BOLD","BOLD");
 define("PARAMETER_ITALIC","ITALIC");
 define("PARAMETER_UNDERLINE","UNDERLINE");
