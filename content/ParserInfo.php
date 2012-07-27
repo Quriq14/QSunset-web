@@ -3,6 +3,7 @@
 require_once("content/FormatFactory.php");
 require_once("content/defines.php");
 require_once("content/SpecialString.php");
+require_once("content/FormatAttribs.php");
 
 // send this info to the parser, its output variables will be changed
 class TContentParserInfo
@@ -13,7 +14,7 @@ class TContentParserInfo
 
   // STATUS (internal use only)
   public $symbols = array();        // defined symbols: name => TSymbol
-  public $activeSymbols = array();  // a set of symbol names
+  public $activeSymbols = array();  // an array of active symbols: name => TFormatAttribs
   public $resultChain = array();    // array of objects, $result = cat($resultChain->Pulse())
   public $producedObjects = 0;      // length of the resultChain
   public $specialChars;             // every characters not in here will be skipped 
@@ -67,12 +68,13 @@ class TContentParserInfo
     return $this->symbols[$name];
     }
 
-  public function ActivateSymbol($name)
+  public function ActivateSymbol($symbolattr)
     {
-    if (!is_string($name) || $name === "")
+    $name = $symbolattr->GetName();
+    if ($name === "")
       return;
 
-    $this->activeSymbols[$name] = TRUE;
+    $this->activeSymbols[$name] = $symbolattr;
     }
 
   public function DeActivateSymbol($name)
@@ -86,15 +88,15 @@ class TContentParserInfo
     return isset($this->activeSymbols[$name]);
     }
 
-  // returns an array of TFormatStatus, ordered from 0 to n
+  // returns an array of TFormatAttribs, ordered from 0 to n
   public function GetActiveSymbolList()
     {
     $result = array();
     $resultidx = 0;
 
-    foreach($this->activeSymbols as $k => $useless)
-      if (($symb = $this->GetFormatByName($k)) !== FALSE)
-        $result[$resultidx++] = $symb;
+    foreach($this->activeSymbols as $k => $formatattr)
+      if ($formatattr->Validate($this))
+        $result[$resultidx++] = $formatattr;
 
     return $result;
     }

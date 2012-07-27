@@ -11,9 +11,9 @@ class TSymbol extends TFormatStatus
     $this->name = $symbolName;
     }
 
-  public function AddSubSymbol($name,$value)
+  public function AddSubSymbol($formatattribs)
     {
-    $this->subsymbols[$name] = $value;
+    $this->subsymbols[$formatattribs->GetName()] = $formatattribs;
     }
 
   public function Apply($info,$content,$attribs)
@@ -23,12 +23,8 @@ class TSymbol extends TFormatStatus
 
     $result = "";
 
-    foreach($this->subsymbols as $name => $attr)
-      {
-      $format = $info->GetFormatByName($name);
-      if ($format !== FALSE)
-        $result .= $format->Apply($info,$content,$attr);
-      }
+    foreach($this->subsymbols as $attr)
+      $result .= $attr->Apply($info,$content);
 
     $this->UnLock($this->applyLock);
 
@@ -44,15 +40,11 @@ class TSymbol extends TFormatStatus
 
     $reverse = array();
     $reversecount = count($this->subsymbols) - 1;
-    foreach($this->subsymbols as $name => $attr)
-      $reverse[$reversecount--] = $name;
+    foreach($this->subsymbols as $attr)
+      $reverse[$reversecount--] = $attr;
 
     for ($i = 0; $i < count($reverse); $i++)
-      {
-      $format = $info->GetFormatByName($reverse[$i]);
-      if ($format !== FALSE)
-        $result .= $format->UnApply($info,$content,$this->subsymbols[$reverse[$i]]);
-      }
+      $result .= $reverse[$i]->UnApply($info,$content);
 
     $this->UnLock($this->unapplyLock);
 
@@ -64,16 +56,12 @@ class TSymbol extends TFormatStatus
     if (!$this->TryLock($this->visibleLock))
       return TRUE;
 
-    foreach($this->subsymbols as $name => $attr)
-      {
-      $format = $info->GetFormatByName($name);
-      if ($format !== FALSE)
-        if (!$format->IsVisible($info,$content,$attr))
-          {
-          $this->UnLock($this->visibleLock);
-          return FALSE;
-          }
-      }
+    foreach($this->subsymbols as $attr)
+      if (!$attr->IsVisible($info,$content))
+        {
+        $this->UnLock($this->visibleLock);
+        return FALSE;
+        }
 
     $this->UnLock($this->visibleLock);
     return TRUE;
@@ -87,65 +75,49 @@ class TSymbol extends TFormatStatus
 
     $result = "";
 
-    foreach($this->subsymbols as $name => $attr)
-      {
-      $format = $info->GetFormatByName($name);
-      if ($format !== FALSE)
-        $result .= $format->Pulse($info,$attr);
-      }
+    foreach($this->subsymbols as $attr)
+      $result .= $attr->Pulse($info,$attr);
 
     $this->UnLock($this->pulseLock);
     return $result;
     }
 
-  public function NeedChild($info,$attribs)
+  public function NeedChildProc($info,$attribs)
     {
     if (!$this->TryLock($this->needChildLock))
       return FALSE;
 
-    foreach($this->subsymbols as $name => $attr)
-      {
-      $format = $info->GetFormatByName($name);
-      if ($format !== FALSE)
-        if ($format->NeedChild($info,$attr))
-          {
-          $this->UnLock($this->needChildLock);
-          return TRUE;
-          }
-      }
+    foreach($this->subsymbols as $attr)
+      if ($attr->NeedChildProc($info))
+        {
+        $this->UnLock($this->needChildLock);
+        return TRUE;
+        }
 
     $this->UnLock($this->needChildLock);
     return FALSE;
     }
 
-  public function Child($info,$attribs)
+  public function ChildProc($info,$attribs)
     {
     if (!$this->TryLock($this->childLock))
       return;
 
-    foreach($this->subsymbols as $name => $attr)
-      {
-      $format = $info->GetFormatByName($name);
-      if ($format !== FALSE)
-        if ($format->NeedChild($info,$attr))
-          {
-          $format->Child($info,$attr);
-          $this->UnLock($this->childLock);
-          return; // Avoid multiple child calls.
-          }
-      }
+    foreach($this->subsymbols as $attr)
+      if ($attr->NeedChildProc($info))
+        {
+        $attr->ChildProc($info,$attr);
+        $this->UnLock($this->childLock);
+        return; // Avoid multiple child calls.
+        }
 
     $this->UnLock($this->childLock);
     }
 
   public function AddedProducer($info,$producer,$attr)
     {
-    foreach($this->subsymbols as $name => $attr) // only propagate to symbols
-      {
-      $format = $info->GetFormatByName($name);
-      if ($format !== FALSE)
-        $format->AddedProducer($info,$producer,$attr);
-      }
+    foreach($this->subsymbols as $attr) // only propagate to symbols
+      $attr->AddedProducer($info,$producer);
     }
 
   private $name = "";
@@ -173,18 +145,19 @@ class TSymbol extends TFormatStatus
     }
   }
 
-// this class holds a Symbol. When it will be Produce()d, the symbol's Pulse() will be called
+// this class holds a symbol with attribute information. When it will be Produce()d, the symbol's Pulse() will be called
 class TSymbolHolder extends THtmlProducer
   {
-  public function TSymbolHolder($symbol)
+  // $symbolattr is a TFormatAttribs
+  public function TSymbolHolder($symbolattr)
     {
-    if (!isset($symbol))
+    if (!isset($symbolattr))
       {
-      error_log("TSymbolHolder: symbol not set.");
+      error_log("TSymbolHolder: symbolattr not set.");
       return;
       }
 
-    $this->mySymbol = $symbol;
+    $this->mySymbol = $symbolattr;
     }
 
   public function Produce($info)
@@ -197,7 +170,7 @@ class TSymbolHolder extends THtmlProducer
     $result .= $this->ApplyAll($info,"");
 
     if ($this->mySymbol !== FALSE)
-      $result .= $this->mySymbol->Pulse($info,array());
+      $result .= $this->mySymbol->Pulse($info);
 
     $result .= $this->UnApplyAll($info,"");
 

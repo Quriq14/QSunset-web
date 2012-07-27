@@ -17,16 +17,15 @@ abstract class TFormatStatus
   abstract public function Pulse($info,$attribs);
 
   // child processing is needed?
-  public function NeedChild($info,$attribs) {return FALSE; }
+  public function NeedChildProc($info,$attribs) {return FALSE; }
 
   // start child processing
-  public function Child($info,$attribs) {}
+  public function ChildProc($info,$attribs) {}
 
   // add a subsymbol to the symbol (useful only for Symbols)
-  // a subsymbol may be the name of any TFormatStatus
-  public function AddSubSymbol($name,$value)
+  // $symbolattr is an object of type TFormatAttribs
+  public function AddSubSymbol($symbolattr)
     {
-    error_log("TFormatStatus::AddSubSymbol called.");
     }
 
   // a producer is created within BEGIN-END of this symbol

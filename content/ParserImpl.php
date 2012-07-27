@@ -26,9 +26,9 @@ class NParserImpl
     $info->AddToResultChain($tf);
     }
 
-  public static function ProducePulse($info,$symbol)
+  public static function ProducePulse($info,$symbolattr)
     {
-    $tf = new TSymbolHolder($symbol);
+    $tf = new TSymbolHolder($symbolattr);
     
     $sl = $info->GetActiveSymbolList();
     foreach($sl as $symb)
@@ -145,6 +145,7 @@ class NParserImpl
     $symbolName = strtoupper($symbolName); // symbol name is case-insensitive
 
     $symbol = $info->GetOrCreateFormatByName($symbolName);
+    $symbolattr = new TFormatAttribs($symbolName,$paramArray[0],$symbol);
 
     $paramCount = count($paramArray);
 
@@ -166,7 +167,7 @@ class NParserImpl
         }
 
     for ($i = 1; $i < $paramCount; $i++)
-      $symbol->AddSubSymbol($paramArray[$i][0],$paramArray[$i]);
+      $symbol->AddSubSymbol(new TFormatAttribs($paramArray[$i][0],$paramArray[$i]));
 
     // execute the command depending on the command type
     switch (strtoupper($lastParam))
@@ -176,23 +177,23 @@ class NParserImpl
         break;
       case PARAMETER_BEGIN:
         // is this a script?
-        if ($symbol->NeedChild($info,array()))
-          $symbol->Child($info,array());
+        if ($symbolattr->NeedChildProc($info))
+          $symbolattr->ChildProc($info);
           else 
-            $info->ActivateSymbol($symbolName);
+            $info->ActivateSymbol($symbolattr);
         break;
       case PARAMETER_TOGGLE:
         if ($info->IsSymbolActive($symbolName))
           $info->DeActivateSymbol($symbolName);
           else
-            $info->ActivateSymbol($symbolName);
+            $info->ActivateSymbol($symbolattr);
         break;
       case PARAMETER_DECL:
         // nothing to do
         break;
       case PARAMETER_PULSE:
       default: // the pulse is the default
-        self::ProducePulse($info,$symbol); // add to the result chain
+        self::ProducePulse($info,$symbolattr); // add to the result chain
         break;
       }
     }

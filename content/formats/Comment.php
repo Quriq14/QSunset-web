@@ -28,12 +28,12 @@ class TCommentScriptFormat extends TFormatStatus
     return "";
     }
 
-  public function NeedChild($info,$attribs) 
+  public function NeedChildProc($info,$attribs) 
     {
     return TRUE; 
     }
 
-  public function Child($info,$attribs) 
+  public function ChildProc($info,$attribs) 
     {
     $contentidx = $info->processed;
 
