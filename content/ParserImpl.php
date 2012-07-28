@@ -40,6 +40,12 @@ class NParserImpl
   // returns an array if success (a chainDOM)
   public static function Parse($info)
     {
+    if ($info->IsEndOfParsingRequested())
+      {
+      $info->ClearEndOfParsingRequest();
+      return array();
+      }
+
     $contentlength = strlen($info->content);
     if ($info->processed >= $contentlength || $info->processed < 0)
       return array(); // starting from invalid index
@@ -115,6 +121,12 @@ class NParserImpl
                                                              // Output it to the buffer.
           break;
         }
+
+      if ($info->IsEndOfParsingRequested())
+        {
+        $info->ClearEndOfParsingRequest();
+        break;
+        }
       }
 
     self::ProduceText($info,$buffer);                   // flush the buffer
@@ -178,7 +190,7 @@ class NParserImpl
       case PARAMETER_BEGIN:
         // is this a script?
         if ($symbolattr->NeedChildProc($info))
-          $symbolattr->ChildProc($info);
+          $symbolattr->ChildProc($info,$symbolattr);
           else 
             $info->ActivateSymbol($symbolattr);
         break;
@@ -186,7 +198,12 @@ class NParserImpl
         if ($info->IsSymbolActive($symbolName))
           $info->DeActivateSymbol($symbolName);
           else
-            $info->ActivateSymbol($symbolattr);
+            {
+            if ($symbolattr->NeedChildProc($info))
+              $symbolattr->ChildProc($info,$symbolattr);
+              else 
+                $info->ActivateSymbol($symbolattr);
+            }
         break;
       case PARAMETER_DECL:
         // nothing to do

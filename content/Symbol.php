@@ -98,7 +98,7 @@ class TSymbol extends TFormatStatus
     return FALSE;
     }
 
-  public function ChildProc($info,$attribs)
+  public function ChildProc($info,$attribs,$origsymbattr)
     {
     if (!$this->TryLock($this->childLock))
       return;
@@ -106,18 +106,30 @@ class TSymbol extends TFormatStatus
     foreach($this->subsymbols as $attr)
       if ($attr->NeedChildProc($info))
         {
-        $attr->ChildProc($info,$attr);
+        $attr->ChildProc($info,$origsymbattr);
         $this->UnLock($this->childLock);
-        return; // Avoid multiple child calls.
+        return; // multiple calls are illegal, return
         }
 
     $this->UnLock($this->childLock);
     }
 
-  public function AddedProducer($info,$producer,$attr)
+  public function OnAddedProducer($info,$producer,$attr)
     {
-    foreach($this->subsymbols as $attr) // only propagate to symbols
-      $attr->AddedProducer($info,$producer);
+    foreach($this->subsymbols as $attr) // propagate to subsymbols
+      $attr->OnAddedProducer($info,$producer);
+    }
+
+  public function OnBegin($info,$attr)
+    {
+    foreach($this->subsymbols as $attr) // propagate to subsymbols
+      $attr->OnBegin($info);
+    }
+
+  public function OnEnd($info,$attr)
+    {
+    foreach($this->subsymbols as $attr) // propagate to subsymbols
+      $attr->OnEnd($info);
     }
 
   private $name = "";

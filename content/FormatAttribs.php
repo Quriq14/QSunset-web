@@ -59,13 +59,13 @@ class TFormatAttribs
     return TRUE;
     }
 
-  public function ChildProc($info)
+  public function ChildProc($info,$origsymbattr)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->ChildProc($info,$this->attribs);
+      $this->symbol->ChildProc($info,$this->attribs,$origsymbattr);
     }
 
   public function NeedChildProc($info)
@@ -79,13 +79,31 @@ class TFormatAttribs
     return FALSE; // error
     }
 
-  public function AddedProducer($info,$producer)
+  public function OnAddedProducer($info,$producer)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->AddedProducer($info,$producer,$this->attribs);
+      $this->symbol->OnAddedProducer($info,$producer,$this->attribs);
+    }
+
+  public function OnBegin($info)
+    {
+    if ($this->symbol === FALSE)
+      $this->symbol = $info->GetFormatByName($this->name);
+
+    if ($this->symbol !== FALSE)
+      $this->symbol->OnBegin($info,$this->attribs);
+    }
+
+  public function OnEnd($info)
+    {
+    if ($this->symbol === FALSE)
+      $this->symbol = $info->GetFormatByName($this->name);
+
+    if ($this->symbol !== FALSE)
+      $this->symbol->OnEnd($info,$this->attribs);
     }
 
   // $symbolattr is a TFormatAttribs

@@ -52,7 +52,7 @@ class TSnippetFormat extends TFormatStatus
     return $result;
     }
 
-  public function AddedProducer($info,$producer,$status)
+  public function OnAddedProducer($info,$producer,$status)
     {
     if ($producer === FALSE)
       return;

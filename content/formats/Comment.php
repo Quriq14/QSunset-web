@@ -33,7 +33,7 @@ class TCommentScriptFormat extends TFormatStatus
     return TRUE; 
     }
 
-  public function ChildProc($info,$attribs) 
+  public function ChildProc($info,$attribs,$orig) 
     {
     $contentidx = $info->processed;
 

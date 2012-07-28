@@ -23,6 +23,7 @@ class TContentParserInfo
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
   public $produceSource = FALSE;    // this a pointer to a symbol. A symbol that requires something to be Produce()d,
                                     // must set this variable to himself and then reset it to the previous value afterwards
+  private $endOfParsingRequest = 0;
   
   // INPUT
   public $language = NLanguages::LANGUAGE_DEFAULT;
@@ -75,12 +76,16 @@ class TContentParserInfo
       return;
 
     $this->activeSymbols[$name] = $symbolattr;
+    $symbolattr->OnBegin($this);
     }
 
   public function DeActivateSymbol($name)
     {
     if (isset($this->activeSymbols[$name]))
+      {
+      $this->activeSymbols[$name]->OnEnd($this);
       unset($this->activeSymbols[$name]);
+      }
     }
 
   public function IsSymbolActive($name)
@@ -177,6 +182,33 @@ class TContentParserInfo
       return $this->data[$key];
 
     return FALSE;
+    }
+
+  // PARSING END REQUESTS
+  // asks the current Parse invocation to end
+  // (useful for child processing)
+  public function RequestEndOfParsing()
+    {
+    if ($this->endOfParsingRequest !== FALSE)
+      $this->endOfParsingRequest++; // multiple requests will quit many invocations
+    }
+
+  public function IsEndOfParsingRequested()
+    {
+    return ($this->endOfParsingRequest !== 0);
+    }
+
+  public function ClearEndOfParsingRequest()
+    {
+    if ($this->endOfParsingRequest !== FALSE && $this->endOfParsingRequest > 0)
+      $this->endOfParsingRequest--; 
+    }
+
+  // Aborts processing. All invocations of the Parser will exit.
+  public function AbortRequest()
+    {
+    $this->endOfParsingRequest = FALSE; // if $endOfParsingRequest is FALSE, ALL invocations will be ended
+                                        // and ClearEndOfParsingRequest won't have any effect
     }
   }
 
