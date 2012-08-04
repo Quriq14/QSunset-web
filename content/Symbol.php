@@ -13,7 +13,7 @@ class TSymbol extends TFormatStatus
 
   public function AddSubSymbol($formatattribs)
     {
-    $this->subsymbols[$formatattribs->GetName()] = $formatattribs;
+    $this->subsymbols[$this->subsymbolscount++] = $formatattribs;
     }
 
   public function Apply($info,$content,$attribs)
@@ -23,8 +23,8 @@ class TSymbol extends TFormatStatus
 
     $result = "";
 
-    foreach($this->subsymbols as $attr)
-      $result .= $attr->Apply($info,$content);
+    for ($i = 0; $i < $this->subsymbolscount; $i++)
+      $result .= $this->subsymbols[$i]->Apply($info,$content);
 
     $this->UnLock($this->applyLock);
 
@@ -38,13 +38,9 @@ class TSymbol extends TFormatStatus
 
     $result = "";
 
-    $reverse = array();
-    $reversecount = count($this->subsymbols) - 1;
-    foreach($this->subsymbols as $attr)
-      $reverse[$reversecount--] = $attr;
-
-    for ($i = 0; $i < count($reverse); $i++)
-      $result .= $reverse[$i]->UnApply($info,$content);
+    // symbols must be unapplied in the reverse order (HTML DOM is a tree)
+    for ($i = ($this->subsymbolscount - 1); $i >= 0; $i--)
+      $result .= $this->subsymbols[$i]->UnApply($info,$content);
 
     $this->UnLock($this->unapplyLock);
 
@@ -56,8 +52,8 @@ class TSymbol extends TFormatStatus
     if (!$this->TryLock($this->visibleLock))
       return TRUE;
 
-    foreach($this->subsymbols as $attr)
-      if (!$attr->IsVisible($info,$content))
+    for ($i = 0; $i < $this->subsymbolscount; $i++)
+      if (!$this->subsymbols[$i]->IsVisible($info,$content))
         {
         $this->UnLock($this->visibleLock);
         return FALSE;
@@ -75,8 +71,8 @@ class TSymbol extends TFormatStatus
 
     $result = "";
 
-    foreach($this->subsymbols as $attr)
-      $result .= $attr->Pulse($info,$attr);
+    for ($i = 0; $i < $this->subsymbolscount; $i++)
+      $result .= $this->subsymbols[$i]->Pulse($info);
 
     $this->UnLock($this->pulseLock);
     return $result;
@@ -87,8 +83,8 @@ class TSymbol extends TFormatStatus
     if (!$this->TryLock($this->needChildLock))
       return FALSE;
 
-    foreach($this->subsymbols as $attr)
-      if ($attr->NeedChildProc($info))
+    for ($i = 0; $i < $this->subsymbolscount; $i++)
+      if ($this->subsymbols[$i]->NeedChildProc($info))
         {
         $this->UnLock($this->needChildLock);
         return TRUE;
@@ -103,10 +99,10 @@ class TSymbol extends TFormatStatus
     if (!$this->TryLock($this->childLock))
       return;
 
-    foreach($this->subsymbols as $attr)
-      if ($attr->NeedChildProc($info))
+    for ($i = 0; $i < $this->subsymbolscount; $i++)
+      if ($this->subsymbols[$i]->NeedChildProc($info))
         {
-        $attr->ChildProc($info,$origsymbattr);
+        $this->subsymbols[$i]->ChildProc($info,$origsymbattr);
         $this->UnLock($this->childLock);
         return; // multiple calls are illegal, return
         }
@@ -116,24 +112,31 @@ class TSymbol extends TFormatStatus
 
   public function OnAddedProducer($info,$producer,$attr)
     {
-    foreach($this->subsymbols as $attr) // propagate to subsymbols
-      $attr->OnAddedProducer($info,$producer);
+    for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
+      $this->subsymbols[$i]->OnAddedProducer($info,$producer);
     }
 
   public function OnBegin($info,$attr)
     {
-    foreach($this->subsymbols as $attr) // propagate to subsymbols
-      $attr->OnBegin($info);
+    for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
+      $this->subsymbols[$i]->OnBegin($info);
     }
 
   public function OnEnd($info,$attr)
     {
-    foreach($this->subsymbols as $attr) // propagate to subsymbols
-      $attr->OnEnd($info);
+    for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
+      $this->subsymbols[$i]->OnEnd($info);
+    }
+
+  public function OnPulse($info,$attr)
+    {
+    for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
+      $this->subsymbols[$i]->OnPulse($info);
     }
 
   private $name = "";
-  private $subsymbols = array(); // an array attribute_name => attribute_params[]
+  private $subsymbolscount = 0;  // the number of subsymbols in 
+  private $subsymbols = array(); // an array (int) => TFormatAttribs
 
   // locks to prevent symbol recursion (a symbol inside a symbol with the same name)
   private $childLock = FALSE;

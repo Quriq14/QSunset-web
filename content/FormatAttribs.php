@@ -106,6 +106,15 @@ class TFormatAttribs
       $this->symbol->OnEnd($info,$this->attribs);
     }
 
+  public function OnPulse($info)
+    {
+    if ($this->symbol === FALSE)
+      $this->symbol = $info->GetFormatByName($this->name);
+
+    if ($this->symbol !== FALSE)
+      $this->symbol->OnPulse($info,$this->attribs);
+    }
+
   // $symbolattr is a TFormatAttribs
   public function AddSubSymbol($symbolattr)
     {

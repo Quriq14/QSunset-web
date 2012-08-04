@@ -35,6 +35,7 @@ class NParserImpl
       $tf->AddSymbol($info,$symb);
     
     $info->AddToResultChain($tf);
+    $symbolattr->OnPulse($info);
     }
 
   // returns an array if success (a chainDOM)

@@ -45,6 +45,10 @@ abstract class TFormatStatus
   public function OnEnd($info,$attribs)
     {
     }
+
+  public function OnPulse($info,$attribs)
+    {
+    }
   }
 
 ?>
