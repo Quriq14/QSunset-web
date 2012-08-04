@@ -75,6 +75,9 @@ class TContentParserInfo
     if ($name === "")
       return;
 
+    if (isset($this->activeSymbols[$name]))
+      return; // do not activate twice
+
     $this->activeSymbols[$name] = $symbolattr;
     $symbolattr->OnBegin($this);
     }
@@ -175,13 +178,14 @@ class TContentParserInfo
     return isset($this->data[$key]);
     }
 
-  // retrieve data, FALSE if failed
-  public function GetFormatData($key)
+  // retrieve data, the value of $def if undefined
+  public function GetFormatData($key,$def = FALSE)
     {
     if (isset($this->data[$key]))
       return $this->data[$key];
 
-    return FALSE;
+    $this->data[$key] = $def;
+    return $def;
     }
 
   // PARSING END REQUESTS

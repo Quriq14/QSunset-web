@@ -33,6 +33,9 @@ define("PARAMETER_SNIPPET","SNIPPET");       // parts of (formatted) text within
                                              //          will print "Lorem ipsum" two times.
 define("PARAMETER_HORIZONTAL_LINE","HORIZONTALLINE");
 
+define("PARAMETER_LIST","LIST");
+define("PARAMETER_LISTITEM","LISTITEM");
+
 define("PREFIX_SHORTCUT_LENGTH",3);
 define("PREFIX_SHORTCUT","SC:");
 define("PREFIX_SHORTCUT_TOTAL_LENGTH",5); // number of character of the prefixes below (to drop the prefix faster)

@@ -10,6 +10,7 @@ require_once("content/formats/Ref.php");
 require_once("content/formats/Html.php");
 require_once("content/formats/Snippet.php");
 require_once("content/formats/HorizontalLine.php");
+require_once("content/formats/List.php");
 
 function FormatFactory($name)
   {
@@ -53,6 +54,10 @@ function FormatFactory($name)
       return new TSnippetFormat();
     case PARAMETER_HORIZONTAL_LINE:
       return new THorizontalLineFormat();
+    case PARAMETER_LIST:
+      return new TListFormat();
+    case PARAMETER_LISTITEM:
+      return new TListItemFormat();
     default:
       return FALSE;
     }

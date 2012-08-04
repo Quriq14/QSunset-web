@@ -61,9 +61,7 @@ class TSnippetFormat extends TFormatStatus
 
     $key = SNIPPET_FORMAT_DATA_KEY_PREFIX.$status[1];
 
-    $plist = $info->GetFormatData($key);
-    if (!is_array($plist)) // not created yet
-      $plist = array();
+    $plist = $info->GetFormatData($key,array());
 
     $plist[count($plist)] = $producer; // store the new producer
 
