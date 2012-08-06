@@ -7,12 +7,6 @@ class TFormatAttribs
   {
   public function __construct($name,$attribs,$alreadyCreatedSymbol = FALSE)
     {
-    if (!isset($name) || !isset($attribs))
-      {
-      error_log("TFormatAttribs: Error: name or attribs not set.");
-      return;
-      }
-
     $this->name = $name;
     $this->attribs = $attribs;
     $this->symbol = $alreadyCreatedSymbol; // cache it if already provided
@@ -145,6 +139,40 @@ class TFormatAttribs
   public function GetAttribs()
     {
     return $this->attribs;
+    }
+
+  // FALSE if failed
+  public function GetSymbol()
+    {
+    if ($this->symbol === FALSE)
+      $this->symbol = $info->GetFormatByName($this->name);
+
+    return $this->symbol;
+    }
+
+  // searches recursively among the subsymbols and finds an array of TFormatAttribs with name $subname
+  public function GetSubSymbolsWithName($info,$subname)
+    {
+    if ($this->symbol === FALSE)
+      $this->symbol = $info->GetFormatByName($this->name);
+
+    $result = array();
+    $resultcount = 0;
+    if ($this->name === $subname)
+      $result[$resultcount++] = $this;
+
+    if ($this->symbol === FALSE)
+      return $result; // symbol does not exists yet
+
+    $subsymbols = $this->symbol->GetSubSymbols();
+    foreach ($subsymbols as $ss)
+      {
+      $subsub = $ss->GetSubSymbolsWithName($info,$subname); // recursive call
+      foreach ($subsub as $sss)
+        $result[$resultcount++] = $sss;
+      }
+
+    return $result;
     }
 
   private $name = "";

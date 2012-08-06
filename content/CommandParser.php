@@ -80,15 +80,14 @@ class NCommandParser
     return $result;
     }
 
+  // self::CHAR_CMD_END.self::CHAR_VAL_SEP.self::CHAR_PAR_SEP.self::CHAR_SPEC_BEGIN
+  const PARSEVALUE_END = "]= \"";
   private static function ParseValue($str,$len,&$offset)
     {
     $buffer = "";
     for ($offset; $offset < $len; )
       {
-      $endOfValue = self::FindFirstOf($str,$offset,self::CHAR_CMD_END.
-                                                   self::CHAR_VAL_SEP.
-                                                   self::CHAR_PAR_SEP.
-                                                   self::CHAR_SPEC_BEGIN);
+      $endOfValue = self::FindFirstOf($str,$offset,self::PARSEVALUE_END);
       if (($add = substr($str,$offset,$endOfValue - $offset)) !== FALSE)
         $buffer .= $add;
       $offset = $endOfValue;
@@ -118,8 +117,7 @@ class NCommandParser
 
     for ($offset; $offset < $len; )
       {
-      $endOfSpecial = self::FindFirstOf($str,$offset,self::CHAR_SPEC_END.
-                                                     self::CHAR_SPEC_ESC);
+      $endOfSpecial = self::FindFirstOf($str,$offset,self::CHAR_SPEC_END.self::CHAR_SPEC_ESC);
       if (($add = substr($str,$offset,$endOfSpecial - $offset)) !== FALSE)
         $buffer .= $add;
       $offset = $endOfSpecial;

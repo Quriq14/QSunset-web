@@ -49,6 +49,12 @@ abstract class TFormatStatus
   public function OnPulse($info,$attribs)
     {
     }
+
+  // returns an array of TFormatAttribs (empty if none)
+  public function GetSubSymbols()
+    {
+    return array();
+    }
   }
 
 ?>

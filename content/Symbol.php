@@ -18,96 +18,62 @@ class TSymbol extends TFormatStatus
 
   public function Apply($info,$content,$attribs)
     {
-    if (!$this->TryLock($this->applyLock))
-      return "";
-
     $result = "";
 
     for ($i = 0; $i < $this->subsymbolscount; $i++)
       $result .= $this->subsymbols[$i]->Apply($info,$content);
-
-    $this->UnLock($this->applyLock);
 
     return $result;
     }
 
   public function UnApply($info,$content,$attribs)
     {
-    if (!$this->TryLock($this->unapplyLock))
-      return "";
-
     $result = "";
 
     // symbols must be unapplied in the reverse order (HTML DOM is a tree)
     for ($i = ($this->subsymbolscount - 1); $i >= 0; $i--)
       $result .= $this->subsymbols[$i]->UnApply($info,$content);
 
-    $this->UnLock($this->unapplyLock);
-
     return $result;
     }
 
   public function IsVisible($info,$content,$attribs)
     {
-    if (!$this->TryLock($this->visibleLock))
-      return TRUE;
-
     for ($i = 0; $i < $this->subsymbolscount; $i++)
       if (!$this->subsymbols[$i]->IsVisible($info,$content))
-        {
-        $this->UnLock($this->visibleLock);
         return FALSE;
-        }
 
-    $this->UnLock($this->visibleLock);
     return TRUE;
     }
 
   // one-shot (when symbol is called but area of effect does not begin)
   public function Pulse($info,$attribs)
     {
-    if (!$this->TryLock($this->pulseLock))
-      return "";
-
     $result = "";
 
     for ($i = 0; $i < $this->subsymbolscount; $i++)
       $result .= $this->subsymbols[$i]->Pulse($info);
 
-    $this->UnLock($this->pulseLock);
     return $result;
     }
 
   public function NeedChildProc($info,$attribs)
     {
-    if (!$this->TryLock($this->needChildLock))
-      return FALSE;
-
     for ($i = 0; $i < $this->subsymbolscount; $i++)
       if ($this->subsymbols[$i]->NeedChildProc($info))
-        {
-        $this->UnLock($this->needChildLock);
         return TRUE;
-        }
 
-    $this->UnLock($this->needChildLock);
     return FALSE;
     }
 
   public function ChildProc($info,$attribs,$origsymbattr)
     {
-    if (!$this->TryLock($this->childLock))
-      return;
-
     for ($i = 0; $i < $this->subsymbolscount; $i++)
       if ($this->subsymbols[$i]->NeedChildProc($info))
         {
         $this->subsymbols[$i]->ChildProc($info,$origsymbattr);
-        $this->UnLock($this->childLock);
         return; // multiple calls are illegal, return
         }
-
-    $this->UnLock($this->childLock);
     }
 
   public function OnAddedProducer($info,$producer,$attr)
@@ -134,30 +100,14 @@ class TSymbol extends TFormatStatus
       $this->subsymbols[$i]->OnPulse($info);
     }
 
+  public function GetSubSymbols()
+    {
+    return $this->subsymbols;
+    }
+
   private $name = "";
   private $subsymbolscount = 0;  // the number of subsymbols in 
-  private $subsymbols = array(); // an array (int) => TFormatAttribs
-
-  // locks to prevent symbol recursion (a symbol inside a symbol with the same name)
-  private $childLock = FALSE;
-  private $needChildLock = FALSE;
-  private $pulseLock = FALSE;
-  private $applyLock = FALSE;
-  private $unapplyLock = FALSE;
-  private $visibleLock = FALSE;
-
-  private function TryLock(&$var)
-    {
-    if ($var)
-      return FALSE;
-    $var = TRUE;
-    return TRUE;
-    }
-
-  private function UnLock(&$var)
-    {
-    $var = FALSE;
-    }
+  private $subsymbols = array(); // an array (int) => FormatAttribs
   }
 
 // this class holds a symbol with attribute information. When it will be Produce()d, the symbol's Pulse() will be called

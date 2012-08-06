@@ -180,7 +180,11 @@ class NParserImpl
         }
 
     for ($i = 1; $i < $paramCount; $i++)
-      $symbol->AddSubSymbol(new TFormatAttribs($paramArray[$i][0],$paramArray[$i]));
+      {
+      $subsymbolattr = new TFormatAttribs(strtoupper($paramArray[$i][0]),$paramArray[$i]);
+      if (count($subsymbolattr->GetSubSymbolsWithName($info,$symbolName)) === 0)   // prevent circular nesting
+        $symbolattr->AddSubSymbol($subsymbolattr); // TODO: display an error here
+      }
 
     // execute the command depending on the command type
     switch (strtoupper($lastParam))
