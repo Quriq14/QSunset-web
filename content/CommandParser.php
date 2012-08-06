@@ -134,7 +134,7 @@ class NCommandParser
             switch($str[$offset])
               {
               case self::CHAR_SPEC_END_SUBST:
-                $buffer .= CHAR_SPEC_END;
+                $buffer .= self::CHAR_SPEC_END;
                 break;
               case self::CHAR_SPEC_ESC_SUBST:
                 $buffer .= self::CHAR_SPEC_ESC;

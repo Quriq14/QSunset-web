@@ -6,6 +6,12 @@ require_once("content/Producer.php");
 class TListFormatData
   {
   const KEY = "TListFormat";
+  const ORDERED = "ORDERED";
+  const UNORDERED = "UNORDERED";
+  const REVERSED = "DEC";
+  const REVERSED2 = "REVERSED";
+  const NOT_REVERSED = "INC";
+  const NAME = "NAME";
 
   static public function Get($info)
     {
@@ -25,13 +31,6 @@ class TListFormatData
   public $itemcounter = array();        // item counter for lists, indexed by name (for named) or by id (for unnamed)
   public $currentname = array();        // an id if unnamed, a string otherwise, indexed by depth
   }
-
-define("LIST_FORMAT_ORDERED","ORDERED");
-define("LIST_FORMAT_UNORDERED","UNORDERED");
-define("LIST_FORMAT_REVERSED","DEC");
-define("LIST_FORMAT_REVERSED2","REVERSED");
-define("LIST_FORMAT_NOT_REVERSED","INC");
-define("LIST_FORMAT_NAME_PAR","NAME");
 
 // holds generic html code
 class TListGenericHolder extends THtmlProducer
@@ -142,20 +141,20 @@ class TListFormat extends TFormatStatus
     for ($i = 1; $i < $attribcount; $i++)
       switch (strtoupper($attribs[$i]))
         {
-        case LIST_FORMAT_REVERSED:
-        case LIST_FORMAT_REVERSED2:
+        case TListFormatData::REVERSED:
+        case TListFormatData::REVERSED2:
           $reversed = TRUE;
           break;
-        case LIST_FORMAT_NOT_REVERSED:
+        case TListFormatData::NOT_REVERSED:
           $reversed = FALSE;
           break;
-        case LIST_FORMAT_ORDERED:
+        case TListFormatData::ORDERED:
           $ordered = TRUE;
           break;
-        case LIST_FORMAT_UNORDERED:
+        case TListFormatData::UNORDERED:
           $ordered = FALSE;
           break;
-        case LIST_FORMAT_NAME_PAR:
+        case TListFormatData::NAME:
           if (isset($attribs[$i+1])) // =name=aa sets the name to aa
             $name = $attribs[++$i];
           break;

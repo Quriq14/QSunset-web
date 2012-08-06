@@ -11,6 +11,7 @@ require_once("content/formats/Html.php");
 require_once("content/formats/Snippet.php");
 require_once("content/formats/HorizontalLine.php");
 require_once("content/formats/List.php");
+require_once("content/formats/Image.php");
 
 function FormatFactory($name)
   {
@@ -58,6 +59,10 @@ function FormatFactory($name)
       return new TListFormat();
     case PARAMETER_LISTITEM:
       return new TListItemFormat();
+    case PARAMETER_IMAGE:
+      return new TImageFormat(FALSE);
+    case PARAMETER_IMAGE_FAR:
+      return new TImageFormat(TRUE);
     default:
       return FALSE;
     }

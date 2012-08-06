@@ -544,6 +544,18 @@ hr.bodytexthr
   margin: 0px;
   }
 
+div.bodytextimgfloatleft
+  {
+  float: left;
+  clear: right;
+  }
+
+div.bodytextimgfloatright
+  {
+  float: right;
+  clear: left;
+  }
+
 a.bodytexta:link
   {
   color: #770000;
