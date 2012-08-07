@@ -2,6 +2,7 @@
 
 require_once("content/FormatStatus.php");
 require_once("content/Producer.php");
+require_once("content/ParseError.php");
 
 class TListFormatData
   {
@@ -62,6 +63,11 @@ class TListHolder extends THtmlProducer
 
   public function Produce($info)
     {
+    $data = TListFormatData::Get($info);
+
+    if (!isset($data->itemcounter[$this->name]) || $data->itemcounter[$this->name] === 0)
+      return ""; // list is empty
+
     $tagname = $this->ordered ? "ol" : "ul";
     $result = "<".$tagname;
     if ($this->ordered)
@@ -71,11 +77,8 @@ class TListHolder extends THtmlProducer
         {
         $result .= " reversed=\"reversed\"";
 
-        $data = TListFormatData::Get($info);
-
-        if (isset($data->itemcounter[$this->name])) // integrity check
-          // the list may have been split, correct the starting value
-          $realstart = 1 - $this->start + $data->itemcounter[$this->name];
+        // the list may have been split, correct the starting value
+        $realstart = 1 - $this->start + $data->itemcounter[$this->name];
         }
       $result .= " start=\"".(string)($realstart)."\"";
       }
@@ -232,7 +235,10 @@ class TListItemFormat extends TFormatStatus
     $data = TListFormatData::Get($info);
 
     if (!isset($data->currentname[$data->depth]))
-      return; // integrity check
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::LISTITEM_OUTSIDE_LIST,array());
+      return;
+      }
     $name = $data->currentname[$data->depth];
 
     if (!isset($data->itemcounter[$name]))

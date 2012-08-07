@@ -50,7 +50,7 @@ define("PREFIX_END_SHORTCUT",   PREFIX_SHORTCUT."E:"); // action END
 
 define("CHAR_OPEN_SQUARE","[");     // [tag]
 define("CHAR_CLOSE_SQUARE","]");
-define("CHAR_OPEN_ANGLED","<");     // <angled> (TODO)
+define("CHAR_OPEN_ANGLED","<");     // <angled>
 define("CHAR_CLOSE_ANGLED",">");
 
 ?>

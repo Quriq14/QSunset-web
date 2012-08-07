@@ -6,6 +6,7 @@ require_once("content/ParserInfo.php");
 require_once("content/Text.php");
 require_once("content/Include.php");
 require_once("content/CommandParser.php");
+require_once("content/ParseError.php");
 
 require_once("html/htmlutils.php");
 
@@ -183,7 +184,10 @@ class NParserImpl
       {
       $subsymbolattr = new TFormatAttribs(strtoupper($paramArray[$i][0]),$paramArray[$i]);
       if (count($subsymbolattr->GetSubSymbolsWithName($info,$symbolName)) === 0)   // prevent circular nesting
-        $symbolattr->AddSubSymbol($subsymbolattr); // TODO: display an error here
+        $symbolattr->AddSubSymbol($subsymbolattr);
+        else
+          NParseError::Error($info,NParseError::ERROR,NParseError::CIRCULAR_DEFINITION,
+            array(0 => $subsymbolattr->GetName(),1 => $symbolName));
       }
 
     // execute the command depending on the command type
@@ -226,7 +230,7 @@ class NParserImpl
     
     if ($includeendidx === FALSE)
       {
-      error_log("END OF INCLUDE not found.");
+      NParseError::Error($info,NParseError::FATAL,NParseError::INCLUDE_NOT_CLOSED,array());
       $info->processed = strlen($info->content);
       return;
       }
