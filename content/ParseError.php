@@ -21,7 +21,7 @@ class NParseError
     );
 
   private static $errorstrings = array(
-    self::CIRCULAR_DEFINITION   => "Cannot define symbol \"#1\" as symbol \"#0\": circular definition.",
+    self::CIRCULAR_DEFINITION   => "Cannot define symbol \"#1#\" as symbol \"#0#\": circular definition.",
     self::INCLUDE_NOT_CLOSED    => "Include not closed.",
     self::LISTITEM_OUTSIDE_LIST => "LISTITEM used outside LIST.",
     );
@@ -59,12 +59,12 @@ class NParseError
     $err .= self::$typestrings[$severity];
 
     // ERROR PARAMETERS
-    $tobereplaced = array(); // build an array containing #0, #1, #2 etc
+    $tobereplaced = array(); // build an array containing #0#, #1#, #2# etc
     foreach ($parameters as $k => $useless)
-      $tobereplaced[$k] = "#".((string)$k);
+      $tobereplaced[$k] = "#".((string)$k)."#";
 
     $errorwithparams = str_replace($tobereplaced,$parameters,self::$errorstrings[$errorid]); 
-      // replace all #1 #2 with the parameters
+      // replace all #1# #2#... with the parameters
 
     $err .= $errorwithparams;
 
