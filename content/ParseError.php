@@ -9,9 +9,9 @@ class NParseError
   const FATAL   = 3; // the error was so big that the parser can't continue
 
   // error ids
-  const CIRCULAR_DEFINITION   = 0; // [A B][B A] this makes a symbol parent of itself
-  const INCLUDE_NOT_CLOSED    = 1; // < without corresponding >
-  const LISTITEM_OUTSIDE_LIST = 2; 
+  const CIRCULAR_DEFINITION      = 0; // [A B][B A] this makes a symbol parent of itself
+  const INCLUDE_NOT_CLOSED       = 1; // < without corresponding >
+  const LISTITEM_OUTSIDE_LIST    = 2; 
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -21,9 +21,9 @@ class NParseError
     );
 
   private static $errorstrings = array(
-    self::CIRCULAR_DEFINITION   => "Cannot define symbol \"#1#\" as symbol \"#0#\": circular definition.",
-    self::INCLUDE_NOT_CLOSED    => "Include not closed.",
-    self::LISTITEM_OUTSIDE_LIST => "LISTITEM used outside LIST.",
+    self::CIRCULAR_DEFINITION      => "Cannot define symbol \"#1#\" as symbol \"#0#\": circular definition.",
+    self::INCLUDE_NOT_CLOSED       => "Include not closed.",
+    self::LISTITEM_OUTSIDE_LIST    => "LISTITEM used outside LIST.",
     );
 
   // sends an error

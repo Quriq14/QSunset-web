@@ -21,7 +21,7 @@ class TSymbol extends TFormatStatus
     $result = "";
 
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      $result .= $this->subsymbols[$i]->Apply($info,$content);
+      $result .= $this->subsymbols[$i]->Apply($info,$content,$attribs);
 
     return $result;
     }
@@ -32,7 +32,7 @@ class TSymbol extends TFormatStatus
 
     // symbols must be unapplied in the reverse order (HTML DOM is a tree)
     for ($i = ($this->subsymbolscount - 1); $i >= 0; $i--)
-      $result .= $this->subsymbols[$i]->UnApply($info,$content);
+      $result .= $this->subsymbols[$i]->UnApply($info,$content,$attribs);
 
     return $result;
     }
@@ -40,7 +40,7 @@ class TSymbol extends TFormatStatus
   public function IsVisible($info,$content,$attribs)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      if (!$this->subsymbols[$i]->IsVisible($info,$content))
+      if (!$this->subsymbols[$i]->IsVisible($info,$content,$attribs))
         return FALSE;
 
     return TRUE;
@@ -52,7 +52,7 @@ class TSymbol extends TFormatStatus
     $result = "";
 
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      $result .= $this->subsymbols[$i]->Pulse($info);
+      $result .= $this->subsymbols[$i]->Pulse($info,$attribs);
 
     return $result;
     }
@@ -60,7 +60,7 @@ class TSymbol extends TFormatStatus
   public function NeedChildProc($info,$attribs)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      if ($this->subsymbols[$i]->NeedChildProc($info))
+      if ($this->subsymbols[$i]->NeedChildProc($info,$attribs))
         return TRUE;
 
     return FALSE;
@@ -71,33 +71,33 @@ class TSymbol extends TFormatStatus
     for ($i = 0; $i < $this->subsymbolscount; $i++)
       if ($this->subsymbols[$i]->NeedChildProc($info))
         {
-        $this->subsymbols[$i]->ChildProc($info,$origsymbattr);
+        $this->subsymbols[$i]->ChildProc($info,$origsymbattr,$attribs);
         return; // multiple calls are illegal, return
         }
     }
 
-  public function OnAddedProducer($info,$producer,$attr)
+  public function OnAddedProducer($info,$producer,$attribs)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnAddedProducer($info,$producer);
+      $this->subsymbols[$i]->OnAddedProducer($info,$producer,$attribs);
     }
 
-  public function OnBegin($info,$attr)
+  public function OnBegin($info,$attribs)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnBegin($info);
+      $this->subsymbols[$i]->OnBegin($info,$attribs);
     }
 
-  public function OnEnd($info,$attr)
+  public function OnEnd($info,$attribs)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnEnd($info);
+      $this->subsymbols[$i]->OnEnd($info,$attribs);
     }
 
-  public function OnPulse($info,$attr)
+  public function OnPulse($info,$attribs)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnPulse($info);
+      $this->subsymbols[$i]->OnPulse($info,$attribs);
     }
 
   public function GetSubSymbols()

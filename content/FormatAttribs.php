@@ -2,6 +2,8 @@
 
 require_once("content/FormatStatus.php");
 
+require_once("content/ParseError.php");
+
 // contains a format name and its attributes
 class TFormatAttribs
   {
@@ -12,101 +14,170 @@ class TFormatAttribs
     $this->symbol = $alreadyCreatedSymbol; // cache it if already provided
     }
 
-  public function Apply($info,$content)
+  private static function ProcessSymAttribs($symattribs)
+    {
+    $procsymattribs = array();
+    $symattribscount = count($symattribs) - 1;
+    for ($i = 1; $i < $symattribscount; $i += 2)
+      $procsymattribs[$symattribs[$i]] = $symattribs[$i + 1];
+
+    return $procsymattribs;
+    }
+
+  private static function ReplaceAttrib($attr,$symattribs,&$cache)
+    {
+    $offset = 0;
+    $length = strlen($attr);
+    $result = "";
+
+    while ($offset < $length)
+      {
+      $first = strpos($attr,"%",$offset);
+      if ($first === FALSE)
+        $first = $length;
+      $firstpart = substr($attr,$offset,$first - $offset);
+      if ($firstpart !== FALSE)
+        $result .= $firstpart;
+      $offset = $first + 1;
+      if ($offset >= $length)
+        continue;
+
+      $second = strpos($attr,"%",$offset);
+      if ($second === FALSE)
+        $second = $length;
+      $secondpart = substr($attr,$offset,$second - $offset);
+      if ($secondpart === FALSE || $secondpart === "")
+        $result .= "%"; // %% => %
+        else
+          {
+          if ($cache === FALSE)
+            $cache = self::ProcessSymAttribs($symattribs);
+
+          if (isset($cache[$secondpart]))
+            $result .= $cache[$secondpart];
+          }
+      $offset = $second + 1;
+      }
+
+    return $result;
+    }
+
+  // $attribs is an array of strings, with key 0 (reserved), 1 .. n
+  // that contains the attributes of this symbol
+  // $symattribs is an array of strings, with key 0 (reserved) 1 .. n
+  // that contains the attributes of the parent symbol (or empty if none)
+  // every construct like %string% inside any $attribs will be detected
+  // and substituted with $symattribs[string]
+  // %% in $attribs will be changed to single %
+  // returns the new attribs created this way
+  private static function SymbolParameterReplace($attribs,$symattribs)
+    {
+    $result = array(0 => $attribs[0]); // copy the parameter name
+
+    $cache = FALSE;
+
+    $attribscount = count($attribs);
+    for ($i = 1; $i < $attribscount; $i++) // replace all the parameters inside the attributes
+      $result[$i] = self::ReplaceAttrib($attribs[$i],$symattribs,$cache);
+
+    return $result;
+    }
+
+  public function Apply($info,$content,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->Apply($info,$content,$this->attribs);
+      return $this->symbol->Apply($info,$content,self::SymbolParameterReplace($this->attribs,$symattribs));
 
     return "";
     }
 
-  public function UnApply($info,$content)
+  public function UnApply($info,$content,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->UnApply($info,$content,$this->attribs);
+      return $this->symbol->UnApply($info,$content,self::SymbolParameterReplace($this->attribs,$symattribs));
     return "";
     }
 
-  public function Pulse($info)
+  public function Pulse($info,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->Pulse($info,$this->attribs);
+      return $this->symbol->Pulse($info,self::SymbolParameterReplace($this->attribs,$symattribs));
     return "";
     }
 
-  public function IsVisible($info,$content)
+  public function IsVisible($info,$content,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->IsVisible($info,$content,$this->attribs);
+      return $this->symbol->IsVisible($info,$content,self::SymbolParameterReplace($this->attribs,$symattribs));
     return TRUE;
     }
 
-  public function ChildProc($info,$origsymbattr)
+  public function ChildProc($info,$origsymbattr,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->ChildProc($info,$this->attribs,$origsymbattr);
+      $this->symbol->ChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs),$origsymbattr);
     }
 
-  public function NeedChildProc($info)
+  public function NeedChildProc($info,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->NeedChildProc($info,$this->attribs);
+      return $this->symbol->NeedChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs));
 
     return FALSE; // error
     }
 
-  public function OnAddedProducer($info,$producer)
+  public function OnAddedProducer($info,$producer,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnAddedProducer($info,$producer,$this->attribs);
+      $this->symbol->OnAddedProducer($info,$producer,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnBegin($info)
+  public function OnBegin($info,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnBegin($info,$this->attribs);
+      $this->symbol->OnBegin($info,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnEnd($info)
+  public function OnEnd($info,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnEnd($info,$this->attribs);
+      $this->symbol->OnEnd($info,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnPulse($info)
+  public function OnPulse($info,$symattribs = array())
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnPulse($info,$this->attribs);
+      $this->symbol->OnPulse($info,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
   // $symbolattr is a TFormatAttribs
