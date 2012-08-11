@@ -12,6 +12,8 @@ class NParseError
   const CIRCULAR_DEFINITION      = 0; // [A B][B A] this makes a symbol parent of itself
   const INCLUDE_NOT_CLOSED       = 1; // < without corresponding >
   const LISTITEM_OUTSIDE_LIST    = 2; 
+  const UNDEFINED_LIST_CLASS     = 3; // LISTTYPE command without parameter
+  const UNKNOWN_LIST_CLASS       = 4; // LISTTYPE command with unknown class specified
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -24,6 +26,8 @@ class NParseError
     self::CIRCULAR_DEFINITION      => "Cannot define symbol \"#1#\" as symbol \"#0#\": circular definition.",
     self::INCLUDE_NOT_CLOSED       => "Include not closed.",
     self::LISTITEM_OUTSIDE_LIST    => "LISTITEM used outside LIST.",
+    self::UNDEFINED_LIST_CLASS     => "Undefined list type in LISTTYPE command.",
+    self::UNKNOWN_LIST_CLASS       => "Unknown list class: \"#0#\"."
     );
 
   // sends an error

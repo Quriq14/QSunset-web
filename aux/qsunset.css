@@ -556,6 +556,41 @@ div.bodytextimgfloatright
   clear: left;
   }
 
+li.bodytextulstd
+  {
+  list-style-type: disc;
+  }
+
+li.bodytextuldisc
+  {
+  list-style-type: disc;
+  }
+
+li.bodytextulcircle
+  {
+  list-style-type: circle;
+  }
+
+li.bodytextolstd
+  {
+  list-style-type: decimal;
+  }
+
+li.bodytextoldecimal
+  {
+  list-style-type: decimal;
+  }
+
+li.bodytextolupper-alpha
+  {
+  list-style-type: upper-alpha;
+  }
+
+li.bodytextolupper-roman
+  {
+  list-style-type: upper-roman;
+  }
+
 a.bodytexta:link
   {
   color: #770000;

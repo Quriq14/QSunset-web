@@ -35,6 +35,7 @@ define("PARAMETER_HORIZONTAL_LINE","HORIZONTALLINE");
 
 define("PARAMETER_LIST","LIST");
 define("PARAMETER_LISTITEM","LISTITEM");
+define("PARAMETER_LISTCLASS","LISTTYPE");
 
 define("PARAMETER_IMAGE","IMG");             // [IMG=src="name"=label="label"] local image
 define("PARAMETER_IMAGE_FAR","XIMG");        // [XIMG=src="url"=label="label"] image from a remote URL
