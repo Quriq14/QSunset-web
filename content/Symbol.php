@@ -69,7 +69,7 @@ class TSymbol extends TFormatStatus
   public function ChildProc($info,$attribs,$origsymbattr)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      if ($this->subsymbols[$i]->NeedChildProc($info))
+      if ($this->subsymbols[$i]->NeedChildProc($info,$attribs))
         {
         $this->subsymbols[$i]->ChildProc($info,$origsymbattr,$attribs);
         return; // multiple calls are illegal, return
@@ -135,7 +135,7 @@ class TSymbolHolder extends THtmlProducer
     $result .= $this->ApplyAll($info,"");
 
     if ($this->mySymbol !== FALSE)
-      $result .= $this->mySymbol->Pulse($info);
+      $result .= $this->mySymbol->Pulse($info,array());
 
     $result .= $this->UnApplyAll($info,"");
 

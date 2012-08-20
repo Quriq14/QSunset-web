@@ -79,14 +79,14 @@ class TContentParserInfo
       return; // do not activate twice
 
     $this->activeSymbols[$name] = $symbolattr;
-    $symbolattr->OnBegin($this);
+    $symbolattr->OnBegin($this,array());
     }
 
   public function DeActivateSymbol($name)
     {
     if (isset($this->activeSymbols[$name]))
       {
-      $this->activeSymbols[$name]->OnEnd($this);
+      $this->activeSymbols[$name]->OnEnd($this,array());
       unset($this->activeSymbols[$name]);
       }
     }

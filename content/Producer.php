@@ -9,13 +9,13 @@ abstract class THtmlProducer
   public function AddSymbol($info,$symbolattr)
     {
     $this->symbols[count($this->symbols)] = $symbolattr;
-    $symbolattr->OnAddedProducer($info,$this);
+    $symbolattr->OnAddedProducer($info,$this,array());
     }
 
   public function VisibleAll($info,$text)
     {
     foreach($this->symbols as $s)
-      if (!($s->IsVisible($info,$text)))
+      if (!($s->IsVisible($info,$text,array())))
         return FALSE; // invisibility
 
     return TRUE;
@@ -27,7 +27,7 @@ abstract class THtmlProducer
 
     $symbolcount = count($this->symbols);
     for ($i = 0; $i < $symbolcount; $i++)
-      $result .= $this->symbols[$i]->Apply($info,$text);
+      $result .= $this->symbols[$i]->Apply($info,$text,array());
 
     return $result;
     }
@@ -38,7 +38,7 @@ abstract class THtmlProducer
 
     $symbolcount = count($this->symbols);
     for ($i = ($symbolcount-1); $i >= 0; $i--) // reverse order
-      $result .= $this->symbols[$i]->UnApply($info,$text);
+      $result .= $this->symbols[$i]->UnApply($info,$text,array());
 
     return $result;
     }

@@ -67,7 +67,7 @@ class TFormatAttribs
   // $symattribs is an array of strings, with key 0 (reserved) 1 .. n
   // that contains the attributes of the parent symbol (or empty if none)
   // every construct like %string% inside any $attribs will be detected
-  // and substituted with $symattribs[string]
+  // and substituted with $symattribs[string] (or empty string if !isset)
   // %% in $attribs will be changed to single %
   // returns the new attribs created this way
   private static function SymbolParameterReplace($attribs,$symattribs)
@@ -83,7 +83,7 @@ class TFormatAttribs
     return $result;
     }
 
-  public function Apply($info,$content,$symattribs = array())
+  public function Apply($info,$content,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -94,7 +94,7 @@ class TFormatAttribs
     return "";
     }
 
-  public function UnApply($info,$content,$symattribs = array())
+  public function UnApply($info,$content,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -104,7 +104,7 @@ class TFormatAttribs
     return "";
     }
 
-  public function Pulse($info,$symattribs = array())
+  public function Pulse($info,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -114,7 +114,7 @@ class TFormatAttribs
     return "";
     }
 
-  public function IsVisible($info,$content,$symattribs = array())
+  public function IsVisible($info,$content,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -124,7 +124,7 @@ class TFormatAttribs
     return TRUE;
     }
 
-  public function ChildProc($info,$origsymbattr,$symattribs = array())
+  public function ChildProc($info,$origsymbattr,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -133,7 +133,7 @@ class TFormatAttribs
       $this->symbol->ChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs),$origsymbattr);
     }
 
-  public function NeedChildProc($info,$symattribs = array())
+  public function NeedChildProc($info,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -144,7 +144,7 @@ class TFormatAttribs
     return FALSE; // error
     }
 
-  public function OnAddedProducer($info,$producer,$symattribs = array())
+  public function OnAddedProducer($info,$producer,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -153,7 +153,7 @@ class TFormatAttribs
       $this->symbol->OnAddedProducer($info,$producer,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnBegin($info,$symattribs = array())
+  public function OnBegin($info,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -162,7 +162,7 @@ class TFormatAttribs
       $this->symbol->OnBegin($info,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnEnd($info,$symattribs = array())
+  public function OnEnd($info,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
@@ -171,7 +171,7 @@ class TFormatAttribs
       $this->symbol->OnEnd($info,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnPulse($info,$symattribs = array())
+  public function OnPulse($info,$symattribs)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);

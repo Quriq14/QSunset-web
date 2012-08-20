@@ -36,7 +36,7 @@ class NParserImpl
       $tf->AddSymbol($info,$symb);
     
     $info->AddToResultChain($tf);
-    $symbolattr->OnPulse($info);
+    $symbolattr->OnPulse($info,array());
     }
 
   // returns an array if success (a chainDOM)
@@ -196,23 +196,17 @@ class NParserImpl
       case PARAMETER_END:
         $info->DeActivateSymbol($symbolName);
         break;
+      case PARAMETER_TOGGLE:
+        if ($info->IsSymbolActive($symbolName)) // if the symbol is active, deactivate it
+          {
+          $info->DeActivateSymbol($symbolName);
+          break;
+          } // else, continue execution into BEGIN
       case PARAMETER_BEGIN:
-        // is this a script?
-        if ($symbolattr->NeedChildProc($info))
-          $symbolattr->ChildProc($info,$symbolattr);
+        if ($symbolattr->NeedChildProc($info,array())) // needs child processing?
+          $symbolattr->ChildProc($info,$symbolattr,array());
           else 
             $info->ActivateSymbol($symbolattr);
-        break;
-      case PARAMETER_TOGGLE:
-        if ($info->IsSymbolActive($symbolName))
-          $info->DeActivateSymbol($symbolName);
-          else
-            {
-            if ($symbolattr->NeedChildProc($info))
-              $symbolattr->ChildProc($info,$symbolattr);
-              else 
-                $info->ActivateSymbol($symbolattr);
-            }
         break;
       case PARAMETER_DECL:
         // nothing to do
