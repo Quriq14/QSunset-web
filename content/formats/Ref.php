@@ -1,6 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
+require_once("content/defines.php");
 
 require_once("html/htmlutils.php");
 
@@ -37,6 +38,11 @@ class TRefFormat extends TFormatStatus
   public function Pulse($info,$attribs)
     {
     return "";
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_REF;
     }
   }
 
@@ -122,6 +128,11 @@ class TRelativeRefFormat extends TFormatStatus
     {
     return "";
     }
+
+  public function GetName()
+    {
+    return PARAMETER_RELATIVE_REF;
+    }
   }
 
 class TFarRefFormat extends TFormatStatus
@@ -154,6 +165,11 @@ class TFarRefFormat extends TFormatStatus
   public function Pulse($info,$attribs)
     {
     return "";
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_FAR_REF;
     }
   }
 

@@ -1,6 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
+require_once("content/defines.php");
 
 require_once("element/defines.php");
 
@@ -94,6 +95,11 @@ class TImageFormat extends TFormatStatus
       $result .= "</div>\r\n";
 
     return $result;
+    }
+
+  public function GetName()
+    {
+    return $this->x ? PARAMETER_IMAGE_FAR : PARAMETER_IMAGE;
     }
 
   private $x;

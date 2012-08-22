@@ -1,6 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
+require_once("content/defines.php");
 
 class TCommentScriptFormat extends TFormatStatus
   {
@@ -51,6 +52,11 @@ class TCommentScriptFormat extends TFormatStatus
       }
 
     $info->processed = $scriptend + $emlength; // advance past the comment ending tag
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_COMMENT;
     }
   }
 

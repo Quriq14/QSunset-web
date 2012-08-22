@@ -1,6 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
+require_once("content/defines.php");
 
 class TBoldFormat extends TFormatStatus
   {
@@ -26,6 +27,11 @@ class TBoldFormat extends TFormatStatus
   public function Pulse($info,$status)
     {
     return "";
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_BOLD;
     }
   }
 
@@ -54,6 +60,11 @@ class TItalicFormat extends TFormatStatus
     {
     return "";
     }
+
+  public function GetName()
+    {
+    return PARAMETER_ITALIC;
+    }
   }
 
 class TUnderlineFormat extends TFormatStatus
@@ -80,6 +91,11 @@ class TUnderlineFormat extends TFormatStatus
   public function Pulse($info,$status)
     {
     return "";
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_UNDERLINE;
     }
   }
 

@@ -5,17 +5,17 @@ abstract class THtmlProducer
   abstract public function Produce($info);
 
   // add a symbol that was active when the item was created
-  // $symbolattr is a TFormatAttribs
+  // $symbolattr is a TParamFormatAttribs
   public function AddSymbol($info,$symbolattr)
     {
     $this->symbols[count($this->symbols)] = $symbolattr;
-    $symbolattr->OnAddedProducer($info,$this,array());
+    $symbolattr->OnAddedProducer($info,$this);
     }
 
   public function VisibleAll($info,$text)
     {
     foreach($this->symbols as $s)
-      if (!($s->IsVisible($info,$text,array())))
+      if (!($s->IsVisible($info,$text)))
         return FALSE; // invisibility
 
     return TRUE;
@@ -27,7 +27,7 @@ abstract class THtmlProducer
 
     $symbolcount = count($this->symbols);
     for ($i = 0; $i < $symbolcount; $i++)
-      $result .= $this->symbols[$i]->Apply($info,$text,array());
+      $result .= $this->symbols[$i]->Apply($info,$text);
 
     return $result;
     }
@@ -38,12 +38,20 @@ abstract class THtmlProducer
 
     $symbolcount = count($this->symbols);
     for ($i = ($symbolcount-1); $i >= 0; $i--) // reverse order
-      $result .= $this->symbols[$i]->UnApply($info,$text,array());
+      $result .= $this->symbols[$i]->UnApply($info,$text);
 
     return $result;
     }
 
-  // an array of TFormatAttribs (formats with attribute information)
+  // automatically links all the active symbols from the TContentParserInfo
+  public function ActiveSymbolsFromInfo($info)
+    {
+    $sl = $info->GetActiveSymbolList();
+    foreach($sl as $symb)
+      $this->AddSymbol($info,$symb);
+    }
+
+  // an array of TParamFormatAttribs
   protected $symbols = array();
   }
 

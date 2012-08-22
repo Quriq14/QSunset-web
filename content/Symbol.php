@@ -18,86 +18,68 @@ class TSymbol extends TFormatStatus
 
   public function Apply($info,$content,$attribs)
     {
-    $result = "";
-
-    for ($i = 0; $i < $this->subsymbolscount; $i++)
-      $result .= $this->subsymbols[$i]->Apply($info,$content,$attribs);
-
-    return $result;
+    return "";
     }
 
   public function UnApply($info,$content,$attribs)
     {
-    $result = "";
-
-    // symbols must be unapplied in the reverse order (HTML DOM is a tree)
-    for ($i = ($this->subsymbolscount - 1); $i >= 0; $i--)
-      $result .= $this->subsymbols[$i]->UnApply($info,$content,$attribs);
-
-    return $result;
+    return "";
     }
 
   public function IsVisible($info,$content,$attribs)
     {
-    for ($i = 0; $i < $this->subsymbolscount; $i++)
-      if (!$this->subsymbols[$i]->IsVisible($info,$content,$attribs))
-        return FALSE;
-
     return TRUE;
     }
 
   // one-shot (when symbol is called but area of effect does not begin)
   public function Pulse($info,$attribs)
     {
-    $result = "";
-
-    for ($i = 0; $i < $this->subsymbolscount; $i++)
-      $result .= $this->subsymbols[$i]->Pulse($info,$attribs);
-
-    return $result;
+    return "";
     }
 
-  public function NeedChildProc($info,$attribs)
+  public function NeedChildProc($info,$attribs,$topsymbattr)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      if ($this->subsymbols[$i]->NeedChildProc($info,$attribs))
+      if ($this->subsymbols[$i]->NeedChildProc($info,$attribs,$topsymbattr))
         return TRUE;
 
     return FALSE;
     }
 
-  public function ChildProc($info,$attribs,$origsymbattr)
+  public function ChildProc($info,$attribs,$topsymbattr)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++)
-      if ($this->subsymbols[$i]->NeedChildProc($info,$attribs))
+      if ($this->subsymbols[$i]->NeedChildProc($info,$attribs,$topsymbattr))
         {
-        $this->subsymbols[$i]->ChildProc($info,$origsymbattr,$attribs);
+        $this->subsymbols[$i]->ChildProc($info,$attribs,$topsymbattr);
         return; // multiple calls are illegal, return
         }
     }
 
   public function OnAddedProducer($info,$producer,$attribs)
     {
-    for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnAddedProducer($info,$producer,$attribs);
     }
 
-  public function OnBegin($info,$attribs)
+  public function OnBegin($info,$attribs,$topsymbattr)
     {
+    parent::OnBegin($info,$attribs,$topsymbattr);
+
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnBegin($info,$attribs);
+      $this->subsymbols[$i]->OnBegin($info,$attribs,$topsymbattr);
     }
 
-  public function OnEnd($info,$attribs)
+  public function OnEnd($info,$topsymbname)
     {
+    parent::OnEnd($info,$topsymbname);
+
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnEnd($info,$attribs);
+      $this->subsymbols[$i]->OnEnd($info,$topsymbname);
     }
 
-  public function OnPulse($info,$attribs)
+  public function OnPulse($info,$attribs,$topsymbattr)
     {
     for ($i = 0; $i < $this->subsymbolscount; $i++) // propagate to subsymbols
-      $this->subsymbols[$i]->OnPulse($info,$attribs);
+      $this->subsymbols[$i]->OnPulse($info,$attribs,$topsymbattr);
     }
 
   public function GetSubSymbols()
@@ -105,44 +87,14 @@ class TSymbol extends TFormatStatus
     return $this->subsymbols;
     }
 
+  public function GetName()
+    {
+    return $this->name;
+    }
+
   private $name = "";
   private $subsymbolscount = 0;  // the number of subsymbols in 
   private $subsymbols = array(); // an array (int) => FormatAttribs
-  }
-
-// this class holds a symbol with attribute information. When it will be Produce()d, the symbol's Pulse() will be called
-class TSymbolHolder extends THtmlProducer
-  {
-  // $symbolattr is a TFormatAttribs
-  public function TSymbolHolder($symbolattr)
-    {
-    if (!isset($symbolattr))
-      {
-      error_log("TSymbolHolder: symbolattr not set.");
-      return;
-      }
-
-    $this->mySymbol = $symbolattr;
-    }
-
-  public function Produce($info)
-    {
-    $result = "";
-
-    if (!$this->VisibleAll($info,""))
-      return ""; // invisibility
-
-    $result .= $this->ApplyAll($info,"");
-
-    if ($this->mySymbol !== FALSE)
-      $result .= $this->mySymbol->Pulse($info,array());
-
-    $result .= $this->UnApplyAll($info,"");
-
-    return $result;
-    }
-
-  private $mySymbol = FALSE;
   }
 
 ?>

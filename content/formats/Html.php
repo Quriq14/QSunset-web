@@ -2,6 +2,7 @@
 
 require_once("content/FormatStatus.php");
 require_once("content/Producer.php");
+require_once("content/defines.php");
 
 // this class contains some raw HTML to be produced
 class THtmlHolder extends THtmlProducer
@@ -54,7 +55,7 @@ class THtmlFormat extends TFormatStatus
     return "";
     }
 
-  public function NeedChildProc($info,$attribs) 
+  public function NeedChildProc($info,$attribs,$orig) 
     {
     return TRUE; 
     }
@@ -81,6 +82,11 @@ class THtmlFormat extends TFormatStatus
       $info->AddToResultChain(new THtmlHolder($content));
 
     $info->processed = $scriptend + $emlength; // advance past the comment ending tag
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_HTML;
     }
   }
 

@@ -4,6 +4,7 @@ require_once("content/FormatFactory.php");
 require_once("content/defines.php");
 require_once("content/SpecialString.php");
 require_once("content/FormatAttribs.php");
+require_once("content/FormatStack.php");
 
 // send this info to the parser, its output variables will be changed
 class TContentParserInfo
@@ -14,7 +15,7 @@ class TContentParserInfo
 
   // STATUS (internal use only)
   public $symbols = array();        // defined symbols: name => TSymbol
-  public $activeSymbols = array();  // an array of active symbols: name => TFormatAttribs
+  public $activeSymbols = array();  // an array of stacks of active symbols: name => TFormatStack
   public $resultChain = array();    // array of objects, $result = cat($resultChain->Pulse())
   public $producedObjects = 0;      // length of the resultChain
   public $specialChars;             // every characters not in here will be skipped 
@@ -69,31 +70,35 @@ class TContentParserInfo
     return $this->symbols[$name];
     }
 
-  public function ActivateSymbol($symbolattr)
+  public function ActivateSymbol($name,$topname,$data)
     {
-    $name = $symbolattr->GetName();
-    if ($name === "")
+    if ($name === "" || $topname === "")
       return;
 
-    if (isset($this->activeSymbols[$name]))
-      return; // do not activate twice
+    if (!isset($this->activeSymbols[$name]))
+      $this->activeSymbols[$name] = new TFormatStack();
 
-    $this->activeSymbols[$name] = $symbolattr;
-    $symbolattr->OnBegin($this,array());
+    $this->activeSymbols[$name]->Push($topname,$data);
     }
 
-  public function DeActivateSymbol($name)
+  public function DeActivateSymbol($name,$topname)
     {
     if (isset($this->activeSymbols[$name]))
-      {
-      $this->activeSymbols[$name]->OnEnd($this,array());
-      unset($this->activeSymbols[$name]);
-      }
+      $this->activeSymbols[$name]->Remove($topname);
     }
 
-  public function IsSymbolActive($name)
+  // FALSE if failed
+  public function GetActiveSymbol($name,$topname)
     {
-    return isset($this->activeSymbols[$name]);
+    if (!isset($this->activeSymbols[$name]))
+      return FALSE;
+
+    return $this->activeSymbols[$name]->Find($topname);
+    }
+
+  public function IsSymbolActive($name,$topname)
+    {
+    return $this->GetActiveSymbol($name,$topname) !== FALSE;
     }
 
   // returns an array of TFormatAttribs, ordered from 0 to n
@@ -102,9 +107,9 @@ class TContentParserInfo
     $result = array();
     $resultidx = 0;
 
-    foreach($this->activeSymbols as $k => $formatattr)
-      if ($formatattr->Validate($this))
-        $result[$resultidx++] = $formatattr;
+    foreach($this->activeSymbols as $stack)
+      if ($stack->Top() !== FALSE)
+        $result[$resultidx++] = $stack->Top();
 
     return $result;
     }

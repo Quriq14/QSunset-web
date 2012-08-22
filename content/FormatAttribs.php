@@ -83,63 +83,22 @@ class TFormatAttribs
     return $result;
     }
 
-  public function Apply($info,$content,$symattribs)
+  public function ChildProc($info,$symattribs,$topsymbattr)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->Apply($info,$content,self::SymbolParameterReplace($this->attribs,$symattribs));
-
-    return "";
+      $this->symbol->ChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs),$topsymbattr);
     }
 
-  public function UnApply($info,$content,$symattribs)
+  public function NeedChildProc($info,$symattribs,$topsymbattr)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      return $this->symbol->UnApply($info,$content,self::SymbolParameterReplace($this->attribs,$symattribs));
-    return "";
-    }
-
-  public function Pulse($info,$symattribs)
-    {
-    if ($this->symbol === FALSE)
-      $this->symbol = $info->GetFormatByName($this->name);
-
-    if ($this->symbol !== FALSE)
-      return $this->symbol->Pulse($info,self::SymbolParameterReplace($this->attribs,$symattribs));
-    return "";
-    }
-
-  public function IsVisible($info,$content,$symattribs)
-    {
-    if ($this->symbol === FALSE)
-      $this->symbol = $info->GetFormatByName($this->name);
-
-    if ($this->symbol !== FALSE)
-      return $this->symbol->IsVisible($info,$content,self::SymbolParameterReplace($this->attribs,$symattribs));
-    return TRUE;
-    }
-
-  public function ChildProc($info,$origsymbattr,$symattribs)
-    {
-    if ($this->symbol === FALSE)
-      $this->symbol = $info->GetFormatByName($this->name);
-
-    if ($this->symbol !== FALSE)
-      $this->symbol->ChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs),$origsymbattr);
-    }
-
-  public function NeedChildProc($info,$symattribs)
-    {
-    if ($this->symbol === FALSE)
-      $this->symbol = $info->GetFormatByName($this->name);
-
-    if ($this->symbol !== FALSE)
-      return $this->symbol->NeedChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs));
+      return $this->symbol->NeedChildProc($info,self::SymbolParameterReplace($this->attribs,$symattribs),$topsymbattr);
 
     return FALSE; // error
     }
@@ -153,31 +112,31 @@ class TFormatAttribs
       $this->symbol->OnAddedProducer($info,$producer,self::SymbolParameterReplace($this->attribs,$symattribs));
     }
 
-  public function OnBegin($info,$symattribs)
+  public function OnBegin($info,$symattribs,$topsymbattr)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnBegin($info,self::SymbolParameterReplace($this->attribs,$symattribs));
+      $this->symbol->OnBegin($info,self::SymbolParameterReplace($this->attribs,$symattribs),$topsymbattr);
     }
 
-  public function OnEnd($info,$symattribs)
+  public function OnEnd($info,$topsymbname)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnEnd($info,self::SymbolParameterReplace($this->attribs,$symattribs));
+      $this->symbol->OnEnd($info,$topsymbname);
     }
 
-  public function OnPulse($info,$symattribs)
+  public function OnPulse($info,$symattribs,$topsymbattr)
     {
     if ($this->symbol === FALSE)
       $this->symbol = $info->GetFormatByName($this->name);
 
     if ($this->symbol !== FALSE)
-      $this->symbol->OnPulse($info,self::SymbolParameterReplace($this->attribs,$symattribs));
+      $this->symbol->OnPulse($info,self::SymbolParameterReplace($this->attribs,$symattribs),$topsymbattr);
     }
 
   // $symbolattr is a TFormatAttribs
@@ -190,8 +149,8 @@ class TFormatAttribs
       $this->symbol->AddSubSymbol($symbolattr);
     }
 
-  public function Validate($info) // attempts to translate the symbol name to a symbol.
-                                  // FALSE if failed, TRUE if success
+  public function Validate($info) // attempts to resolve the symbol name into a symbol.
+                                  // FALSE if failed, TRUE otherwise
     {
     if ($this->symbol !== FALSE)
       return TRUE;
@@ -252,5 +211,43 @@ class TFormatAttribs
                            // a pointer to it is stored here
   } 
 
+class TParamFormatAttribs
+  {
+  public function __construct($format,$attribs,$topsymbattr)
+    {
+    $this->format = $format;
+    $this->attribs = $attribs;
+    $this->topsymbattr = $topsymbattr;
+    }
+
+  public function OnAddedProducer($info,$producer)
+    {
+    $this->format->OnAddedProducer($info,$producer,$this->attribs);
+    }
+
+  public function IsVisible($info,$content)
+    {
+    return $this->format->IsVisible($info,$content,$this->attribs);
+    }
+
+  public function Apply($info,$content)
+    {
+    return $this->format->Apply($info,$content,$this->attribs);
+    }
+
+  public function UnApply($info,$content)
+    {
+    return $this->format->UnApply($info,$content,$this->attribs);
+    }
+
+  public function Pulse($info)
+    {
+    return $this->format->Pulse($info,$this->attribs);
+    }
+
+  public $format;
+  public $attribs;
+  public $topsymbattr;
+  }
 
 ?>

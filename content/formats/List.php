@@ -3,6 +3,7 @@
 require_once("content/FormatStatus.php");
 require_once("content/Producer.php");
 require_once("content/ParseError.php");
+require_once("content/defines.php");
 
 class TListFormatData
   {
@@ -173,8 +174,10 @@ class TListFormat extends TFormatStatus
         }
     }
 
-  public function OnBegin($info,$attribs)
+  public function OnBegin($info,$attribs,$topsymbattr)
     {
+    parent::OnBegin($info,$attribs,$topsymbattr);
+
     $data = TListFormatData::Get($info);
     $data->depth++;
 
@@ -197,8 +200,13 @@ class TListFormat extends TFormatStatus
     $info->AddToResultChain(new TListHolder($name,$reversed,$ordered,$start));
     }
 
-  public function OnEnd($info,$attribs)
+  public function OnEnd($info,$topsymbname)
     {
+    $attribs = $info->GetActiveSymbol($this->GetName(),$topsymbname);
+    if ($attribs === FALSE)
+      return; // error
+    $attribs = $attribs->attribs;
+
     $data = TListFormatData::Get($info);
 
     $reversed = FALSE;
@@ -211,6 +219,13 @@ class TListFormat extends TFormatStatus
       $data->depth--;
 
     $info->AddToResultChain(new TListGenericHolder($ordered ? "</ol>\r\n" : "</ul>\r\n"));
+
+    parent::OnEnd($info,$topsymbname);
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_LIST;
     }
   }
 
@@ -240,8 +255,10 @@ class TListItemFormat extends TFormatStatus
     return "";
     }
 
-  public function OnBegin($info,$attribs)
+  public function OnBegin($info,$attribs,$topsymbattr)
     {
+    parent::OnBegin($info,$attribs,$topsymbattr);
+
     $data = TListFormatData::Get($info);
 
     if (!isset($data->currentname[$data->depth]))
@@ -258,9 +275,16 @@ class TListItemFormat extends TFormatStatus
     $info->AddToResultChain(new TListItemHolder($data->currentlistclass[$data->ordered[$name]]));
     }
 
-  public function OnEnd($info,$attribs)
+  public function OnEnd($info,$topsymbname)
     {
     $info->AddToResultChain(new TListGenericHolder("</li>\r\n"));
+
+    parent::OnEnd($info,$topsymbname);
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_LISTITEM;
     }
   }
 
@@ -300,8 +324,10 @@ class TListClassFormat extends TFormatStatus
     "bodytextolupper-roman" => TRUE,
     );
 
-  public function OnBegin($info,$attribs)
+  public function OnBegin($info,$attribs,$topsymbattr)
     {
+    parent::OnBegin($info,$attribs,$topsymbattr);
+
     $maybeolclass = FALSE;
     $maybeulclass = FALSE;
 
@@ -346,8 +372,14 @@ class TListClassFormat extends TFormatStatus
       }
     }
 
-  public function OnEnd($info,$attribs)
+  public function OnEnd($info,$topsymbname)
     {
+    $attribs = $info->GetActiveSymbol($this->GetName(),$topsymbname);
+    if ($attribs === FALSE)
+      return; // error
+
+    $attribs = $attribs->attribs;
+
     $data = TListFormatData::Get($info);
 
     $attribscount = count($attribs);
@@ -362,6 +394,13 @@ class TListClassFormat extends TFormatStatus
             $maybeulclass = TListFormatData::DEFAULT_LIST_CLASS_UL;
             break;
           } // TODO: restore values active before begin, instead
+
+    parent::OnEnd($info,$topsymbname);
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_LISTCLASS;
     }
   }
 ?>

@@ -7,6 +7,7 @@ require_once("content/Text.php");
 require_once("content/Include.php");
 require_once("content/CommandParser.php");
 require_once("content/ParseError.php");
+require_once("content/PulseProducer.php");
 
 require_once("html/htmlutils.php");
 
@@ -19,24 +20,8 @@ class NParserImpl
       return;
 
     $tf = new TTextHolder($text);
-    
-    $sl = $info->GetActiveSymbolList();
-    foreach($sl as $symb)
-      $tf->AddSymbol($info,$symb);
-    
+    $tf->ActiveSymbolsFromInfo($info);
     $info->AddToResultChain($tf);
-    }
-
-  public static function ProducePulse($info,$symbolattr)
-    {
-    $tf = new TSymbolHolder($symbolattr);
-    
-    $sl = $info->GetActiveSymbolList();
-    foreach($sl as $symb)
-      $tf->AddSymbol($info,$symb);
-    
-    $info->AddToResultChain($tf);
-    $symbolattr->OnPulse($info,array());
     }
 
   // returns an array if success (a chainDOM)
@@ -194,26 +179,28 @@ class NParserImpl
     switch (strtoupper($lastParam))
       {
       case PARAMETER_END:
-        $info->DeActivateSymbol($symbolName);
+        if ($info->IsSymbolActive($symbolName,$symbolName))
+          $symbolattr->OnEnd($info,$symbolName);
         break;
       case PARAMETER_TOGGLE:
-        if ($info->IsSymbolActive($symbolName)) // if the symbol is active, deactivate it
+        if ($info->IsSymbolActive($symbolName,$symbolName)) // if the symbol is active, deactivate it
           {
-          $info->DeActivateSymbol($symbolName);
+          $symbolattr->OnEnd($info,$symbolName);
           break;
           } // else, continue execution into BEGIN
       case PARAMETER_BEGIN:
-        if ($symbolattr->NeedChildProc($info,array())) // needs child processing?
-          $symbolattr->ChildProc($info,$symbolattr,array());
-          else 
-            $info->ActivateSymbol($symbolattr);
+        if ($symbolattr->NeedChildProc($info,array(),$symbolattr)) // needs child processing?
+          $symbolattr->ChildProc($info,array(),$symbolattr);
+          else
+            if (!$info->IsSymbolActive($symbolName,$symbolName))
+              $symbolattr->OnBegin($info,array(),$symbolattr);
         break;
       case PARAMETER_DECL:
         // nothing to do
         break;
       case PARAMETER_PULSE:
       default: // the pulse is the default
-        self::ProducePulse($info,$symbolattr); // add to the result chain
+        $symbolattr->OnPulse($info,array(),$symbolattr);
         break;
       }
     }

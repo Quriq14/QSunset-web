@@ -1,6 +1,8 @@
 <?php
 
 require_once("content/FormatStatus.php");
+require_once("content/defines.php");
+
 require_once("html/htmlutils.php");
 
 // writes to the output the characters passed in the first attribute
@@ -31,6 +33,11 @@ class TCharWriterFormat extends TFormatStatus
       return "";
 
     return TrueHtmlEntities($attribs[1]);
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_WRITE_CHARS;
     }
   }
 

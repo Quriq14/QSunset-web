@@ -1,6 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
+require_once("content/defines.php");
 
 class TLineBreakFormat extends TFormatStatus
   {
@@ -26,6 +27,11 @@ class TLineBreakFormat extends TFormatStatus
   public function Pulse($info,$status)
     {
     return "<br />\r\n";
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_LINEBREAK;
     }
   }
 

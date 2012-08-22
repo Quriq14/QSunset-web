@@ -1,8 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
-
-define("SNIPPET_FORMAT_DATA_KEY_PREFIX","TSnippetFormat:");
+require_once("content/defines.php");
 
 // every time this format is called with BEGIN-END
 // some text is added to the snippet
@@ -10,6 +9,8 @@ define("SNIPPET_FORMAT_DATA_KEY_PREFIX","TSnippetFormat:");
 // requires a parameter: the name of the snippet
 class TSnippetFormat extends TFormatStatus
   {
+  const DATA_KEY_PREFIX = "TSnippetFormat:";
+
   public function __construct()
     {
     }
@@ -34,7 +35,7 @@ class TSnippetFormat extends TFormatStatus
     if (!isset($status[1]) || !is_string($status[1]))
       return ""; // snippet name not set
 
-    $key = SNIPPET_FORMAT_DATA_KEY_PREFIX.$status[1];
+    $key = self::DATA_KEY_PREFIX.$status[1];
     $plist = $info->GetFormatData($key);
     if (!is_array($plist)) // not created
       return "";
@@ -59,13 +60,18 @@ class TSnippetFormat extends TFormatStatus
     if (!isset($status[1]) || !is_string($status[1]))
       return; // snippet name not set
 
-    $key = SNIPPET_FORMAT_DATA_KEY_PREFIX.$status[1];
+    $key = self::DATA_KEY_PREFIX.$status[1];
 
     $plist = $info->GetFormatData($key,array());
 
     $plist[count($plist)] = $producer; // store the new producer
 
     $info->SetFormatData($key,$plist);
+    }
+
+  public function GetName()
+    {
+    return PARAMETER_SNIPPET;
     }
   }
 
