@@ -571,6 +571,16 @@ li.bodytextulcircle
   list-style-type: circle;
   }
 
+li.bodytextulsquare
+  {
+  list-style-type: square;
+  }
+
+li.bodytextulnone
+  {
+  list-style-type: none;
+  }
+
 li.bodytextolstd
   {
   list-style-type: decimal;
@@ -589,6 +599,11 @@ li.bodytextolupper-alpha
 li.bodytextolupper-roman
   {
   list-style-type: upper-roman;
+  }
+
+li.bodytextolnone
+  {
+  list-style-type: none;
   }
 
 a.bodytexta:link

@@ -37,8 +37,6 @@ class TListFormatData
 
   const DEFAULT_LIST_CLASS_UL = "bodytextulstd";
   const DEFAULT_LIST_CLASS_OL = "bodytextolstd";
-  public $currentlistclass = array(FALSE => self::DEFAULT_LIST_CLASS_UL, TRUE => self::DEFAULT_LIST_CLASS_OL);
-    // listitem class, indexed by ordered (TRUE) or unordered (FALSE)
   }
 
 // holds generic html code
@@ -272,7 +270,14 @@ class TListItemFormat extends TFormatStatus
       return; // integrity check
     $data->itemcounter[$name]++;
 
-    $info->AddToResultChain(new TListItemHolder($data->currentlistclass[$data->ordered[$name]]));
+    // get the class on the top of the stack
+    $olulname = $data->ordered[$name] ? PARAMETER_OLISTCLASS : PARAMETER_ULISTCLASS;
+    $class = $data->ordered[$name] ? TListFormatData::DEFAULT_LIST_CLASS_OL : TListFormatData::DEFAULT_LIST_CLASS_UL;
+    $symbattr = $info->GetTopActiveSymbol($olulname);
+    if ($symbattr !== FALSE)
+      $class = $symbattr->format->GetListClass($info,$symbattr->attribs);
+
+    $info->AddToResultChain(new TListItemHolder($class));
     }
 
   public function OnEnd($info,$topsymbname)
@@ -290,8 +295,26 @@ class TListItemFormat extends TFormatStatus
 
 class TListClassFormat extends TFormatStatus
   {
-    public function __construct()
+  public function __construct($name)
     {
+    $this->name = $name;
+
+    // find the default value
+    // and the prefix
+    switch ($this->name)
+      {
+      case PARAMETER_OLISTCLASS:
+        $this->def = TListFormatData::DEFAULT_LIST_CLASS_OL;
+        $this->prefix = "ol";
+        break;
+      case PARAMETER_ULISTCLASS:
+        $this->def = TListFormatData::DEFAULT_LIST_CLASS_UL;
+        $this->prefix = "ul";
+        break;
+      default:
+        error_log("TListClassFormat created with unknown name.");
+        return; // ??
+      }
     }
 
   public function Apply($info,$content,$attribs)
@@ -316,91 +339,50 @@ class TListClassFormat extends TFormatStatus
 
   static private $validclasses = array( // defined in the css
     "bodytextulstd" => TRUE,
-    "bodytextolstd" => TRUE,
+    "bodytextulnone" => TRUE,
     "bodytextuldisc" => TRUE,
     "bodytextulcircle" => TRUE,
+    "bodytextulsquare" => TRUE,
+
+    "bodytextolstd" => TRUE,
+    "bodytextolnone" => TRUE,
     "bodytextoldecimal" => TRUE,
     "bodytextolupper-alpha" => TRUE,
     "bodytextolupper-roman" => TRUE,
     );
 
+  const PREFIX = "bodytext";
+
   public function OnBegin($info,$attribs,$topsymbattr)
     {
+    if (isset($attribs[1]) && $attribs[1] !== "")
+      {
+      $maybeclass = self::PREFIX.$this->prefix.$attribs[1];
+      if (!isset(self::$validclasses[$maybeclass])) // unknown class
+        {
+        NParseError::Error($info,NParseError::ERROR,NParseError::UNKNOWN_LIST_CLASS,array(0 => $attribs[1]));
+        return; // do not activate the format with invalid params
+        }
+      }
+
     parent::OnBegin($info,$attribs,$topsymbattr);
-
-    $maybeolclass = FALSE;
-    $maybeulclass = FALSE;
-
-    // parse attribs like LISTTYPE=ordered=class1=unordered=class2
-    $attribscount = count($attribs);
-    for ($i = 1; $i < $attribscount; $i += 2)
-      if (isset($attribs[$i + 1]) && $attribs[$i + 1] !== "")
-        switch (strtoupper($attribs[$i]))
-          {
-          case TListFormatData::ORDERED:
-            $maybeolclass = $attribs[$i + 1];
-            break;
-          case TListFormatData::UNORDERED:
-            $maybeulclass = $attribs[$i + 1];
-            break;
-          }
-
-    if ($maybeolclass === FALSE && $maybeulclass === FALSE) // empty call: send the error
-      {
-      NParseError::Error($info,NParseError::ERROR,NParseError::UNDEFINED_LIST_CLASS,array());
-      return;
-      }
-
-    $data = TListFormatData::Get($info);
-
-    if ($maybeolclass !== FALSE)
-      {
-      $olclass = "bodytextol".$maybeolclass;
-      if (!isset(self::$validclasses[$olclass])) // not valid: send the warning,
-        // but execute anyway because the css may change sometimes
-        NParseError::Error($info,NParseError::WARNING,NParseError::UNKNOWN_LIST_CLASS,array(0 => $maybeolclass));
-      $data->currentlistclass[TRUE] = $olclass;
-      }
-
-    if ($maybeulclass !== FALSE)
-      {
-      $ulclass = "bodytextul".$maybeulclass;
-      if (!isset(self::$validclasses[$ulclass])) // not valid: send the warning,
-        // but execute anyway because the css may change sometimes
-        NParseError::Error($info,NParseError::WARNING,NParseError::UNKNOWN_LIST_CLASS,array(0 => $maybeulclass));
-      $data->currentlistclass[FALSE] = $ulclass;
-      }
     }
 
-  public function OnEnd($info,$topsymbname)
+  public function GetListClass($info,$attribs)
     {
-    $attribs = $info->GetActiveSymbol($this->GetName(),$topsymbname);
-    if ($attribs === FALSE)
-      return; // error
+    if (isset($attribs[1]) && $attribs[1] !== "")
+      return self::PREFIX.$this->prefix.$attribs[1];
 
-    $attribs = $attribs->attribs;
-
-    $data = TListFormatData::Get($info);
-
-    $attribscount = count($attribs);
-    for ($i = 1; $i < $attribscount; $i += 2)
-      if (isset($attribs[$i + 1]) && $attribs[$i + 1] !== "")
-        switch (strtoupper($attribs[$i]))
-          {
-          case TListFormatData::ORDERED:
-            $maybeolclass = TListFormatData::DEFAULT_LIST_CLASS_OL;
-            break;
-          case TListFormatData::UNORDERED:
-            $maybeulclass = TListFormatData::DEFAULT_LIST_CLASS_UL;
-            break;
-          } // TODO: restore values active before begin, instead
-
-    parent::OnEnd($info,$topsymbname);
+    return $this->def;
     }
 
   public function GetName()
     {
-    return PARAMETER_LISTCLASS;
+    return $this->name;
     }
+
+  private $name;
+  private $prefix = "";
+  private $def = "";
   }
 ?>

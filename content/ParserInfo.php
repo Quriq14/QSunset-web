@@ -96,6 +96,15 @@ class TContentParserInfo
     return $this->activeSymbols[$name]->Find($topname);
     }
 
+  // FALSE if failed
+  public function GetTopActiveSymbol($name)
+    {
+    if (!isset($this->activeSymbols[$name]))
+      return FALSE;
+
+    return $this->activeSymbols[$name]->Top();
+    }
+
   public function IsSymbolActive($name,$topname)
     {
     return $this->GetActiveSymbol($name,$topname) !== FALSE;

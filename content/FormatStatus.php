@@ -11,7 +11,7 @@ require_once("content/FormatAttribs.php");
 //   $attribs: an array int => string. At 0 is the format name, attributes start at 1.
 //   $topsymbattr: the TFormatAttribs of the top-level symbol which triggered the function call
 //     i.e. the command parsed from the source file
-//   $topsymbname: the name of the $topsymbattr, if it's not available
+//   $topsymbname: the name of the top symbol
 abstract class TFormatStatus
   {
   // returns a string that will be added to result when applied (opening tag)

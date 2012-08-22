@@ -59,8 +59,10 @@ function FormatFactory($name)
       return new TListFormat();
     case PARAMETER_LISTITEM:
       return new TListItemFormat();
-    case PARAMETER_LISTCLASS:
-      return new TListClassFormat();
+    case PARAMETER_OLISTCLASS:
+      return new TListClassFormat(PARAMETER_OLISTCLASS);
+    case PARAMETER_ULISTCLASS:
+      return new TListClassFormat(PARAMETER_ULISTCLASS);
     case PARAMETER_IMAGE:
       return new TImageFormat(FALSE);
     case PARAMETER_IMAGE_FAR:
