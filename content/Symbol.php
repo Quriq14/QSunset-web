@@ -56,10 +56,6 @@ class TSymbol extends TFormatStatus
         }
     }
 
-  public function OnAddedProducer($info,$producer,$attribs)
-    {
-    }
-
   public function OnBegin($info,$attribs,$topsymbattr)
     {
     parent::OnBegin($info,$attribs,$topsymbattr);

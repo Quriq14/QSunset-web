@@ -18,6 +18,8 @@ class TContentParserInfo
   public $activeSymbols = array();  // an array of stacks of active symbols: name => TFormatStack
   public $resultChain = array();    // array of objects, $result = cat($resultChain->Pulse())
   public $producedObjects = 0;      // length of the resultChain
+  private $produceListen = array(); // every time AddToResultChain(obj) is called, the method OnAddedProducer of each
+                                    // of the objects here is called. Array string => object
   public $specialChars;             // every characters not in here will be skipped 
                                     // and considered text even before processing (see NParserImpl::Parse)
   public $specialStrings;           // for multi-character shortcuts
@@ -126,6 +128,24 @@ class TContentParserInfo
   public function AddToResultChain($obj)
     {
     $this->resultChain[$this->producedObjects++] = $obj;
+
+    foreach ($this->produceListen as $o) // notify the listeners
+      $o->OnAddedProducer($this,$obj);
+    }
+
+  // $obj is a TParamFormatAttribs, $name is a string
+  public function AddProducerListener($name,$obj)
+    {
+    if ($name === "")
+      return;
+
+    $this->produceListen[$name] = $obj;
+    }
+
+  public function RemoveProducerListener($name)
+    {
+    if (isset($this->produceListen[$name]))
+      unset($this->produceListen[$name]);
     }
 
   // if $name is a shortcut symbol, it will be added to the special strings, otherwise nothing happens

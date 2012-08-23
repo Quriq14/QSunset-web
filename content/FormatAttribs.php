@@ -103,15 +103,6 @@ class TFormatAttribs
     return FALSE; // error
     }
 
-  public function OnAddedProducer($info,$producer,$symattribs)
-    {
-    if ($this->symbol === FALSE)
-      $this->symbol = $info->GetFormatByName($this->name);
-
-    if ($this->symbol !== FALSE)
-      $this->symbol->OnAddedProducer($info,$producer,self::SymbolParameterReplace($this->attribs,$symattribs));
-    }
-
   public function OnBegin($info,$symattribs,$topsymbattr)
     {
     if ($this->symbol === FALSE)
@@ -209,7 +200,7 @@ class TFormatAttribs
   private $attribs = array();
   private $symbol = FALSE; // this is a cache: once the symbol object is discovered,
                            // a pointer to it is stored here
-  } 
+  }
 
 class TParamFormatAttribs
   {

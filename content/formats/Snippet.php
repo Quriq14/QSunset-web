@@ -15,27 +15,55 @@ class TSnippetFormat extends TFormatStatus
     {
     }
 
-  public function Apply($info,$content,$status)
+  public function Apply($info,$content,$attribs)
     {
     return "";
     }
    
-  public function UnApply($info,$content,$status)
+  public function UnApply($info,$content,$attribs)
     {
     return "";
     }
 
-  public function IsVisible($info,$content,$status)
+  public function IsVisible($info,$content,$attribs)
     {
     return $info->produceSource !== FALSE;
     }
 
-  public function Pulse($info,$status)
+  public function OnBegin($info,$attribs,$topsymbattr)
     {
-    if (!isset($status[1]) || !is_string($status[1]))
+    parent::OnBegin($info,$attribs,$topsymbattr);
+
+    if (!isset($attribs[1]) || $attribs[1] === "")
+      return; // snippet name not set
+
+    $key = self::DATA_KEY_PREFIX.$attribs[1];
+    $info->AddProducerListener($key,new TParamFormatAttribs($this,$attribs,$topsymbattr));
+      // start listening for created objects
+    }
+
+  public function OnEnd($info,$topsymbname)
+    {
+    $attribs = $info->GetActiveSymbol($this->GetName(),$topsymbname); // find the symbol
+    if ($attribs === FALSE)
+      return;
+    $attribs = $attribs->attribs;
+
+    if (!isset($attribs[1]) || $attribs[1] === "")
+      return; // snippet name not set
+
+    $key = self::DATA_KEY_PREFIX.$attribs[1];
+    $info->RemoveProducerListener($key); // stop listening
+
+    parent::OnEnd($info,$topsymbname);
+    }
+
+  public function Pulse($info,$attribs)
+    {
+    if (!isset($attribs[1]) || $attribs[1] === "")
       return ""; // snippet name not set
 
-    $key = self::DATA_KEY_PREFIX.$status[1];
+    $key = self::DATA_KEY_PREFIX.$attribs[1];
     $plist = $info->GetFormatData($key);
     if (!is_array($plist)) // not created
       return "";
@@ -53,14 +81,12 @@ class TSnippetFormat extends TFormatStatus
     return $result;
     }
 
-  public function OnAddedProducer($info,$producer,$status)
+  public function OnAddedProducer($info,$producer,$attribs)
     {
-    if ($producer === FALSE)
-      return;
-    if (!isset($status[1]) || !is_string($status[1]))
+    if (!isset($attribs[1]) || $attribs[1] === "")
       return; // snippet name not set
 
-    $key = self::DATA_KEY_PREFIX.$status[1];
+    $key = self::DATA_KEY_PREFIX.$attribs[1];
 
     $plist = $info->GetFormatData($key,array());
 

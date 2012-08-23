@@ -42,13 +42,17 @@ class TListFormatData
 // holds generic html code
 class TListGenericHolder extends THtmlProducer
   {
-  public function __construct($content)
+  public function __construct($info,$content)
     {
     $this->content = $content;
+    $this->ActiveSymbolsFromInfo($info);
     }
 
   public function Produce($info)
     {
+    if (!$this->VisibleAll($info,$this->content))
+      return "";
+
     return $this->content;
     }
 
@@ -59,16 +63,20 @@ class TListGenericHolder extends THtmlProducer
 class TListHolder extends THtmlProducer
   {
   // if $name is an int, the list is unnamed
-  public function __construct($name,$reversed,$ordered,$start)
+  public function __construct($info,$name,$reversed,$ordered,$start)
     {
     $this->start = $start;       // start from this item number (not reversed yet)
     $this->name = $name;
     $this->reversed = $reversed;
     $this->ordered = $ordered;
+    $this->ActiveSymbolsFromInfo($info);
     }
 
   public function Produce($info)
     {
+    if (!$this->VisibleAll($info,""))
+      return "";
+
     $data = TListFormatData::Get($info);
 
     if (!isset($data->itemcounter[$this->name]) || $data->itemcounter[$this->name] === 0)
@@ -101,13 +109,17 @@ class TListHolder extends THtmlProducer
 // holds <li> tags
 class TListItemHolder extends THtmlProducer
   {
-  public function __construct($cla)
+  public function __construct($info,$cla)
     {
     $this->cla = $cla;
+    $this->ActiveSymbolsFromInfo($info);
     }
 
   public function Produce($info)
     {
+    if (!$this->VisibleAll($info,""))
+      return "";
+
     return "<li class=\"".htmlspecialchars($this->cla)."\">";
     }
 
@@ -194,8 +206,9 @@ class TListFormat extends TFormatStatus
     $start = 1 + $data->itemcounter[$name];
     $data->currentname[$data->depth] = $name;
     $data->ordered[$name] = $ordered;
-      
-    $info->AddToResultChain(new TListHolder($name,$reversed,$ordered,$start));
+
+    
+    $info->AddToResultChain(new TListHolder($info,$name,$reversed,$ordered,$start));
     }
 
   public function OnEnd($info,$topsymbname)
@@ -216,7 +229,7 @@ class TListFormat extends TFormatStatus
     if ($data->depth > 0)
       $data->depth--;
 
-    $info->AddToResultChain(new TListGenericHolder($ordered ? "</ol>\r\n" : "</ul>\r\n"));
+    $info->AddToResultChain(new TListGenericHolder($info,$ordered ? "</ol>\r\n" : "</ul>\r\n"));
 
     parent::OnEnd($info,$topsymbname);
     }
@@ -277,12 +290,12 @@ class TListItemFormat extends TFormatStatus
     if ($symbattr !== FALSE)
       $class = $symbattr->format->GetListClass($info,$symbattr->attribs);
 
-    $info->AddToResultChain(new TListItemHolder($class));
+    $info->AddToResultChain(new TListItemHolder($info,$class));
     }
 
   public function OnEnd($info,$topsymbname)
     {
-    $info->AddToResultChain(new TListGenericHolder("</li>\r\n"));
+    $info->AddToResultChain(new TListGenericHolder($info,"</li>\r\n"));
 
     parent::OnEnd($info,$topsymbname);
     }

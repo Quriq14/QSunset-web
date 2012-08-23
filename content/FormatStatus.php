@@ -41,12 +41,6 @@ abstract class TFormatStatus
     {
     }
 
-  // EVENTS
-  // a producer is created within BEGIN-END of this symbol
-  public function OnAddedProducer($info,$producer,$attribs)
-    {
-    }
-
   // this is called when the symbol must be added to the active symbols
   public function OnBegin($info,$attribs,$topsymbattr)
     {
