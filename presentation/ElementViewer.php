@@ -310,7 +310,7 @@ class TElementViewer
     {
     $result = new TContentParserInfo();
     $result->language = $this->GetLanguage();
-    $result->cElement = $this->GetElement();
+    $result->PushCurrentElement($this->GetElement());
     return $result;
     }
 

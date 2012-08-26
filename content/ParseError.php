@@ -13,6 +13,14 @@ class NParseError
   const INCLUDE_NOT_CLOSED       = 1; // < without corresponding >
   const LISTITEM_OUTSIDE_LIST    = 2; 
   const UNKNOWN_LIST_CLASS       = 3; // LISTTYPE command with unknown class specified
+  const CIRCULAR_SNIPPET         = 4; // a snippet is called by itself
+  const UNNAMED_SNIPPET          = 5; // snippet name not defined
+  const INCLUDE_DEPTH_EXCEEDED   = 6; // probably recursive include, sanity check
+  const RREF_CELEMENT_NOT_SET    = 7; // TContentParserInfo does not provide a current element, so TRelativeRefFormat failed
+  const REF_PARAM_NOT_SPECIFIED  = 8;
+  const RREF_INVALID_SINTAX      = 9;
+  const REF_ELEM_NOT_FOUND       = 10; // referenced element not found
+  const INCLUDE_NOT_FOUND        = 11;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -25,7 +33,15 @@ class NParseError
     self::CIRCULAR_DEFINITION      => "Cannot define symbol \"#1#\" as symbol \"#0#\": circular definition.",
     self::INCLUDE_NOT_CLOSED       => "Include not closed.",
     self::LISTITEM_OUTSIDE_LIST    => "LISTITEM used outside LIST.",
-    self::UNKNOWN_LIST_CLASS       => "Unknown list class: \"#0#\"."
+    self::UNKNOWN_LIST_CLASS       => "Unknown list class: \"#0#\".",
+    self::CIRCULAR_SNIPPET         => "Cannot produce snippet #0#: circular call. Full stack: #1#.",
+    self::UNNAMED_SNIPPET          => "Unnamed snippet.",
+    self::INCLUDE_DEPTH_EXCEEDED   => "Include maximum depth (#1#) exceeded (Included: \"#0#\")",
+    self::RREF_CELEMENT_NOT_SET    => "Couldn't generate relative reference #0#: current element not set here.",
+    self::REF_PARAM_NOT_SPECIFIED  => "Reference parameter not specified.",
+    self::RREF_INVALID_SINTAX      => "Invalid sintax for relative reference: \"#0#\".",
+    self::REF_ELEM_NOT_FOUND       => "Referenced element not found: \"#0#\".",
+    self::INCLUDE_NOT_FOUND        => "Included element not found: \"#0#\".",
     );
 
   // sends an error
@@ -44,8 +60,20 @@ class NParseError
     if ($info !== FALSE)
       {
       // ELEMENT NAME
-      if ($info->cElement !== FALSE)
-        $err .= "Element: ".$info->cElement->GetAddress()." ";
+      if ($info->TopCurrentElement() !== FALSE)
+        {
+        $err .= "Element: ".$info->TopCurrentElement()->GetAddress()." ";
+      
+        // report include stack
+        $elementnestcount = count($info->cElementStack) - 1;
+        if ($elementnestcount > 0)
+          {
+          $err .= "Included by: ";
+          for ($i = 0; $i < $elementnestcount; $i++)
+            $err .= ($i === 0 ? "" : "->").$info->cElementStack[$i]->GetAddress();
+          $err .= " ";
+          }
+        }
 
       // LINE NUMBER
       $linenumber = substr_count($info->content,"\n",0,$info->processed); 

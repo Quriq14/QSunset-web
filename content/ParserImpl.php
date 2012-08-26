@@ -213,6 +213,7 @@ class NParserImpl
       {
       NParseError::Error($info,NParseError::FATAL,NParseError::INCLUDE_NOT_CLOSED,array());
       $info->processed = strlen($info->content);
+      $info->AbortRequest();
       return;
       }
 

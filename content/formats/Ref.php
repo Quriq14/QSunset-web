@@ -17,7 +17,10 @@ class TRefFormat extends TFormatStatus
   public function Apply($info,$content,$attribs)
     {
     if (!isset($attribs[1]))
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::REF_PARAM_NOT_SPECIFIED,array());
       return "";
+      }
 
     return AHrefBegin("bodytexta",$attribs[1],$info->language);
     }
@@ -57,24 +60,31 @@ class TRelativeRefFormat extends TFormatStatus
   const SYMBOL_REMOVELAST = "-"; // removes last element and eveluate again
   const SYMBOL_THIS       = "."; // reference to current element (may be combined with - to obtain parent)
 
-  const ERROR = " TRelativeRefFormat(RREF): Invalid sintax ";
-
   public function Apply($info,$content,$attribs)
     {
     if (!isset($attribs[1]))
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::REF_PARAM_NOT_SPECIFIED,array());
       return "";
+      }
 
-    if ($info->cElement === FALSE || !$info->cElement->IsValid())
-      return self::ERROR; // current element not set
+    if ($info->TopCurrentElement() === FALSE)
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::RREF_CELEMENT_NOT_SET,array(0 => $attribs[1]));
+      return ""; // current element not set
+      }
 
     $relativePath = trim($attribs[1]);
-    $currentElement = $info->cElement;
+    $currentElement = $info->TopCurrentElement();
     $finished = FALSE;
 
     while (!$finished)
       {
       if (!isset($relativePath[0]))
-        return self::ERROR; // string too short!
+        {
+        NParseError::Error($info,NParseError::ERROR,NParseError::RREF_INVALID_SINTAX,array(0 => $relativePath));
+        return ""; // string too short!
+        }
 
       switch ($relativePath[0])
         {
@@ -82,7 +92,10 @@ class TRelativeRefFormat extends TFormatStatus
           $relativePath = substr($relativePath,1);
           $currentElement = ElementFactory($relativePath);
           if (!$currentElement->IsValid())
-            return self::ERROR;
+            {
+            NParseError::Error($info,NParseError::ERROR,NParseError::REF_ELEM_NOT_FOUND,array(0 => $relativePath));
+            return ""; // not found
+            }
           $finished = TRUE;
           break;
 
@@ -91,7 +104,10 @@ class TRelativeRefFormat extends TFormatStatus
           $newAddr = $currentElement->GetAddress().$relativePath;
           $currentElement = ElementFactory($newAddr);
           if (!$currentElement->IsValid())
-            return self::ERROR;
+            {
+            NParseError::Error($info,NParseError::ERROR,NParseError::REF_ELEM_NOT_FOUND,array(0 => $relativePath));
+            return ""; // not found
+            }
           $finished = TRUE;
           break;
 
@@ -103,11 +119,15 @@ class TRelativeRefFormat extends TFormatStatus
           $relativePath = substr($relativePath,1); // remove the minus
           $currentElement = $currentElement->GetParent(); // go to parent
           if ($currentElement === FALSE)
-            return self::ERROR; // something went horribly wrong
+            {
+            NParseError::Error($info,NParseError::ERROR,NParseError::REF_ELEM_NOT_FOUND,array(0 => $relativePath));
+            return ""; // not found
+            }
           break;
 
         default:
-          return self::ERROR; // invalid symbol
+          NParseError::Error($info,NParseError::ERROR,NParseError::RREF_INVALID_SINTAX,array(0 => $relativePath));
+          return ""; // invalid symbol
         }
       }
 
@@ -144,7 +164,10 @@ class TFarRefFormat extends TFormatStatus
   public function Apply($info,$content,$attribs)
     {
     if (!isset($attribs[1]))
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::REF_PARAM_NOT_SPECIFIED,array());
       return "";
+      }
 
     return "<a class=\"bodytextafar\" href=\"".htmlspecialchars($attribs[1])."\">";
     }

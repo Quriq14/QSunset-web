@@ -24,13 +24,12 @@ class TContentParserInfo
                                     // and considered text even before processing (see NParserImpl::Parse)
   public $specialStrings;           // for multi-character shortcuts
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
-  public $produceSource = FALSE;    // this a pointer to a symbol. A symbol that requires something to be Produce()d,
-                                    // must set this variable to himself and then reset it to the previous value afterwards
   private $endOfParsingRequest = 0;
   
   // INPUT
   public $language = NLanguages::LANGUAGE_DEFAULT;
-  public $cElement = FALSE;
+  public $cElementStack = array(); // at position 0, the current TElementData
+                                   // <includes> will push new elements
   public $content  = "";
 
   public function __construct()
@@ -220,6 +219,41 @@ class TContentParserInfo
 
     $this->data[$key] = $def;
     return $def;
+    }
+
+  // CURRENT ELEMENT STACK
+  // to be used by the include system
+  // $elem is a TElementData
+  public function PushCurrentElement($elem)
+    {
+    $this->cElementStack[count($this->cElementStack)] = $elem;
+    }
+
+  public function PopCurrentElement()
+    {
+    $count = count($this->cElementStack);
+    if ($count > 0)
+      unset($this->cElementStack[$count - 1]);
+    }
+
+  // FALSE if empty
+  // returns the element on top of the stack
+  public function TopCurrentElement()
+    {
+    $count = count($this->cElementStack);
+    if ($count === 0)
+      return FALSE;
+
+    return $this->cElementStack[$count - 1];
+    }
+
+  // FALSE if empty
+  // returns the element at the bottom of the stack
+  public function BaseCurrentElement()
+    {
+    if (!isset($this->cElementStack[0]))
+      return FALSE;
+    return $this->cElementStack[0];
     }
 
   // PARSING END REQUESTS
