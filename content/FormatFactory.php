@@ -12,6 +12,7 @@ require_once("content/formats/Snippet.php");
 require_once("content/formats/HorizontalLine.php");
 require_once("content/formats/List.php");
 require_once("content/formats/Image.php");
+require_once("content/formats/Jump.php");
 
 function FormatFactory($name)
   {
@@ -67,6 +68,8 @@ function FormatFactory($name)
       return new TImageFormat(FALSE);
     case PARAMETER_IMAGE_FAR:
       return new TImageFormat(TRUE);
+    case PARAMETER_JUMP:
+      return new TJumpFormat();
     default:
       return FALSE;
     }

@@ -41,6 +41,8 @@ define("PARAMETER_OLISTCLASS","OLISTTYPE");  // appearance of unordered lists
 define("PARAMETER_IMAGE","IMG");             // [IMG=src="name"=label="label"] local image
 define("PARAMETER_IMAGE_FAR","XIMG");        // [XIMG=src="url"=label="label"] image from a remote URL
 
+define("PARAMETER_JUMP","JUMP");
+
 define("PREFIX_SHORTCUT_LENGTH",3);
 define("PREFIX_SHORTCUT","SC:");
 define("PREFIX_SHORTCUT_TOTAL_LENGTH",5); // number of character of the prefixes below (to drop the prefix faster)

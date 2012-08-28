@@ -21,6 +21,11 @@ class NParseError
   const RREF_INVALID_SINTAX      = 9;
   const REF_ELEM_NOT_FOUND       = 10; // referenced element not found
   const INCLUDE_NOT_FOUND        = 11;
+  const CONDITION_EXPECTED       = 12;
+  const CONDITION_UNKNOWN        = 13;
+  const CONDITION_NOPARAM        = 14; // a condition required a parameter
+  const CONDITION_WRONG_TYPE     = 15; // a statement returned a result of the wrong type
+  const JUMP_STH_EXPECTED        = 16;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -42,6 +47,11 @@ class NParseError
     self::RREF_INVALID_SINTAX      => "Invalid sintax for relative reference: \"#0#\".",
     self::REF_ELEM_NOT_FOUND       => "Referenced element not found: \"#0#\".",
     self::INCLUDE_NOT_FOUND        => "Included element not found: \"#0#\".",
+    self::CONDITION_EXPECTED       => "Condition expected or unfinished condition.",
+    self::CONDITION_UNKNOWN        => "Unknown operator in condition: \"#0#\".",
+    self::CONDITION_NOPARAM        => "Parameter not specified for condition \"#0#\", \"#1#\" returned.",
+    self::CONDITION_WRONG_TYPE     => "A statement of type \"#0#\" is expected for condition \"#1#\".",
+    self::JUMP_STH_EXPECTED        => "Jump: #0# expected."
     );
 
   // sends an error
@@ -68,10 +78,10 @@ class NParseError
         $elementnestcount = count($info->cElementStack) - 1;
         if ($elementnestcount > 0)
           {
-          $err .= "Included by: ";
+          $err .= "Included by: \"";
           for ($i = 0; $i < $elementnestcount; $i++)
             $err .= ($i === 0 ? "" : "->").$info->cElementStack[$i]->GetAddress();
-          $err .= " ";
+          $err .= "\" ";
           }
         }
 
