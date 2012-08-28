@@ -50,7 +50,7 @@ class TListGenericHolder extends THtmlProducer
 
   public function Produce($info)
     {
-    if (!$this->VisibleAll($info,$this->content))
+    if (!$this->VisibleAll($info))
       return "";
 
     return $this->content;
@@ -74,7 +74,7 @@ class TListHolder extends THtmlProducer
 
   public function Produce($info)
     {
-    if (!$this->VisibleAll($info,""))
+    if (!$this->VisibleAll($info))
       return "";
 
     $data = TListFormatData::Get($info);
@@ -117,7 +117,7 @@ class TListItemHolder extends THtmlProducer
 
   public function Produce($info)
     {
-    if (!$this->VisibleAll($info,""))
+    if (!$this->VisibleAll($info))
       return "";
 
     return "<li class=\"".htmlspecialchars($this->cla)."\">";

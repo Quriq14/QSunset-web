@@ -17,11 +17,14 @@ class THtmlHolder extends THtmlProducer
     {
     $result = "";
 
-    $result .= $this->ApplyAll($info,$this->content);
+    if (!$this->VisibleAll($info))
+      return $result;
+
+    $result .= $this->ApplyAll($info);
 
     $result .= $this->content;
 
-    $result .= $this->UnApplyAll($info,$this->content);
+    $result .= $this->UnApplyAll($info);
 
     return $result;
     }

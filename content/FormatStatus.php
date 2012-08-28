@@ -7,7 +7,7 @@ require_once("content/FormatAttribs.php");
 // add all the TFormatStatuses to the FormatFactory (except symbols, obviously)
 // parameters:
 //   $info: the current TContentParserInfo
-//   $content: the content to which the format will be applied
+//   $content: the THtmlProducer to which the content will be applied
 //   $attribs: an array int => string. At 0 is the format name, attributes start at 1.
 //   $topsymbattr: the TFormatAttribs of the top-level symbol which triggered the function call
 //     i.e. the command parsed from the source file

@@ -14,15 +14,15 @@ class TPulseProducer extends THtmlProducer
     {
     $result = "";
 
-    if (!$this->VisibleAll($info,""))
+    if (!$this->VisibleAll($info))
       return ""; // invisibility
 
-    $result .= $this->ApplyAll($info,"");
+    $result .= $this->ApplyAll($info);
 
     if ($this->formatattr !== FALSE)
       $result .= $this->formatattr->Pulse($info,array());
 
-    $result .= $this->UnApplyAll($info,"");
+    $result .= $this->UnApplyAll($info);
 
     return $result;
     }

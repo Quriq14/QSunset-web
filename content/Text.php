@@ -17,14 +17,14 @@ class TTextHolder extends THtmlProducer
     {
     $result = "";
 
-    if (!$this->VisibleAll($info,$this->text))
+    if (!$this->VisibleAll($info))
       return "";
 
-    $result .= $this->ApplyAll($info,$this->text);
+    $result .= $this->ApplyAll($info);
 
     $result .= TrueHtmlEntities($this->text);
 
-    $result .= $this->UnApplyAll($info,$this->text);
+    $result .= $this->UnApplyAll($info);
 
     return $result;
     }

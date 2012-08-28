@@ -11,33 +11,33 @@ abstract class THtmlProducer
     $this->symbols[count($this->symbols)] = $symbolattr;
     }
 
-  public function VisibleAll($info,$text)
+  public function VisibleAll($info)
     {
     foreach($this->symbols as $s)
-      if (!($s->IsVisible($info,$text)))
+      if (!($s->IsVisible($info,$this)))
         return FALSE; // invisibility
 
     return TRUE;
     }
 
-  public function ApplyAll($info,$text)
+  public function ApplyAll($info)
     {
     $result = "";
 
     $symbolcount = count($this->symbols);
     for ($i = 0; $i < $symbolcount; $i++)
-      $result .= $this->symbols[$i]->Apply($info,$text);
+      $result .= $this->symbols[$i]->Apply($info,$this);
 
     return $result;
     }
 
-  public function UnApplyAll($info,$text)
+  public function UnApplyAll($info)
     {
     $result = "";
 
     $symbolcount = count($this->symbols);
     for ($i = ($symbolcount-1); $i >= 0; $i--) // reverse order
-      $result .= $this->symbols[$i]->UnApply($info,$text);
+      $result .= $this->symbols[$i]->UnApply($info,$this);
 
     return $result;
     }
@@ -50,8 +50,15 @@ abstract class THtmlProducer
       $this->AddSymbol($info,$symb);
     }
 
+  // returns the array of formats active when the producer was created
+  // [0..n-1] => TParamFormatAttribs
+  public function GetActiveFormats()
+    {
+    return $this->symbols;
+    }
+
   // an array of TParamFormatAttribs
-  protected $symbols = array();
+  private $symbols = array();
   }
 
 ?>

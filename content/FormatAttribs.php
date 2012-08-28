@@ -236,6 +236,11 @@ class TParamFormatAttribs
     return $this->format->Pulse($info,$this->attribs);
     }
 
+  public function GetName()
+    {
+    return $this->format->GetName();
+    }
+
   public $format;
   public $attribs;
   public $topsymbattr;
