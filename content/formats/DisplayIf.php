@@ -1,9 +1,9 @@
 <?php
 
-require_once("content/FormatStatus.php");
 require_once("content/defines.php");
+require_once("content/FormatStatus.php");
 
-class THiddenFormat extends TFormatStatus
+class TDisplayIfFormat extends TFormatStatus
   {
   public function __construct()
     {
@@ -21,7 +21,8 @@ class THiddenFormat extends TFormatStatus
 
   public function IsVisible($info,$content,$attribs)
     {
-    return FALSE;
+    $ci = 1;
+    return NFormatCondition::Evaluate($info,$attribs,$ci,array(NFormatCondition::DATA_PRODUCER => $content));
     }
 
   public function Pulse($info,$attribs)
@@ -31,7 +32,7 @@ class THiddenFormat extends TFormatStatus
 
   public function GetName()
     {
-    return PARAMETER_HIDDEN;
+    return PARAMETER_DISPLAYIF;
     }
   }
 

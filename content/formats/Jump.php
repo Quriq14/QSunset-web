@@ -51,7 +51,7 @@ class TJumpFormat extends TFormatStatus
 
     $idx++;
 
-    return NFormatCondition::Evaluate($info,$attribs,$idx);
+    return NFormatCondition::Evaluate($info,$attribs,$idx,array());
     }
 
   public function ProcessToPart($info,$attribs,&$idx)

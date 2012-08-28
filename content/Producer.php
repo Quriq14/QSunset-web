@@ -50,11 +50,13 @@ abstract class THtmlProducer
       $this->AddSymbol($info,$symb);
     }
 
-  // returns the array of formats active when the producer was created
-  // [0..n-1] => TParamFormatAttribs
-  public function GetActiveFormats()
+  public function HasActiveFormat($name)
     {
-    return $this->symbols;
+    foreach ($this->symbols as $symb)
+      if ($symb->GetName() === $name)
+        return TRUE;
+
+    return FALSE;
     }
 
   // an array of TParamFormatAttribs

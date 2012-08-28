@@ -82,7 +82,11 @@ class THtmlFormat extends TFormatStatus
 
     $content = substr($info->content,$contentidx,$scriptend - $contentidx);
     if ($content !== FALSE && $content !== "") // if there is content
-      $info->AddToResultChain(new THtmlHolder($content));
+      {
+      $holder = new THtmlHolder($content);
+      $info->AddToResultChain($holder);
+      $holder->ActiveSymbolsFromInfo($info);
+      }
 
     $info->processed = $scriptend + $emlength; // advance past the comment ending tag
     }

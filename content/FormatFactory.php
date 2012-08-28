@@ -13,6 +13,7 @@ require_once("content/formats/HorizontalLine.php");
 require_once("content/formats/List.php");
 require_once("content/formats/Image.php");
 require_once("content/formats/Jump.php");
+require_once("content/formats/DisplayIf.php");
 
 function FormatFactory($name)
   {
@@ -70,6 +71,8 @@ function FormatFactory($name)
       return new TImageFormat(TRUE);
     case PARAMETER_JUMP:
       return new TJumpFormat();
+    case PARAMETER_DISPLAYIF:
+      return new TDisplayIfFormat();
     default:
       return FALSE;
     }
