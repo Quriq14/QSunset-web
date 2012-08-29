@@ -84,6 +84,10 @@ function AutoLang($maybeLanguage,$availLanguages,$origLanguages)
         $result->result = $l;
         return $result;
         }
+
+    $result->reason = TAutoLangResult::NOT_AVAIL_LANG;
+    $result->result = $singleoL;
+    return $result;
     }
 
   // language not requested, autodetect it

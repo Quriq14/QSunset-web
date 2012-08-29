@@ -45,7 +45,7 @@ function NormalizePath($dir)
   
   $replcount = 1;
   while ($replcount !== 0)
-    $dir2 = str_replace(SYSTEM_PATH_SEP.SYSTEM_PATH_SEP,SYSTEM_PATH_SEP,$dir2,$replcount);
+    $dir2 = str_replace(DIR_PATH_SEP.DIR_PATH_SEP,DIR_PATH_SEP,$dir2,$replcount);
 
   return $dir2;
   }

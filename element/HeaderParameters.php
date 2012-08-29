@@ -119,7 +119,7 @@ class NParams
     self::FOOTER                   => "",
     self::SHOW_CONT_TITLE          => self::TRUE_STR,
     self::SHOW_CONT_SUBTITLE       => self::FALSE_STR,
-    self::HEADER_TITLE             => "<INCLUDE|DEFAULTHEADER>",
+    self::HEADER_TITLE             => DEFAULT_HEADER_TITLE_CONTENT,
     self::CONT_SUBTITLE            => "",
     self::REDIRECT_NEAR            => "",
     self::REDIRECT_SILENT          => "",
@@ -130,7 +130,7 @@ class NParams
     self::NEXT                     => self::AUTO_STR,
     self::PREV                     => self::AUTO_STR,
     self::HTTP_STATUS_CODE         => "",
-    self::READABLE_ERROR           => "<ERRORS/VISIBILITY|HIDDEN>",
+    self::READABLE_ERROR           => DEFAULT_READABILITY_ERROR_CONTENT,
     );
 
   // returns "" if failed

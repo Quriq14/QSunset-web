@@ -29,7 +29,7 @@ function PrepareLanguageData($view,$autoLang)
     {
     case TAutoLangResult::FAILED_DETECT:
       $langdata->status = TLanguageSelectorData::NOT_FOUND;
-      $langdata->errorStr = NContentParser::Parse("<ERRORS/LANGUAGE|NOTFOUND>",$view->GetContentParserInfo());
+      $langdata->errorStr = NContentParser::Parse("<ERRORS".DIR_PATH_SEP."LANGUAGE".PATH_SEP."NOTFOUND>",$view->GetContentParserInfo());
       break;
     case TAutoLangResult::REQUESTED_LANG:
       $langdata->status = TLanguageSelectorData::SELECTED_BY_USER;
@@ -39,7 +39,7 @@ function PrepareLanguageData($view,$autoLang)
       break;
     case TAutoLangResult::NOT_AVAIL_LANG:
       $langdata->status = TLanguageSelectorData::NOT_AVAILABLE;
-      $langdata->errorStr = NContentParser::Parse("<ERRORS/LANGUAGE|NOTAVAIL>",$view->GetContentParserInfo());
+      $langdata->errorStr = NContentParser::Parse("<ERRORS".DIR_PATH_SEP."LANGUAGE".PATH_SEP."NOTAVAIL>",$view->GetContentParserInfo());
       break;
     }
 

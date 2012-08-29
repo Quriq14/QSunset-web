@@ -22,7 +22,7 @@ class TDirectoryData extends TElementData
 
     $path = NormalizePath($path);
 
-    $exploded = explode(SYSTEM_PATH_SEP,$path);
+    $exploded = explode(DIR_PATH_SEP,$path);
     $explodecount = count($exploded);
     if ($explodecount === 1 && $exploded[0] === "")
       $explodecount = 0; // this is root, no steps needed
@@ -130,7 +130,7 @@ class TDirectoryData extends TElementData
         case TIndexEntry::TYPE_SUBDIR:
           $buildPath = "";
           if ($this->path !== "") // root is represented by an empty string, not /
-            $buildPath = $this->path.SYSTEM_PATH_SEP;
+            $buildPath = $this->path.DIR_PATH_SEP;
 
           // build the directory starting from the physicalPath, since it's known
           $maybeDir = ElementFactory($buildPath.$indexentry->id,$this->physicalpath->GetConcat($indexentry->addition));
@@ -166,7 +166,7 @@ class TDirectoryData extends TElementData
 
     // directory alias
     $pName = dirname($this->path);
-    if ($pName === "." || $pName === SYSTEM_PATH_SEP) // dirname returns "." if no slash is present
+    if ($pName === "." || $pName === DIR_PATH_SEP) // dirname returns "." if no slash is present
       $pName = "";
 
     // directory physical name
@@ -239,7 +239,7 @@ class TDirectoryData extends TElementData
         case TIndexEntry::TYPE_SUBSECTION:
           return $this->path.PATH_SEP.$indexentry->id;
         case TIndexEntry::TYPE_SUBDIR:
-          return $this->path.SYSTEM_PATH_SEP.$indexentry->id;
+          return $this->path.DIR_PATH_SEP.$indexentry->id;
         }  
       }
 

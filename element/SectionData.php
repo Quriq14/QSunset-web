@@ -140,7 +140,7 @@ class TSectionData extends TElementData
       case TIndexEntry::TYPE_SUBSECTION:
         return $this->myDir->GetAddress().PATH_SEP.$myIndexEntryPN->id;
       case TIndexEntry::TYPE_SUBDIR:
-        return $this->myDir->GetAddress().SYSTEM_PATH_SEP.$myIndexEntryPN->id;
+        return $this->myDir->GetAddress().DIR_PATH_SEP.$myIndexEntryPN->id;
       }
 
     return FALSE;

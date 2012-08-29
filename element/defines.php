@@ -2,7 +2,8 @@
 // use ONLY require/include_once for this file
 
 define("PATH_FIELD","path"); // GET request field
-define("PATH_SEP","|");      // separator for GET subfields
+define("PATH_SEP","|");      // separator between directory and section
+define("DIR_PATH_SEP","/");  // separator for directories
 define("LANGUAGE_FIELD","pl"); // language preferred by user
 define("PATH_ROOT","");      // path of the root directory
 
@@ -21,7 +22,9 @@ define("IMAGE_ROOT","img/");
 define("FILE_CONTENT_SEPARATOR","----------------------------------------"); // trailing characters on same line will be ignored
 define("FILE_MAX_LINE_LENGTH",1024);
 
-define("ERROR_404_PATH","ERRORS/HTTP|404"); // logical path of the 404 error
+define("ERROR_404_PATH","ERRORS".DIR_PATH_SEP."HTTP".PATH_SEP."404"); // logical path of the 404 error
+define("DEFAULT_HEADER_TITLE_CONTENT","<INCLUDE".PATH_SEP."DEFAULTHEADER>");
+define("DEFAULT_READABILITY_ERROR_CONTENT","<ERRORS".DIR_PATH_SEP."VISIBILITY".PATH_SEP."HIDDEN>");
 define("MAX_CONSECUTIVE_REDIRECT",10);
 
 class NLanguages
