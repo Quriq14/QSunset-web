@@ -14,6 +14,7 @@ require_once("content/formats/List.php");
 require_once("content/formats/Image.php");
 require_once("content/formats/Jump.php");
 require_once("content/formats/DisplayIf.php");
+require_once("content/formats/TerminateIf.php");
 
 function FormatFactory($name)
   {
@@ -73,6 +74,8 @@ function FormatFactory($name)
       return new TJumpFormat();
     case PARAMETER_DISPLAYIF:
       return new TDisplayIfFormat();
+    case PARAMETER_TERMINATEIF:
+      return new TTerminateIfFormat();
     default:
       return FALSE;
     }

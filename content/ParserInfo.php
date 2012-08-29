@@ -111,6 +111,11 @@ class TContentParserInfo
     return $this->GetActiveSymbol($name,$topname) !== FALSE;
     }
 
+  public function IsAnySymbolActive($name)
+    {
+    return $this->GetTopActiveSymbol($name) !== FALSE;
+    }
+
   // returns an array of TFormatAttribs, ordered from 0 to n
   public function GetActiveSymbolList()
     {

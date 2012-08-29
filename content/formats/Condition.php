@@ -82,7 +82,7 @@ class NFormatCondition
         if (isset($data[self::DATA_PRODUCER])) // if a producer is defined, search in it
           return $data[self::DATA_PRODUCER]->HasActiveFormat($name);
 
-        return $info->IsSymbolActive($name);   // else, search in the status
+        return $info->IsAnySymbolActive($name);   // else, search in the status
         break;
 
       default:

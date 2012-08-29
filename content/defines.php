@@ -41,8 +41,9 @@ define("PARAMETER_OLISTCLASS","OLISTTYPE");  // appearance of unordered lists
 define("PARAMETER_IMAGE","IMG");             // [IMG=src="name"=label="label"] local image
 define("PARAMETER_IMAGE_FAR","XIMG");        // [XIMG=src="url"=label="label"] image from a remote URL
 
-define("PARAMETER_JUMP","JUMP");             // [JUMP=if=condition=to=label] jumps to label if the condition is true
-define("PARAMETER_DISPLAYIF","DISPLAYIF");   // [DISPLAYIF=condition] the content is hidden if the condition is not met
+define("PARAMETER_JUMP","JUMP");             // [JUMP=if=condition=to=label BEGIN] jumps to label if the condition is true
+define("PARAMETER_DISPLAYIF","DISPLAYIF");   // [DISPLAYIF=condition BEGIN] the content is hidden if the condition is not met
+define("PARAMETER_TERMINATEIF","TERMINATEIF"); // [TERMINATEIF=condition] terminates processing of current file if contition is true
 
 define("PREFIX_SHORTCUT_LENGTH",3);
 define("PREFIX_SHORTCUT","SC:");
