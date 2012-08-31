@@ -206,28 +206,14 @@ function IndexParserFactory($dir,$section)
   if (!isset($dir) || !isset($section) || !is_string($section))
     return FALSE;
 
-  $cacheId = INDEX_CACHE_PREFIX.$dir."|//".$section;
-
-  if (USE_APC)
-    {
-    $success = FALSE;
-    $cached = apc_fetch($cacheId,$success);
-    
-    if ($success)
-      return $cached;
-
-    $cached = new TIndexParser($dir,$section);
-    apc_add($cacheId,$cached);
-    return $cached;
-    }
-
   static $cache = array();
+  $cacheid = $dir.SYSTEM_PATH_SEP.SYSTEM_PATH_SEP.$section;
 
-  if (isset($cache[$dir.$section]))
-    return $cache[$dir.$section];
+  if (isset($cache[$cacheid]))
+    return $cache[$cacheid];
 
-  $cache[$dir.$section] = new TIndexParser($dir,$section);
-  return $cache[$dir.$section];
+  $cache[$cacheid] = new TIndexParser($dir,$section);
+  return $cache[$cacheid];
   }
 
 ?>

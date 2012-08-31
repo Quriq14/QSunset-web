@@ -7,8 +7,6 @@ require_once("content/ParserInfo.php");
 
 require_once("element/defines.php");
 
-define("CONTENT_PARSER_MAX_DEPTH",20);
-
 class NContentParser
   {
   static function Parse($content,$info)

@@ -13,10 +13,6 @@ define("SYSTEM_FILE_ROOT",SYSTEM_PATH_ROOT.SYSTEM_PATH_SEP."index.txt"); // FILE
 
 define("MAX_PATH_DEPTH",20); // max depth of directory tree
 
-define("USE_APC",FALSE);
-define("ELEMENT_CACHE_PREFIX","E");
-define("INDEX_CACHE_PREFIX","I");
-
 define("IMAGE_ROOT","img/");
 
 define("FILE_CONTENT_SEPARATOR","----------------------------------------"); // trailing characters on same line will be ignored

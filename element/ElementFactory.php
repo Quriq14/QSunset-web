@@ -4,27 +4,16 @@ require_once("element/SectionData.php");
 require_once("element/secutils.php");
 
 // produces an invalid object if failed
-// set $maybeInfo to FALSE if not needed
 // CHECK the created element with IsValid before use
+// $string is the object path
+// $physicalPath is the TPhysicalPath, if known, or FALSE
 function ElementFactory($string,$physicalPath = FALSE)
   {
+  static $cache = array();
+
   // if cached, return it
-  if (isset($string))
-    if (USE_APC)
-      {
-      $success = FALSE;
-      $cached = apc_fetch(ELEMENT_CACHE_PREFIX.$string,$success);
-    
-      if ($success)
-        return $cached;
-      }
-      else
-        {
-        static $cache = array();
-  
-        if (isset($cache[$string]))
-        return $cache[$string];
-        }
+  if (isset($string) && isset($cache[$string]))
+    return $cache[$string];
 
   $maybeElement = FALSE;
 
@@ -46,10 +35,7 @@ function ElementFactory($string,$physicalPath = FALSE)
 
   // cache it
   if (isset($string) && ($maybeElement !== FALSE))
-    if (USE_APC)
-      apc_add(ELEMENT_CACHE_PREFIX.$string,$maybeElement);
-      else
-        $cache[$string] = $maybeElement;
+    $cache[$string] = $maybeElement;
     
   return $maybeElement;
   }
