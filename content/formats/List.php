@@ -63,12 +63,13 @@ class TListGenericHolder extends THtmlProducer
 class TListHolder extends THtmlProducer
   {
   // if $name is an int, the list is unnamed
-  public function __construct($info,$name,$reversed,$ordered,$start)
+  public function __construct($info,$name,$reversed,$ordered,$start,$cla)
     {
     $this->start = $start;       // start from this item number (not reversed yet)
     $this->name = $name;
     $this->reversed = $reversed;
     $this->ordered = $ordered;
+    $this->cla = $cla;
     $this->ActiveSymbolsFromInfo($info);
     }
 
@@ -96,7 +97,10 @@ class TListHolder extends THtmlProducer
         }
       $result .= " start=\"".(string)($realstart)."\"";
       }
-    $result .= ">";
+    $result .= ">\r\n";
+
+    // begin the first item
+    $result .= "<li class=\"".htmlspecialchars($this->cla)."\">";
     return $result;
     }
 
@@ -104,6 +108,7 @@ class TListHolder extends THtmlProducer
   private $name;
   private $reversed;
   private $ordered;
+  private $cla;
   }
 
 // holds <li> tags
@@ -120,7 +125,7 @@ class TListItemHolder extends THtmlProducer
     if (!$this->VisibleAll($info))
       return "";
 
-    return "<li class=\"".htmlspecialchars($this->cla)."\">";
+    return "</li>\r\n<li class=\"".htmlspecialchars($this->cla)."\">";
     }
 
   private $cla;
@@ -207,8 +212,9 @@ class TListFormat extends TFormatStatus
     $data->currentname[$data->depth] = $name;
     $data->ordered[$name] = $ordered;
 
-    
-    $info->AddToResultChain(new TListHolder($info,$name,$reversed,$ordered,$start));
+    $data->itemcounter[$name]++; // if LISTITEM is called 0 times, the list has 1 item
+    $info->AddToResultChain(new TListHolder($info,$name,$reversed,$ordered,$start,
+      TListItemFormat::GetClassOnTop($info,$data,$name)));
     }
 
   public function OnEnd($info,$topsymbname)
@@ -229,7 +235,7 @@ class TListFormat extends TFormatStatus
     if ($data->depth > 0)
       $data->depth--;
 
-    $info->AddToResultChain(new TListGenericHolder($info,$ordered ? "</ol>\r\n" : "</ul>\r\n"));
+    $info->AddToResultChain(new TListGenericHolder($info,"</li>".($ordered ? "</ol>\r\n" : "</ul>\r\n")));
 
     parent::OnEnd($info,$topsymbname);
     }
@@ -266,10 +272,8 @@ class TListItemFormat extends TFormatStatus
     return "";
     }
 
-  public function OnBegin($info,$attribs,$topsymbattr)
+  public function OnPulse($info,$attribs,$topsymbattr)
     {
-    parent::OnBegin($info,$attribs,$topsymbattr);
-
     $data = TListFormatData::Get($info);
 
     if (!isset($data->currentname[$data->depth]))
@@ -283,21 +287,18 @@ class TListItemFormat extends TFormatStatus
       return; // integrity check
     $data->itemcounter[$name]++;
 
-    // get the class on the top of the stack
+    $info->AddToResultChain(new TListItemHolder($info,self::GetClassOnTop($info,$data,$name)));
+    }
+
+  // get the current active list class
+  public static function GetClassOnTop($info,$data,$name)
+    {
     $olulname = $data->ordered[$name] ? PARAMETER_OLISTCLASS : PARAMETER_ULISTCLASS;
     $class = $data->ordered[$name] ? TListFormatData::DEFAULT_LIST_CLASS_OL : TListFormatData::DEFAULT_LIST_CLASS_UL;
     $symbattr = $info->GetTopActiveSymbol($olulname);
     if ($symbattr !== FALSE)
       $class = $symbattr->format->GetListClass($info,$symbattr->attribs);
-
-    $info->AddToResultChain(new TListItemHolder($info,$class));
-    }
-
-  public function OnEnd($info,$topsymbname)
-    {
-    $info->AddToResultChain(new TListGenericHolder($info,"</li>\r\n"));
-
-    parent::OnEnd($info,$topsymbname);
+    return $class;
     }
 
   public function GetName()

@@ -34,7 +34,7 @@ define("PARAMETER_SNIPPET","SNIPPET");       // parts of (formatted) text within
 define("PARAMETER_HORIZONTAL_LINE","HORIZONTALLINE");
 
 define("PARAMETER_LIST","LIST");
-define("PARAMETER_LISTITEM","LISTITEM");
+define("PARAMETER_LISTITEM","LISTITEM");     // [LISTITEM] starts a new item in current active list
 define("PARAMETER_ULISTCLASS","ULISTTYPE");  // appearance of ordered lists
 define("PARAMETER_OLISTCLASS","OLISTTYPE");  // appearance of unordered lists
 
