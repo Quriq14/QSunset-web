@@ -54,7 +54,11 @@ class TParam
     if (!$this->IsCustom())
       return "";
 
-    return trim(substr($this->data,strlen(NParams::CUSTOM_PREFIX_STR)));
+    $value = substr($this->data,strlen(NParams::CUSTOM_PREFIX_STR));
+    if ($value === FALSE)
+      $value = "";
+
+    return trim($value);
     }
 
   private $data;
@@ -116,7 +120,7 @@ class NParams
   private static $DEFAULTS = array(
     self::LANG_ORIG                => NLanguages::LANGUAGE_DEFAULT,
     self::LANG_AVAIL               => NLanguages::LANGUAGE_DEFAULT,
-    self::FOOTER                   => "",
+    self::FOOTER                   => DEFAULT_FOOTER_CONTENT,
     self::SHOW_CONT_TITLE          => self::TRUE_STR,
     self::SHOW_CONT_SUBTITLE       => self::FALSE_STR,
     self::HEADER_TITLE             => DEFAULT_HEADER_TITLE_CONTENT,

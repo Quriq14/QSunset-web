@@ -18,9 +18,11 @@ define("IMAGE_ROOT","img/");
 define("FILE_CONTENT_SEPARATOR","----------------------------------------"); // trailing characters on same line will be ignored
 define("FILE_MAX_LINE_LENGTH",1024);
 
-define("ERROR_404_PATH","ERRORS".DIR_PATH_SEP."HTTP".PATH_SEP."404"); // logical path of the 404 error
 define("DEFAULT_HEADER_TITLE_CONTENT","<INCLUDE".PATH_SEP."DEFAULTHEADER>");
+define("DEFAULT_FOOTER_CONTENT","<INCLUDE".PATH_SEP."DEFAULTFOOTER>");
 define("DEFAULT_READABILITY_ERROR_CONTENT","<ERRORS".DIR_PATH_SEP."VISIBILITY".PATH_SEP."HIDDEN>");
+
+define("ERROR_404_PATH","ERRORS".DIR_PATH_SEP."HTTP".PATH_SEP."404"); // logical path of the 404 error
 define("MAX_CONSECUTIVE_REDIRECT",10);
 
 class NLanguages
