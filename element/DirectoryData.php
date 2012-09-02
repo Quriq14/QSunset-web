@@ -270,6 +270,30 @@ class TDirectoryData extends TElementData
     return "";
     }
 
+  protected function GetLastEditTimePhys()
+    {
+    if (!$this->IsValid())
+      return FALSE;
+
+    $index = IndexParserFactory($this->physicalpath->Get(),$this->info->id);
+    if (!$index->IsValid())
+      return FALSE;
+
+    return $index->GetLastEditTime();
+    }
+
+  protected function GetCreationTimePhys()
+    {
+    if (!$this->IsValid())
+      return FALSE;
+
+    $index = IndexParserFactory($this->physicalpath->Get(),$this->info->id);
+    if (!$index->IsValid())
+      return FALSE;
+
+    return $index->GetCreationTime();
+    }
+
   private $path;
   private $physicalpath;
   private $info;

@@ -23,6 +23,9 @@ class TParam
   public function ToString() {return $this->data; }
   public function ToBool() {return strtoupper($this->data) === strtoupper(NParams::TRUE_STR); }
 
+  // convert the content to a date/time (FALSE if failed)
+  public function ToDate() {return strtotime($this->data); }
+
   public function ToLowercaseArray($separator) // produce a lowercase string array (empty elements are removed)
     {
     if (!isset($separator) || !is_string($separator))
@@ -107,6 +110,9 @@ class NParams
   const PREV               = "Prev-section";             // defines the previous section for this section
     // same as above
 
+  const CREATED            = "Created";                  // date/time of the creation of the element
+  const LAST_EDIT          = "Last-modified";            // date/time of the last modification of the element
+
   // values
   const TRUE_STR           = "YES";
   const FALSE_STR          = "NO";
@@ -135,6 +141,8 @@ class NParams
     self::PREV                     => self::AUTO_STR,
     self::HTTP_STATUS_CODE         => "",
     self::READABLE_ERROR           => DEFAULT_READABILITY_ERROR_CONTENT,
+    self::CREATED                  => self::AUTO_STR, // if set to AUTO, the date will be obtained from the operating system
+    self::LAST_EDIT                => self::AUTO_STR, // same as above
     );
 
   // returns "" if failed

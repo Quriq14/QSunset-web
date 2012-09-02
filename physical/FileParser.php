@@ -32,6 +32,7 @@ class TFileParser
   function __construct($filename)
     {
     $this->handler = FALSE;
+    $this->fileName = $filename;
     if (is_file($filename) && is_readable($filename))
       $this->handler = fopen($filename,"r");
     }
@@ -195,6 +196,25 @@ class TFileParser
     return FALSE;
     }
 
+  // returns an int (unix timestamp) or FALSE if failed
+  public function GetCreationTime()
+    {
+    if (!$this->IsValid())
+      return FALSE;
+
+    return filectime($this->fileName); // this is not the true creation time
+                                       // but creation time should be set by parameter in most cases
+    }
+
+  // returns an int (unix timestamp) or FALSE if failed
+  public function GetLastEditTime()
+    {
+    if (!$this->IsValid())
+      return FALSE;
+
+    return filemtime($this->fileName); // returns FALSE if failed
+    }
+
   // returns a TFileParseInfo object
   // with type EOF if ended
   // or type ERROR if error
@@ -288,6 +308,7 @@ class TFileParser
     }
 
   private $handler;
+  private $fileName;
 
   private $inHeaderArea; // only Scan and Reset can access this
   private $linecounter;  // only Scan and Reset can access this

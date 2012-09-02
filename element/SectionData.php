@@ -260,6 +260,30 @@ class TSectionData extends TElementData
     return $sectentry;
     }
 
+  protected function GetLastEditTimePhys()
+    {
+    if (!$this->IsValid())
+      return FALSE;
+
+    $scanner = FileParserFactory($this->sPhysicalPath->Get());
+    if (!$scanner->IsValid())
+      return FALSE;
+
+    return $scanner->GetLastEditTime();
+    }
+
+  protected function GetCreationTimePhys()
+    {
+    if (!$this->IsValid())
+      return FALSE;
+
+    $scanner = FileParserFactory($this->sPhysicalPath->Get());
+    if (!$scanner->IsValid())
+      return FALSE;
+
+    return $scanner->GetCreationTime();
+    }
+
   private $section; // a string or "" if invalid
   private $sinfo;    // a TSectionHeader object or FALSE if invalid
 

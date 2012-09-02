@@ -95,6 +95,43 @@ abstract class TElementData
     {
     return FALSE;
     }
+
+  // time functions to query the operating system
+  abstract protected function GetLastEditTimePhys(); // returns an int (unix timestamp): the file last edit time
+  abstract protected function GetCreationTimePhys();  // returns an int (unix timestamp): the file creation time
+
+  // time functions (return FALSE if failed, but should never happen unless !IsValid or filesystem failure)
+  public function GetLastEditTime()
+    {
+    $result = $this->GetParamDefault(NParams::LAST_EDIT);
+    if ($result->IsAuto()) // obtain automatically from the operating system
+      return $this->GetLastEditTimePhys();
+
+    if ($result->IsFalse())
+      return FALSE; // disabled
+
+    $result = $result->ToDate();
+    if ($result === FALSE) // conversion error
+      return $this->GetLastEditTimePhys();
+
+    return $result;
+    }
+
+  public function GetCreationTime()
+    {
+    $result = $this->GetParamDefault(NParams::CREATED);
+    if ($result->IsAuto()) // obtain automatically from the operating system
+      return $this->GetCreationTimePhys();
+
+    if ($result->IsFalse())
+      return FALSE;
+
+    $result = $result->ToDate();
+    if ($result === FALSE) // conversion error
+      return $this->GetCreationTimePhys();
+
+    return $result;
+    }
   }
 
 require_once("element/ElementFactory.php");

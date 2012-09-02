@@ -97,6 +97,10 @@ class TIndexParser
     $contentidx = 0;
     for ($rawcontentidx; $rawcontentidx < $rawcontentcount; $rawcontentidx++)
       $this->content[$contentidx++] = $rawcontent[$rawcontentidx];
+
+    // save timestamp information
+    $this->created = $scanner->GetCreationTime();
+    $this->lastedit = $scanner->GetLastEditTime();
     }
 
   // process a sub-index (recursive)
@@ -188,6 +192,16 @@ class TIndexParser
     return $this->content;
     }
 
+  public function GetCreationTime()
+    {
+    return $this->created;
+    }
+
+  public function GetLastEditTime()
+    {
+    return $this->lastedit;
+    }
+
   private $dir;
   private $section;
 
@@ -196,7 +210,10 @@ class TIndexParser
 
   private $idmap;  // id map for fast association id->indexentry
 
-  private $content; // everything between an Info and [EndInfo] directives 
+  private $content; // everything between an Info and [EndInfo] directives
+
+  private $created; // creation timestamp
+  private $lastedit;// last edit timestamp
   }
 
 // constructs a cached IndexParser
