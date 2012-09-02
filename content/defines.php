@@ -45,6 +45,9 @@ define("PARAMETER_JUMP","JUMP");             // [JUMP=if=condition=to=label BEGI
 define("PARAMETER_DISPLAYIF","DISPLAYIF");   // [DISPLAYIF=condition BEGIN] the content is hidden if the condition is not met
 define("PARAMETER_TERMINATEIF","TERMINATEIF"); // [TERMINATEIF=condition] terminates processing of current file if contition is true
 
+define("PARAMETER_DATETIME","DATETIME");     // [DATETIME=source=format] writes the date "source", formatted with "format"
+                                             // Available dates: created (file creation), lastedit
+
 define("PREFIX_SHORTCUT_LENGTH",3);
 define("PREFIX_SHORTCUT","SC:");
 define("PREFIX_SHORTCUT_TOTAL_LENGTH",5); // number of character of the prefixes below (to drop the prefix faster)

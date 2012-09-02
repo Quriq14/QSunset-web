@@ -15,6 +15,7 @@ require_once("content/formats/Image.php");
 require_once("content/formats/Jump.php");
 require_once("content/formats/DisplayIf.php");
 require_once("content/formats/TerminateIf.php");
+require_once("content/formats/Datetime.php");
 
 function FormatFactory($name)
   {
@@ -76,6 +77,8 @@ function FormatFactory($name)
       return new TDisplayIfFormat();
     case PARAMETER_TERMINATEIF:
       return new TTerminateIfFormat();
+    case PARAMETER_DATETIME:
+      return new TDateTimeFormat();
     default:
       return FALSE;
     }

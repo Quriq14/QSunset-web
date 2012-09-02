@@ -26,6 +26,8 @@ class NParseError
   const CONDITION_NOPARAM        = 14; // a condition required a parameter
   const CONDITION_WRONG_TYPE     = 15; // a statement returned a result of the wrong type
   const JUMP_STH_EXPECTED        = 16;
+  const DATETIME_INVALID_FORMAT  = 17;
+  const DATETIME_UNKNOWN_SOURCE  = 18;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -51,7 +53,9 @@ class NParseError
     self::CONDITION_UNKNOWN        => "Unknown operator in condition: \"#0#\".",
     self::CONDITION_NOPARAM        => "Parameter not specified for condition \"#0#\", \"#1#\" returned.",
     self::CONDITION_WRONG_TYPE     => "A statement of type \"#0#\" is expected for condition \"#1#\".",
-    self::JUMP_STH_EXPECTED        => "Jump: #0# expected."
+    self::JUMP_STH_EXPECTED        => "Jump: #0# expected.",
+    self::DATETIME_INVALID_FORMAT  => "Could not parse the format string for DATETIME: \"#0#\".",
+    self::DATETIME_UNKNOWN_SOURCE  => "Unknown or undefined date for DATETIME: \"#0#\".",
     );
 
   // sends an error
