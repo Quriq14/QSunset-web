@@ -59,7 +59,7 @@ class TSectionData extends TElementData
     if (!$scanner->IsValid())
       return;
 
-    $headers = $scanner->ScanSectionHeaders($section);
+    $headers = $scanner->GetSectionHeaders($section);
     if (count($headers) < 1)
       return;
 
@@ -101,7 +101,7 @@ class TSectionData extends TElementData
     return $this->section;
     }
 
-  // returns a TSectionHeader object, FALSE if invalid
+  // returns a TSectionInfo object, FALSE if invalid
   public function GetInfo()
     {
     if (!$this->IsValid())

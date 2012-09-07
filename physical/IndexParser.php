@@ -75,7 +75,7 @@ class TIndexParser
       return;
 
     $rawcontent = array();
-    $headers = $scanner->ScanSectionHeaders($section);
+    $headers = $scanner->GetSectionHeaders($section);
     if (count($headers) > 0)
       {
       $this->info = $headers[0];
@@ -206,11 +206,11 @@ class TIndexParser
   private $section;
 
   private $index;  // array of TIndexEntry
-  private $info;   // TSectionHeader object
+  private $info;   // TSectionInfo object
 
   private $idmap;  // id map for fast association id->indexentry
 
-  private $content; // everything between an Info and [EndInfo] directives
+  private $content; // everything after the End directive
 
   private $created; // creation timestamp
   private $lastedit;// last edit timestamp
