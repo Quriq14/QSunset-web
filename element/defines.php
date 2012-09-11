@@ -10,6 +10,7 @@ define("PATH_ROOT","");      // path of the root directory
 define("SYSTEM_PATH_SEP","/");                          // separator for folders (from the operating system)
 define("SYSTEM_PATH_ROOT",".".SYSTEM_PATH_SEP."root");  // ROOT folder: directories outside this should NEVER be accessed
 define("SYSTEM_FILE_ROOT",SYSTEM_PATH_ROOT.SYSTEM_PATH_SEP."index.txt"); // FILE in which there is the root folder data
+define("SYSTEM_CACHE_ROOT",".".SYSTEM_PATH_SEP."cache");
 
 define("MAX_PATH_DEPTH",20); // max depth of directory tree
 

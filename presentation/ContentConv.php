@@ -41,7 +41,8 @@ function PrepareContentData($view,$toRight)
     {
     if ($prev->IsReachable())
       {
-      $contentdata->prevLabel = NContentParser::Parse($prev->GetTitle(),$view->GetContentParserInfo());
+      $contentdata->prevLabel = NContentParser::Parse($prev->GetTitle(),
+        new TContentParserInfo($view->GetLanguage(),$prev,NPresCacheKeys::TITLE));
       $contentdata->prevAddr = $prev->GetAddress();
       }
     }
@@ -50,7 +51,8 @@ function PrepareContentData($view,$toRight)
     {
     if ($next->IsReachable()) // check reachability
       {
-      $contentdata->nextLabel = NContentParser::Parse($next->GetTitle(),$view->GetContentParserInfo());
+      $contentdata->nextLabel = NContentParser::Parse($next->GetTitle(),
+        new TContentParserInfo($view->GetLanguage(),$next,NPresCacheKeys::TITLE));
       $contentdata->nextAddr = $next->GetAddress();
       }
     }

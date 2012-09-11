@@ -18,12 +18,14 @@ function IndexTreeGenPivot($view,$dirindex,$depth,$markname)
   for ($i = 0; $i < $dirindexcount; $i++)
     {
     $treeelem = new TIndexTreeElem();
-    $treeelem->name = NContentParser::Parse($dirindex[$i]->GetTitle(),$view->GetContentParserInfo());
+    $treeelem->name = NContentParser::Parse($dirindex[$i]->GetTitle(),
+      new TContentParserInfo($view->GetLanguage(),$dirindex[$i],NPresCacheKeys::TITLE));
     $treeelem->href = $dirindex[$i]->GetAddress();
     $treeelem->marked = $treeelem->href === $markname; // it's the current element
     $treeelem->titleonly = !($dirindex[$i]->IsReachable());
     $treeelem->directory = ($dirindex[$i]->GetType() === TElementType::DIRECTORY);
-    $treeelem->comment = NContentParser::Parse($dirindex[$i]->GetSubTitle(),$view->GetContentParserInfo());
+    $treeelem->comment = NContentParser::Parse($dirindex[$i]->GetSubTitle(),
+      new TContentParserInfo($view->GetLanguage(),$dirindex[$i],NPresCacheKeys::SUBTITLE));
     $treeelem->linklanguage = $view->GetLanguage();
 
     if ($treeelem->directory && $treeelem->titleonly)

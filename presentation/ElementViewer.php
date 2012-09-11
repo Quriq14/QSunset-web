@@ -10,7 +10,9 @@ require_once("content/ParseContent.php");
 
 require_once("html/htmlutils.php");
 
-define("ELEMENT_VIEWER_MAX_REDIRECT","10");
+require_once("presentation/defines.php");
+
+define("ELEMENT_VIEWER_MAX_REDIRECT",10);
 
 // this class holds one (or more, if error or silent redirect) TElement object, but transformed so that it is safely viewable
 // all the method results are HTML safe
@@ -63,7 +65,8 @@ class TElementViewer
 
   public function GetNotReadableError()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::READABLE_ERROR)->ToString(),$this->GetContentParserInfo());
+    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::READABLE_ERROR)->ToString(),
+      $this->GetContentParserInfo(NPresCacheKeys::NOT_READABLE_ERROR));
     }
 
   // no links to this page should be created
@@ -126,7 +129,8 @@ class TElementViewer
   // *** CONTENT ACCESS FUNCTIONS ***
   public function GetTitle()
     {
-    return NContentParser::Parse($this->Top()->GetTitle(),$this->GetContentParserInfo());
+    return NContentParser::Parse($this->Top()->GetTitle(),
+      $this->GetContentParserInfo(NPresCacheKeys::TITLE));
     }
 
   public function GetType()
@@ -136,7 +140,8 @@ class TElementViewer
 
   public function GetSubTitle()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::CONT_SUBTITLE)->ToString(),$this->GetContentParserInfo());
+    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::CONT_SUBTITLE)->ToString(),
+      $this->GetContentParserInfo(NPresCacheKeys::SUBTITLE));
     }
 
   public function IsDisplaySubTitle()
@@ -225,12 +230,13 @@ class TElementViewer
 
   public function GetContent()
     {
-    return NContentParser::ParseArray($this->Top()->GetContent(),$this->GetContentParserInfo());
+    return NContentParser::ParseArray($this->Top()->GetContent(),$this->GetContentParserInfo(NPresCacheKeys::CONTENT));
     }
 
   public function GetFooter()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::FOOTER)->ToString(),$this->GetContentParserInfo());
+    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::FOOTER)->ToString(),
+      $this->GetContentParserInfo(NPresCacheKeys::FOOTER));
     }
 
   public function IsDisplayTitle()
@@ -240,7 +246,8 @@ class TElementViewer
 
   public function GetHeaderTitle()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::HEADER_TITLE)->ToString(),$this->GetContentParserInfo());
+    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::HEADER_TITLE)->ToString(),
+      $this->GetContentParserInfo(NPresCacheKeys::HEADER));
     }
 
   // an array
@@ -306,12 +313,9 @@ class TElementViewer
   // *** PARSER HELPER FUNCTIONS ***
   // produce a new TContentParserInfo to be sent to the parser
   // should never fail, if the object is valid
-  public function GetContentParserInfo()
+  public function GetContentParserInfo($cacheType = FALSE)
     {
-    $result = new TContentParserInfo();
-    $result->language = $this->GetLanguage();
-    $result->PushCurrentElement($this->GetElement());
-    return $result;
+    return new TContentParserInfo($this->GetLanguage(),$this->GetElement(),$cacheType);
     }
 
   public function SetLanguage($lang)

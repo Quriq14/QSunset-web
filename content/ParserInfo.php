@@ -31,11 +31,18 @@ class TContentParserInfo
   public $cElementStack = array(); // at position 0, the current TElementData
                                    // <includes> will push new elements
   public $content  = "";
+  public $cacheKey = FALSE;       // FALSE is "no cache", otherwise a string that will be used as cache key
 
-  public function __construct()
+  public function __construct($language = FALSE,$cElement = FALSE,$cacheKey = FALSE)
     {
     $this->specialStrings = new TSpecialStringTree();
     $this->specialChars = CHAR_OPEN_SQUARE.CHAR_OPEN_ANGLED;
+
+    if ($language !== FALSE)
+      $this->language = $language;
+    if ($cElement !== FALSE)
+      $this->PushCurrentElement($cElement);
+    $this->cacheKey = $cacheKey;
     }
 
   // returns a TFormatStatus or FALSE if not existing
