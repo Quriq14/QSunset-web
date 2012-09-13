@@ -16,6 +16,7 @@ require_once("content/formats/Jump.php");
 require_once("content/formats/DisplayIf.php");
 require_once("content/formats/TerminateIf.php");
 require_once("content/formats/Datetime.php");
+require_once("content/formats/Box.php");
 
 function FormatFactory($name)
   {
@@ -79,6 +80,8 @@ function FormatFactory($name)
       return new TTerminateIfFormat();
     case PARAMETER_DATETIME:
       return new TDateTimeFormat();
+    case PARAMETER_BOX:
+      return new TBoxFormat();
     default:
       return FALSE;
     }

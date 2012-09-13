@@ -28,6 +28,7 @@ class NParseError
   const JUMP_STH_EXPECTED        = 16;
   const DATETIME_INVALID_FORMAT  = 17;
   const DATETIME_UNKNOWN_SOURCE  = 18;
+  const BOX_UNKNOWN_ATTRIB       = 19;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -56,6 +57,7 @@ class NParseError
     self::JUMP_STH_EXPECTED        => "Jump: #0# expected.",
     self::DATETIME_INVALID_FORMAT  => "Could not parse the format string for DATETIME: \"#0#\".",
     self::DATETIME_UNKNOWN_SOURCE  => "Unknown or undefined date for DATETIME: \"#0#\".",
+    self::BOX_UNKNOWN_ATTRIB       => "Box: unknown attribute: \"#0#\"",
     );
 
   // sends an error
