@@ -29,6 +29,7 @@ class NParseError
   const DATETIME_INVALID_FORMAT  = 17;
   const DATETIME_UNKNOWN_SOURCE  = 18;
   const BOX_UNKNOWN_ATTRIB       = 19;
+  const TEXTSIZE_NOPARAM         = 20;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -58,6 +59,7 @@ class NParseError
     self::DATETIME_INVALID_FORMAT  => "Could not parse the format string for DATETIME: \"#0#\".",
     self::DATETIME_UNKNOWN_SOURCE  => "Unknown or undefined date for DATETIME: \"#0#\".",
     self::BOX_UNKNOWN_ATTRIB       => "Box: unknown attribute: \"#0#\"",
+    self::TEXTSIZE_NOPARAM         => "Parameter not found for textsize.",
     );
 
   // sends an error
