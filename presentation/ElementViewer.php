@@ -235,8 +235,7 @@ class TElementViewer
 
   public function GetFooter()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::FOOTER)->ToString(),
-      $this->GetContentParserInfo(NPresCacheKeys::FOOTER));
+    return NContentParser::Parse($this->Top()->GetFooter(),$this->GetContentParserInfo(NPresCacheKeys::FOOTER));
     }
 
   public function IsDisplayTitle()
@@ -246,8 +245,7 @@ class TElementViewer
 
   public function GetHeaderTitle()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::HEADER_TITLE)->ToString(),
-      $this->GetContentParserInfo(NPresCacheKeys::HEADER));
+    return NContentParser::Parse($this->Top()->GetHeaderTitle(),$this->GetContentParserInfo(NPresCacheKeys::HEADER));
     }
 
   // an array

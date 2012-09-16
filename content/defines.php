@@ -66,4 +66,6 @@ define("CHAR_CLOSE_SQUARE","]");
 define("CHAR_OPEN_ANGLED","<");     // <angled>
 define("CHAR_CLOSE_ANGLED",">");
 
+define("INCLUDE_PART_SEPARATOR","::"); // <path::part>
+
 ?>

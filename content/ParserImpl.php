@@ -217,12 +217,26 @@ class NParserImpl
       return;
       }
 
-    $include = substr($info->content,$info->processed,$includeendidx - $info->processed); // get the command
+    $include = substr($info->content,$info->processed,$includeendidx - $info->processed); // get the path
     $include = trim($include);
 
     $info->processed = $includeendidx + 1;
 
-    NInclude::DoInclude($info,$include);
+    $part = FALSE;
+    $includepartidx = strpos($include,INCLUDE_PART_SEPARATOR);
+    if ($includepartidx !== FALSE) // the part is defined, split the string
+      {
+      $part = substr($include,$includepartidx + strlen(INCLUDE_PART_SEPARATOR));
+      if ($part === FALSE)
+        $part = "";
+      $include = substr($include,0,$includepartidx);
+      if ($include === FALSE)
+        $include = "";
+      }
+
+    if ($part === FALSE)
+      NInclude::DoInclude($info,$include);
+      else NInclude::DoInclude($info,$include,$part);
     }
   }
 ?>

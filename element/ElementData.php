@@ -73,6 +73,16 @@ abstract class TElementData
     return $this->GetParamDefault(NParams::REDIRECT_SILENT)->ToString();
     }
 
+  public function GetHeaderTitle() // a string or "" if none
+    {
+    return $this->GetParamDefault(NParams::HEADER_TITLE)->ToString();
+    }
+
+  public function GetFooter() // a string
+    {
+    return $this->GetParamDefault(NParams::FOOTER)->ToString();
+    }
+
   abstract public function GetNextAddress(); // addresses of prev and next element read from the directory index
   abstract public function GetPrevAddress(); // returns a string or FALSE if none
 

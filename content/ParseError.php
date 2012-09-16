@@ -30,6 +30,7 @@ class NParseError
   const DATETIME_UNKNOWN_SOURCE  = 18;
   const BOX_UNKNOWN_ATTRIB       = 19;
   const TEXTSIZE_NOPARAM         = 20;
+  const INCLUDE_UNKNOWN_PART     = 21;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -60,6 +61,7 @@ class NParseError
     self::DATETIME_UNKNOWN_SOURCE  => "Unknown or undefined date for DATETIME: \"#0#\".",
     self::BOX_UNKNOWN_ATTRIB       => "Box: unknown attribute: \"#0#\"",
     self::TEXTSIZE_NOPARAM         => "Parameter not found for textsize.",
+    self::INCLUDE_UNKNOWN_PART     => "Include: Unknown part: #0#",
     );
 
   // sends an error
