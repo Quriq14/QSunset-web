@@ -1,7 +1,7 @@
 <?php
 
 require_once("content/FormatStatus.php");
-
+require_once("content/ParserInfo.php");
 require_once("content/ParseError.php");
 
 // contains a format name and its attributes
@@ -202,7 +202,7 @@ class TFormatAttribs
                            // a pointer to it is stored here
   }
 
-class TParamFormatAttribs
+class TParamFormatAttribs implements IProduceRedirect
   {
   public function __construct($format,$attribs,$topsymbattr)
     {
@@ -213,7 +213,7 @@ class TParamFormatAttribs
 
   public function OnAddedProducer($info,$producer)
     {
-    $this->format->OnAddedProducer($info,$producer,$this->attribs);
+    return $this->format->OnAddedProducer($info,$producer,$this->attribs);
     }
 
   public function IsVisible($info,$content)

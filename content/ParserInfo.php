@@ -6,8 +6,17 @@ require_once("content/SpecialString.php");
 require_once("content/FormatAttribs.php");
 require_once("content/FormatStack.php");
 
+// this interface must be implemented by every class that can be used as parameter in PushProduceRedirect
+interface IProduceRedirect
+  {
+  // $info is the info that is adding the producer
+  // $producer is the producer that is being added
+  // if TRUE is returned, the next registered ProduceRedirect will be called
+  public function OnAddedProducer($info,$producer);
+  }
+
 // send this info to the parser, its output variables will be changed
-class TContentParserInfo
+class TContentParserInfo implements IProduceRedirect
   {
   // OUTPUT
   public $processed = 0;          // number of characters processed
@@ -18,8 +27,13 @@ class TContentParserInfo
   public $activeSymbols = array();  // an array of stacks of active symbols: name => TFormatStack
   public $resultChain = array();    // array of objects, $result = cat($resultChain->Pulse())
   public $producedObjects = 0;      // length of the resultChain
-  private $produceListen = array(); // every time AddToResultChain(obj) is called, the method OnAddedProducer of each
-                                    // of the objects here is called. Array string => object
+
+  private $produceRedirectStack;    // array 0..n-1 => object
+                                    // every time AddToResultChain(obj) is used, 
+                                    // the method OnAddedProducer of the top object is called
+  private $produceRedirectTop;      // index of the top of $produceRedirectStack
+  private $produceRedirectNames;    // string => id_in_$produceRedirectStack
+
   public $specialChars;             // every characters not in here will be skipped 
                                     // and considered text even before processing (see NParserImpl::Parse)
   public $specialStrings;           // for multi-character shortcuts
@@ -37,6 +51,10 @@ class TContentParserInfo
     {
     $this->specialStrings = new TSpecialStringTree();
     $this->specialChars = CHAR_OPEN_SQUARE.CHAR_OPEN_ANGLED;
+
+    $this->produceRedirectStack = array(0 => $this);
+    $this->produceRedirectTop = 0;
+    $this->produceRedirectNames = array();
 
     if ($language !== FALSE)
       $this->language = $language;
@@ -136,27 +154,43 @@ class TContentParserInfo
     return $result;
     }
 
-  public function AddToResultChain($obj)
+  // MANAGE PRODUCERS
+  // default listener
+  public function OnAddedProducer($info,$obj)
     {
     $this->resultChain[$this->producedObjects++] = $obj;
-
-    foreach ($this->produceListen as $o) // notify the listeners
-      $o->OnAddedProducer($this,$obj);
+    return FALSE;
     }
 
-  // $obj is a TParamFormatAttribs, $name is a string
-  public function AddProducerListener($name,$obj)
+  // this will be called to add a producer to the output
+  public function AddToResultChain($obj)
     {
-    if ($name === "")
-      return;
-
-    $this->produceListen[$name] = $obj;
+    $i = $this->produceRedirectTop;
+    while ((!isset($this->produceRedirectStack[$i]) || // if !isset simply skip
+      $this->produceRedirectStack[$i]->OnAddedProducer($this,$obj)) && $i > 0)
+      $i--;
     }
 
-  public function RemoveProducerListener($name)
+  // $obj is something implementing IProduceRedirect
+  public function PushProduceRedirect($name,$obj)
     {
-    if (isset($this->produceListen[$name]))
-      unset($this->produceListen[$name]);
+    if (isset($this->produceRedirectNames[$name]))
+      return; // avoid duplicates
+
+    $this->produceRedirectStack[++$this->produceRedirectTop] = $obj;
+    $this->produceRedirectNames[$name] = $this->produceRedirectTop;
+    }
+
+  public function RemoveProduceRedirect($name)
+    {
+    if (!isset($this->produceRedirectNames[$name]))
+      return; // not found
+
+    unset($this->produceRedirectStack[$this->produceRedirectNames[$name]]);
+    unset($this->produceRedirectNames[$name]);
+
+    while (!isset($this->produceRedirectStack[$this->produceRedirectTop]))
+      $this->produceRedirectTop--; // find the next valid index
     }
 
   // if $name is a shortcut symbol, it will be added to the special strings, otherwise nothing happens

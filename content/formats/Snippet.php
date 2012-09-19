@@ -29,7 +29,7 @@ class TSnippetFormat extends TFormatStatus
 
   public function IsVisible($info,$content,$attribs)
     {
-    return count($info->GetFormatData(self::STACK_KEY,array())) !== 0; // some snippet is producing
+    return TRUE; // some snippet is producing
     }
 
   public function OnBegin($info,$attribs,$topsymbattr)
@@ -43,8 +43,8 @@ class TSnippetFormat extends TFormatStatus
       }
 
     $key = self::DATA_KEY_PREFIX.$attribs[1];
-    $info->AddProducerListener($key,new TParamFormatAttribs($this,$attribs,$topsymbattr));
-      // start listening for created objects
+    $info->PushProduceRedirect($key,new TParamFormatAttribs($this,$attribs,$topsymbattr));
+      // start redirecting created objects to this object
     }
 
   public function OnEnd($info,$topsymbname)
@@ -58,7 +58,7 @@ class TSnippetFormat extends TFormatStatus
       return; // snippet name not set
 
     $key = self::DATA_KEY_PREFIX.$attribs[1];
-    $info->RemoveProducerListener($key); // stop listening
+    $info->RemoveProduceRedirect($key); // stop redirecting
 
     parent::OnEnd($info,$topsymbname);
     }
@@ -116,7 +116,7 @@ class TSnippetFormat extends TFormatStatus
   public function OnAddedProducer($info,$producer,$attribs)
     {
     if (!isset($attribs[1]) || $attribs[1] === "")
-      return; // snippet name not set
+      return FALSE; // snippet name not set
 
     $key = self::DATA_KEY_PREFIX.$attribs[1];
 
@@ -125,6 +125,8 @@ class TSnippetFormat extends TFormatStatus
     $plist[count($plist)] = $producer; // store the new producer
 
     $info->SetFormatData($key,$plist);
+
+    return FALSE;
     }
 
   public function GetName()
