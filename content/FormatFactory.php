@@ -18,6 +18,7 @@ require_once("content/formats/TerminateIf.php");
 require_once("content/formats/Datetime.php");
 require_once("content/formats/Box.php");
 require_once("content/formats/Textsize.php");
+require_once("content/formats/Table.php");
 
 function FormatFactory($name)
   {
@@ -85,6 +86,12 @@ function FormatFactory($name)
       return new TBoxFormat();
     case PARAMETER_TEXTSIZE:
       return new TTextsizeFormat();
+    case PARAMETER_TABLE:
+      return new TTableFormat();
+    case PARAMETER_TABLE_ROW:
+      return new TTableRowColumnFormat(PARAMETER_TABLE_ROW);
+    case PARAMETER_TABLE_COLUMN:
+      return new TTableRowColumnFormat(PARAMETER_TABLE_COLUMN);
     default:
       return FALSE;
     }

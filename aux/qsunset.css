@@ -640,6 +640,20 @@ li.bodytextolnone
   list-style-type: none;
   }
 
+table.bodytexttable
+  {
+  border-collapse: collapse;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 0px;
+  margin-right: 0px;
+  }
+
+td.bodytexttd
+  {
+  border: 1px solid #FF0000;
+  }
+
 a.bodytexta:link
   {
   color: #770000;

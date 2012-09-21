@@ -133,7 +133,7 @@ class TListItemHolder extends THtmlProducer
 
 class TListFormat extends TFormatStatus
   {
-    public function __construct()
+  public function __construct()
     {
     }
 

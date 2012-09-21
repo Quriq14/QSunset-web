@@ -213,7 +213,7 @@ class TParamFormatAttribs implements IProduceRedirect
 
   public function OnAddedProducer($info,$producer)
     {
-    return $this->format->OnAddedProducer($info,$producer,$this->attribs);
+    return $this->format->OnAddedProducer($info,$producer,$this);
     }
 
   public function IsVisible($info,$content)
@@ -239,6 +239,11 @@ class TParamFormatAttribs implements IProduceRedirect
   public function GetName()
     {
     return $this->format->GetName();
+    }
+
+  public function GetTopSymbName()
+    {
+    return $this->topsymbattr->GetName();
     }
 
   public $format;

@@ -31,6 +31,8 @@ class NParseError
   const BOX_UNKNOWN_ATTRIB       = 19;
   const TEXTSIZE_NOPARAM         = 20;
   const INCLUDE_UNKNOWN_PART     = 21;
+  const TABLE_COLROW_INTEGER     = 22;
+  const TABLE_COLROW_OUT_TABLE   = 23;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -62,6 +64,8 @@ class NParseError
     self::BOX_UNKNOWN_ATTRIB       => "Box: unknown attribute: \"#0#\"",
     self::TEXTSIZE_NOPARAM         => "Parameter not found for textsize.",
     self::INCLUDE_UNKNOWN_PART     => "Include: Unknown part: #0#",
+    self::TABLE_COLROW_INTEGER     => "A table #0# index must be a positive integer, not \"#1#\".",
+    self::TABLE_COLROW_OUT_TABLE   => "#0# pulse action used outside table.",
     );
 
   // sends an error

@@ -60,6 +60,12 @@ abstract class TFormatStatus
     $info->AddToResultChain($prod);
     }
 
+  public function OnAddedProducer($info,$producer,$paramformatattribs)
+    {
+    // OnAddedProducer MUST be overridden if in use
+    error_log("TFormatStatus: OnAddedProducer called.");
+    }
+
   // returns an array of TFormatAttribs (empty if none)
   public function GetSubSymbols()
     {

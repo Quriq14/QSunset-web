@@ -113,8 +113,10 @@ class TSnippetFormat extends TFormatStatus
     return $result;
     }
 
-  public function OnAddedProducer($info,$producer,$attribs)
+  public function OnAddedProducer($info,$producer,$paramformatattr)
     {
+    $attribs = $paramformatattr->attribs;
+
     if (!isset($attribs[1]) || $attribs[1] === "")
       return FALSE; // snippet name not set
 

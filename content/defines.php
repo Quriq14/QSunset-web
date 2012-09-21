@@ -52,6 +52,10 @@ define("PARAMETER_BOX","BOX");
 
 define("PARAMETER_TEXTSIZE","TEXTSIZE");     // [TEXTSIZE=npixels BEGIN]
 
+define("PARAMETER_TABLE","TABLE");
+define("PARAMETER_TABLE_ROW","ROW");         // [ROW=n BEGIN] sets current row. [ROW] increments current row. [ROW=n] resets to n
+define("PARAMETER_TABLE_COLUMN","COLUMN");   // like row, but for columns
+
 define("PREFIX_SHORTCUT_LENGTH",3);
 define("PREFIX_SHORTCUT","SC:");
 define("PREFIX_SHORTCUT_TOTAL_LENGTH",5); // number of character of the prefixes below (to drop the prefix faster)
