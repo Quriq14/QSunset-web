@@ -43,4 +43,6 @@ class TTextsizeFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TTextsizeFormat());
+
 ?>

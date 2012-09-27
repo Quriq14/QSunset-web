@@ -42,4 +42,6 @@ class TTerminateIfFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TTerminateIfFormat());
+
 ?>

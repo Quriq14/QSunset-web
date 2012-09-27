@@ -35,6 +35,8 @@ class TBoldFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TBoldFormat());
+
 class TItalicFormat extends TFormatStatus
   {
   public function __construct()
@@ -67,6 +69,8 @@ class TItalicFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TItalicFormat());
+
 class TUnderlineFormat extends TFormatStatus
   {
   public function __construct()
@@ -98,5 +102,7 @@ class TUnderlineFormat extends TFormatStatus
     return PARAMETER_UNDERLINE;
     }
   }
+
+NFormatFactory::Register(new TUnderlineFormat());
 
 ?>

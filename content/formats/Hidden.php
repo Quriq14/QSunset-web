@@ -35,4 +35,6 @@ class THiddenFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new THiddenFormat());
+
 ?>

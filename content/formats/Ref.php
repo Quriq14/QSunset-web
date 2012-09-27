@@ -49,6 +49,8 @@ class TRefFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TRefFormat());
+
 class TRelativeRefFormat extends TFormatStatus
   {
   public function __construct()
@@ -155,6 +157,8 @@ class TRelativeRefFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TRelativeRefFormat());
+
 class TFarRefFormat extends TFormatStatus
   {
   public function __construct()
@@ -195,5 +199,7 @@ class TFarRefFormat extends TFormatStatus
     return PARAMETER_FAR_REF;
     }
   }
+
+NFormatFactory::Register(new TFarRefFormat());
 
 ?>

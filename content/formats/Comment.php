@@ -3,7 +3,7 @@
 require_once("content/FormatStatus.php");
 require_once("content/defines.php");
 
-class TCommentScriptFormat extends TFormatStatus
+class TCommentFormat extends TFormatStatus
   {
   function __construct()
     {
@@ -59,5 +59,7 @@ class TCommentScriptFormat extends TFormatStatus
     return PARAMETER_COMMENT;
     }
   }
+
+NFormatFactory::Register(new TCommentFormat());
 
 ?>

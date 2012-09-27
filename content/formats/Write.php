@@ -41,4 +41,6 @@ class TCharWriterFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TCharWriterFormat());
+
 ?>

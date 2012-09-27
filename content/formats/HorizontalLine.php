@@ -37,4 +37,6 @@ class THorizontalLineFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new THorizontalLineFormat());
+
 ?>

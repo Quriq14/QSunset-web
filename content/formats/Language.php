@@ -40,4 +40,6 @@ class TLanguageFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TLanguageFormat());
+
 ?>

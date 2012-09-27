@@ -77,4 +77,6 @@ class TDateTimeFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TDateTimeFormat());
+
 ?>

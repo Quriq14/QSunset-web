@@ -36,4 +36,6 @@ class TDisplayIfFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TDisplayIfFormat());
+
 ?>

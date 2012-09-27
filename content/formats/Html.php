@@ -97,4 +97,6 @@ class THtmlFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new THtmlFormat());
+
 ?>

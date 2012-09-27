@@ -246,6 +246,8 @@ class TListFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TListFormat());
+
 class TListItemFormat extends TFormatStatus
   {
     public function __construct()
@@ -306,6 +308,8 @@ class TListItemFormat extends TFormatStatus
     return PARAMETER_LISTITEM;
     }
   }
+
+NFormatFactory::Register(new TListItemFormat());
 
 class TListClassFormat extends TFormatStatus
   {
@@ -399,4 +403,8 @@ class TListClassFormat extends TFormatStatus
   private $prefix = "";
   private $def = "";
   }
+
+NFormatFactory::Register(new TListClassFormat(PARAMETER_OLISTCLASS));
+NFormatFactory::Register(new TListClassFormat(PARAMETER_ULISTCLASS));
+
 ?>

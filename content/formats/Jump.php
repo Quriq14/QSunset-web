@@ -128,4 +128,6 @@ class TJumpFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TJumpFormat());
+
 ?>

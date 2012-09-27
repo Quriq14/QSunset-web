@@ -35,4 +35,6 @@ class TLineBreakFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TLineBreakFormat());
+
 ?>

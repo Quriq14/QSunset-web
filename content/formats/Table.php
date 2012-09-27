@@ -301,6 +301,8 @@ class TTableFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TTableFormat());
+
 class TTableRowColumnFormat extends TFormatStatus
   {
   public function __construct($name)
@@ -401,5 +403,8 @@ class TTableRowColumnFormat extends TFormatStatus
 
   private $name;
   }
+
+NFormatFactory::Register(new TTableRowColumnFormat(PARAMETER_TABLE_COLUMN));
+NFormatFactory::Register(new TTableRowColumnFormat(PARAMETER_TABLE_ROW));
 
 ?>

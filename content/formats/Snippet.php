@@ -137,4 +137,6 @@ class TSnippetFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TSnippetFormat());
+
 ?>

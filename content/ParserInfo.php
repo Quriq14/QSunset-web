@@ -70,7 +70,7 @@ class TContentParserInfo implements IProduceRedirect
     if ($name === "")
       return FALSE;
 
-    $stateless = FormatFactory($name); // see if a default stateless format status exists
+    $stateless = NFormatFactory::GetByName($name); // see if a default stateless format status exists
     if ($stateless !== FALSE)
       return $stateless;
 

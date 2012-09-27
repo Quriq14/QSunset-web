@@ -102,4 +102,6 @@ class TBoxFormat extends TFormatStatus
     }
   }
 
+NFormatFactory::Register(new TBoxFormat());
+
 ?>

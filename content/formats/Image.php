@@ -105,4 +105,7 @@ class TImageFormat extends TFormatStatus
   private $x;
   }
 
+NFormatFactory::Register(new TImageFormat(TRUE));
+NFormatFactory::Register(new TImageFormat(FALSE));
+
 ?>

@@ -1,5 +1,36 @@
 <?php
 
+class NFormatFactory
+  {
+  public static function Register($formatstatus)
+    {
+    $name = $formatstatus->GetName();
+    self::$formats[$name] = $formatstatus;
+    self::$nameset[$name] = TRUE;
+    }
+
+  // FALSE if not existing
+  public static function GetByName($name)
+    {
+    if ($name === "")
+      return FALSE;
+
+    if (!isset(self::$formats[$name]))
+      return FALSE;
+
+    return self::$formats[$name];
+    }
+
+  // returns a set format_names => TRUE
+  public static function GetNameSet()
+    {
+    return self::$nameset;
+    }
+
+  private static $nameset = array(); // is a format registered? name => TRUE
+  private static $formats = array(); // registered formats: name => TFormatStatus
+  }
+
 require_once("content/formats/BoldItalicUnderline.php");
 require_once("content/formats/Paragraph.php");
 require_once("content/formats/Hidden.php");
@@ -19,82 +50,5 @@ require_once("content/formats/Datetime.php");
 require_once("content/formats/Box.php");
 require_once("content/formats/Textsize.php");
 require_once("content/formats/Table.php");
-
-function FormatFactory($name)
-  {
-  if (!isset($name) || !is_string($name) || $name === "")
-    return FALSE;
-
-  static $status = array();  // cache the formats (they MUST be all stateless)
-
-  if (isset($status[$name]))
-    {
-    return $status[$name];
-    }
-
-  switch (strtoupper($name))
-    {
-    case PARAMETER_BOLD:
-      return new TBoldFormat();
-    case PARAMETER_ITALIC:
-      return new TItalicFormat();
-    case PARAMETER_UNDERLINE:
-      return new TUnderlineFormat();
-    case PARAMETER_LINEBREAK:
-      return new TLineBreakFormat();
-    case PARAMETER_HIDDEN:
-      return new THiddenFormat();
-    case PARAMETER_COMMENT:
-      return new TCommentScriptFormat();
-    case PARAMETER_LANGUAGE:
-      return new TLanguageFormat();
-    case PARAMETER_WRITE_CHARS:
-      return new TCharWriterFormat();
-    case PARAMETER_REF:
-      return new TRefFormat();
-    case PARAMETER_RELATIVE_REF:
-      return new TRelativeRefFormat();
-    case PARAMETER_FAR_REF:
-      return new TFarRefFormat();
-    case PARAMETER_HTML:
-      return new THtmlFormat();
-    case PARAMETER_SNIPPET:
-      return new TSnippetFormat();
-    case PARAMETER_HORIZONTAL_LINE:
-      return new THorizontalLineFormat();
-    case PARAMETER_LIST:
-      return new TListFormat();
-    case PARAMETER_LISTITEM:
-      return new TListItemFormat();
-    case PARAMETER_OLISTCLASS:
-      return new TListClassFormat(PARAMETER_OLISTCLASS);
-    case PARAMETER_ULISTCLASS:
-      return new TListClassFormat(PARAMETER_ULISTCLASS);
-    case PARAMETER_IMAGE:
-      return new TImageFormat(FALSE);
-    case PARAMETER_IMAGE_FAR:
-      return new TImageFormat(TRUE);
-    case PARAMETER_JUMP:
-      return new TJumpFormat();
-    case PARAMETER_DISPLAYIF:
-      return new TDisplayIfFormat();
-    case PARAMETER_TERMINATEIF:
-      return new TTerminateIfFormat();
-    case PARAMETER_DATETIME:
-      return new TDateTimeFormat();
-    case PARAMETER_BOX:
-      return new TBoxFormat();
-    case PARAMETER_TEXTSIZE:
-      return new TTextsizeFormat();
-    case PARAMETER_TABLE:
-      return new TTableFormat();
-    case PARAMETER_TABLE_ROW:
-      return new TTableRowColumnFormat(PARAMETER_TABLE_ROW);
-    case PARAMETER_TABLE_COLUMN:
-      return new TTableRowColumnFormat(PARAMETER_TABLE_COLUMN);
-    default:
-      return FALSE;
-    }
-  }
 
 ?>
