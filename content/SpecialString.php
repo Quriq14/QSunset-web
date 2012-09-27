@@ -45,6 +45,29 @@ class TSpecialStringTree
     return $this->childs[$letter]->Find($offset + 1,$str,$depth + 1);
     }
 
+  // removes a string from the tree
+  public function Remove($str,$offset = 0)
+    {
+    if ($offset >= strlen($str))
+      {
+      $this->data = FALSE; // set to FALSE
+      return; // processing ended: end of string
+      }
+
+    $letter = $str[$offset];
+    if (!isset($this->childs[$letter])) // processing ended: not found
+      return;
+
+    $this->childs[$letter]->Remove($offset + 1,$str);
+    if ($this->childs[$letter]->IsEmpty())
+      unset($this->childs[$letter]); // if child is now empty, free some memory
+    }
+
+  public function IsEmpty()
+    {
+    return count($this->childs) === 0 && $this->data === FALSE;
+    }
+
   private $data;
   private $childs = array(); // indexed by letters
   }

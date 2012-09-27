@@ -42,7 +42,7 @@ class NParserImpl
     for ($info->processed; $info->processed < $contentlength; $info->processed)
       {
       // skip characters (and put to the buffer) until a special character is found
-      $nextSpecialChar = NCommandParser::FindFirstOf($info->content,$info->processed,$info->specialChars);
+      $nextSpecialChar = NCommandParser::FindFirstOf($info->content,$info->processed,$info->GetSpecialChars());
       if ($nextSpecialChar >= $contentlength) // no more special chars found
         {
         $ma = substr($info->content,$info->processed);
@@ -74,7 +74,7 @@ class NParserImpl
           break;
         default:
           // it's a common character. What action will be taken?
-          $specialFinding = $info->specialStrings->Find($info->processed,$info->content);
+          $specialFinding = $info->FindSpecialString($info->processed,$info->content);
           $actionParam = FALSE;
           if ($specialFinding !== FALSE) // a special string is found
             {
@@ -142,8 +142,11 @@ class NParserImpl
       return; // symbol name is empty
 
     $symbolName = strtoupper($symbolName); // symbol name is case-insensitive
+    if (!$info->IsSymbolEnabled($symbolName))
+      return; // disabled
 
     $symbol = $info->GetOrCreateFormatByName($symbolName);
+
     $symbolattr = new TFormatAttribs($symbolName,$paramArray[0],$symbol);
 
     $paramCount = count($paramArray);
@@ -167,7 +170,11 @@ class NParserImpl
 
     for ($i = 1; $i < $paramCount; $i++)
       {
-      $subsymbolattr = new TFormatAttribs(strtoupper($paramArray[$i][0]),$paramArray[$i]);
+      $subsymbolname = strtoupper($paramArray[$i][0]);
+      if (!$info->IsSymbolEnabled($subsymbolname))
+        return;
+
+      $subsymbolattr = new TFormatAttribs($subsymbolname,$paramArray[$i]);
       if (count($subsymbolattr->GetSubSymbolsWithName($info,$symbolName)) === 0)   // prevent circular nesting
         $symbolattr->AddSubSymbol($subsymbolattr);
         else
