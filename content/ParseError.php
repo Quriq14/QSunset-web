@@ -33,6 +33,7 @@ class NParseError
   const INCLUDE_UNKNOWN_PART     = 21;
   const TABLE_COLROW_INTEGER     = 22;
   const TABLE_COLROW_OUT_TABLE   = 23;
+  const SYMBOL_DISABLED          = 24;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -66,6 +67,7 @@ class NParseError
     self::INCLUDE_UNKNOWN_PART     => "Include: Unknown part: #0#",
     self::TABLE_COLROW_INTEGER     => "A table #0# index must be a positive integer, not \"#1#\".",
     self::TABLE_COLROW_OUT_TABLE   => "#0# pulse action used outside table.",
+    self::SYMBOL_DISABLED          => "Symbol \"#0#\" is disabled.",
     );
 
   // sends an error

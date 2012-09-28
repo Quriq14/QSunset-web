@@ -142,10 +142,13 @@ class NParserImpl
       return; // symbol name is empty
 
     $symbolName = strtoupper($symbolName); // symbol name is case-insensitive
-    if (!$info->IsSymbolEnabled($symbolName))
-      return; // disabled
 
     $symbol = $info->GetOrCreateFormatByName($symbolName);
+    if (!$info->IsSymbolEnabled($symbolName))
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::SYMBOL_DISABLED,array(0 => $symbolName));
+      return; // disabled
+      }
 
     $symbolattr = new TFormatAttribs($symbolName,$paramArray[0],$symbol);
 
@@ -172,7 +175,10 @@ class NParserImpl
       {
       $subsymbolname = strtoupper($paramArray[$i][0]);
       if (!$info->IsSymbolEnabled($subsymbolname))
-        return;
+        {
+        NParseError::Error($info,NParseError::ERROR,NParseError::SYMBOL_DISABLED,array(0 => $subsymbolname));
+        continue;
+        }
 
       $subsymbolattr = new TFormatAttribs($subsymbolname,$paramArray[$i]);
       if (count($subsymbolattr->GetSubSymbolsWithName($info,$symbolName)) === 0)   // prevent circular nesting

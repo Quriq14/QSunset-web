@@ -38,6 +38,8 @@ class TContentParserInfo implements IProduceRedirect
                                     // and considered text even before processing (see NParserImpl::Parse)
   private $specialStrings;          // a TSpecialStringTree for multi-character shortcuts
 
+  private $enabledSymbols;          // name => TRUE. Symbols not in this set are disabled.
+
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
   private $endOfParsingRequest = 0;
   
@@ -56,6 +58,8 @@ class TContentParserInfo implements IProduceRedirect
     $this->produceRedirectStack = array(0 => $this);
     $this->produceRedirectTop = 0;
     $this->produceRedirectNames = array();
+
+    $this->enabledSymbols = NFormatFactory::GetNameSet(); // enable ALL the default formats
 
     if ($language !== FALSE)
       $this->language = $language;
@@ -92,7 +96,7 @@ class TContentParserInfo implements IProduceRedirect
 
     $this->symbols[$name] = new TSymbol($name); // if not existing, create it
 
-    $this->EnableSymbol($name);
+    $this->EnableSymbol($name); // enable all custom symbols upon creation
 
     return $this->symbols[$name];
     }
@@ -195,12 +199,11 @@ class TContentParserInfo implements IProduceRedirect
     }
 
   // MANAGE SHORTCUTS and SYMBOL ENABLE/DISABLE
-  // if $name is a shortcut symbol, it will be added to the special strings, otherwise nothing happens
-  public function EnableSymbol($name)
+
+  static private function SplitShortcut($name)
     {
-    // is it a shortcut?
     if (!isset($name[PREFIX_SHORTCUT_TOTAL_LENGTH]))
-      return; // too short
+      return FALSE; // too short
 
     $scprefix = strtoupper(substr($name,0,PREFIX_SHORTCUT_TOTAL_LENGTH));
     switch ($scprefix)
@@ -211,27 +214,52 @@ class TContentParserInfo implements IProduceRedirect
       case PREFIX_END_SHORTCUT:
         break;
       default:
-        return; // not a shortcut
+        return FALSE; // not a shortcut
       }
 
     $sc = substr($name,PREFIX_SHORTCUT_TOTAL_LENGTH);
     if ($sc === FALSE || $sc === "")
-      return; // shortcut string is empty
+      return FALSE; // shortcut string is empty
+
+    return array(0 => $sc, 1 => $scprefix);
+    }
+
+  // enables a symbol
+  // if $name is a shortcut symbol, it will be added to the special strings
+  public function EnableSymbol($name)
+    {
+    if ($name === "")
+      return;
+
+    $this->enabledSymbols[$name] = TRUE;
+
+    $splitted = self::SplitShortcut($name);
+    if ($splitted === FALSE)
+      return; // not a shortcut or error
     
-    $this->AddSpecialString($sc,$scprefix);
+    $this->AddSpecialString($splitted[0],$splitted[1]);
     }
 
   public function DisableSymbol($name)
     {
-    // TODO
+    if (!isset($this->enabledSymbols[$name]))
+      return;
+
+    unset($this->enabledSymbols[$name]);
+
+    $splitted = self::SplitShortcut($name);
+    if ($splitted === FALSE)
+      return; // not a shortcut or error
+
+    $this->specialStrings->Remove($splitted[0]);
     }
 
   public function IsSymbolEnabled($name)
     {
-    return TRUE; // TODO
+    return isset($this->enabledSymbols[$name]);
     }
 
-  // shortcuts
+  // add a shortcut to the special strings
   private function AddSpecialString($sc,$type)
     {
     if ($sc === "")
@@ -254,6 +282,19 @@ class TContentParserInfo implements IProduceRedirect
   public function FindSpecialString($startfrom,$content)
     {
     return $this->specialStrings->Find($startfrom,$content);
+    }
+
+  // disables all enabled symbols that are not keys in $nameset
+  public function DisableAllSymbolsExcept($nameset = array())
+    {
+    $newenabled = array();
+
+    // intersect the sets
+    foreach ($nameset as $k => $useless)
+      if (isset($this->enabledSymbols[$k]))
+        $newenabled[$k] = TRUE;
+
+    $this->enabledSymbols = $newenabled;
     }
 
   // FORMAT DATA ACCESS
