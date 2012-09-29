@@ -34,6 +34,10 @@ class NParseError
   const TABLE_COLROW_INTEGER     = 22;
   const TABLE_COLROW_OUT_TABLE   = 23;
   const SYMBOL_DISABLED          = 24;
+  const ENABLE_NOT_ENOUGH_PARAM  = 25;
+  const ENABLE_EXCEPTION_EMPTY   = 26;
+  const ENABLE_UNKNOWN_SUBCMD    = 27;
+  const ENABLE_LIST_EMPTY        = 28;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -68,6 +72,10 @@ class NParseError
     self::TABLE_COLROW_INTEGER     => "A table #0# index must be a positive integer, not \"#1#\".",
     self::TABLE_COLROW_OUT_TABLE   => "#0# pulse action used outside table.",
     self::SYMBOL_DISABLED          => "Symbol \"#0#\" is disabled.",
+    self::ENABLE_NOT_ENOUGH_PARAM  => "Not enough parameters for #0#.",
+    self::ENABLE_EXCEPTION_EMPTY   => "Exception list is empty.",
+    self::ENABLE_UNKNOWN_SUBCMD    => "Unknown subcommand: \"#0#\".",
+    self::ENABLE_LIST_EMPTY        => "The symbol list for #0# is empty.",
     );
 
   // sends an error

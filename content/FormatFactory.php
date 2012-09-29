@@ -50,5 +50,6 @@ require_once("content/formats/Datetime.php");
 require_once("content/formats/Box.php");
 require_once("content/formats/Textsize.php");
 require_once("content/formats/Table.php");
+require_once("content/formats/Enable.php");
 
 ?>

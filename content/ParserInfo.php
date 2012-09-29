@@ -101,6 +101,19 @@ class TContentParserInfo implements IProduceRedirect
     return $this->symbols[$name];
     }
 
+  // returns TRUE if a symbol named $name exists, FALSE otherwise
+  public function IsSymbol($name)
+    {
+    if (isset($this->symbols[$name]))
+      return TRUE;
+
+    $defaultformats = NFormatFactory::GetNameSet();
+    if (isset($defaultformats[$name]))
+      return TRUE;
+
+    return FALSE;
+    }
+
   public function ActivateSymbol($name,$topname,$data)
     {
     if ($name === "" || $topname === "")
@@ -228,7 +241,7 @@ class TContentParserInfo implements IProduceRedirect
   // if $name is a shortcut symbol, it will be added to the special strings
   public function EnableSymbol($name)
     {
-    if ($name === "")
+    if (!$this->IsSymbol($name))
       return;
 
     $this->enabledSymbols[$name] = TRUE;
@@ -242,6 +255,9 @@ class TContentParserInfo implements IProduceRedirect
 
   public function DisableSymbol($name)
     {
+    if (!$this->IsSymbol($name))
+      return;
+
     if (!isset($this->enabledSymbols[$name]))
       return;
 
@@ -287,14 +303,33 @@ class TContentParserInfo implements IProduceRedirect
   // disables all enabled symbols that are not keys in $nameset
   public function DisableAllSymbolsExcept($nameset = array())
     {
-    $newenabled = array();
+    $defaultformats = NFormatFactory::GetNameSet();
 
-    // intersect the sets
-    foreach ($nameset as $k => $useless)
-      if (isset($this->enabledSymbols[$k]))
-        $newenabled[$k] = TRUE;
+    // disable formats
+    foreach ($defaultformats as $k => $useless)
+      if (!isset($nameset[$k]) && $this->IsSymbolEnabled($k))
+        $this->DisableSymbol($k);
 
-    $this->enabledSymbols = $newenabled;
+    // disable custom symbols
+    foreach ($this->symbols as $k => $useless)
+      if (!isset($nameset[$k]) && $this->IsSymbolEnabled($k))
+        $this->DisableSymbol($k);
+    }
+
+  // enables all the disabled symbols that are not keys in $nameset
+  public function EnableAllSymbolsExcept($nameset = array())
+    {
+    $defaultformats = NFormatFactory::GetNameSet();
+
+    // enable formats
+    foreach ($defaultformats as $k => $useless)
+      if (!isset($nameset[$k]) && !$this->IsSymbolEnabled($k))
+        $this->EnableSymbol($k);
+
+    // enable custom symbols
+    foreach ($this->symbols as $k => $useless)
+      if (!isset($nameset[$k]) && !$this->IsSymbolEnabled($k))
+        $this->EnableSymbol($k);
     }
 
   // FORMAT DATA ACCESS
