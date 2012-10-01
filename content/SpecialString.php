@@ -68,6 +68,12 @@ class TSpecialStringTree
     return count($this->childs) === 0 && $this->data === FALSE;
     }
 
+  // returns an array with all the first letters of the contained strings
+  public function GetFirstLettersArray()
+    {
+    return array_keys($this->childs);
+    }
+
   private $data;
   private $childs = array(); // indexed by letters
   }

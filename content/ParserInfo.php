@@ -5,6 +5,7 @@ require_once("content/defines.php");
 require_once("content/SpecialString.php");
 require_once("content/FormatAttribs.php");
 require_once("content/FormatStack.php");
+require_once("content/Shortcut.php");
 
 // this interface must be implemented by every class that can be used as parameter in PushProduceRedirect
 interface IProduceRedirect
@@ -53,7 +54,7 @@ class TContentParserInfo implements IProduceRedirect
   public function __construct($language = FALSE,$cElement = FALSE,$cacheKey = FALSE)
     {
     $this->specialStrings = new TSpecialStringTree();
-    $this->specialChars = CHAR_OPEN_SQUARE.CHAR_OPEN_ANGLED;
+    $this->specialChars = CHAR_SPECIAL_DEFAULT;
 
     $this->produceRedirectStack = array(0 => $this);
     $this->produceRedirectTop = 0;
@@ -94,7 +95,12 @@ class TContentParserInfo implements IProduceRedirect
     if ($maybeExists !== FALSE)
       return $maybeExists;
 
-    $this->symbols[$name] = new TSymbol($name); // if not existing, create it
+    // if not existing, create it
+    $maybeshortcut = self::GetShortcutPart($name);
+    if ($maybeshortcut !== FALSE) // is a shortcut
+      $this->symbols[$name] = new TShortcut($name,$maybeshortcut);
+      else
+        $this->symbols[$name] = new TSymbol($name);
 
     $this->EnableSymbol($name); // enable all custom symbols upon creation
 
@@ -166,8 +172,8 @@ class TContentParserInfo implements IProduceRedirect
     $resultidx = 0;
 
     foreach($this->activeSymbols as $stack)
-      if ($stack->Top() !== FALSE)
-        $result[$resultidx++] = $stack->Top();
+      if (($top = $stack->Top()) !== FALSE)
+        $result[$resultidx++] = $top;
 
     return $result;
     }
@@ -213,28 +219,20 @@ class TContentParserInfo implements IProduceRedirect
 
   // MANAGE SHORTCUTS and SYMBOL ENABLE/DISABLE
 
-  static private function SplitShortcut($name)
+  static private function GetShortcutPart($name)
     {
-    if (!isset($name[PREFIX_SHORTCUT_TOTAL_LENGTH]))
+    if (!isset($name[PREFIX_SHORTCUT_LENGTH]))
       return FALSE; // too short
 
-    $scprefix = strtoupper(substr($name,0,PREFIX_SHORTCUT_TOTAL_LENGTH));
-    switch ($scprefix)
-      {
-      case PREFIX_TOGGLE_SHORTCUT:
-      case PREFIX_PULSE_SHORTCUT:
-      case PREFIX_BEGIN_SHORTCUT:
-      case PREFIX_END_SHORTCUT:
-        break;
-      default:
-        return FALSE; // not a shortcut
-      }
+    $scprefix = strtoupper(substr($name,0,PREFIX_SHORTCUT_LENGTH));
+    if ($scprefix !== PREFIX_SHORTCUT)
+      return FALSE;
 
-    $sc = substr($name,PREFIX_SHORTCUT_TOTAL_LENGTH);
+    $sc = substr($name,PREFIX_SHORTCUT_LENGTH);
     if ($sc === FALSE || $sc === "")
       return FALSE; // shortcut string is empty
 
-    return array(0 => $sc, 1 => $scprefix);
+    return $sc;
     }
 
   // enables a symbol
@@ -245,12 +243,6 @@ class TContentParserInfo implements IProduceRedirect
       return;
 
     $this->enabledSymbols[$name] = TRUE;
-
-    $splitted = self::SplitShortcut($name);
-    if ($splitted === FALSE)
-      return; // not a shortcut or error
-    
-    $this->AddSpecialString($splitted[0],$splitted[1]);
     }
 
   public function DisableSymbol($name)
@@ -262,12 +254,6 @@ class TContentParserInfo implements IProduceRedirect
       return;
 
     unset($this->enabledSymbols[$name]);
-
-    $splitted = self::SplitShortcut($name);
-    if ($splitted === FALSE)
-      return; // not a shortcut or error
-
-    $this->specialStrings->Remove($splitted[0]);
     }
 
   public function IsSymbolEnabled($name)
@@ -275,19 +261,22 @@ class TContentParserInfo implements IProduceRedirect
     return isset($this->enabledSymbols[$name]);
     }
 
-  // add a shortcut to the special strings
-  private function AddSpecialString($sc,$type)
+  public function UpdateShortcutStatus($name)
     {
-    if ($sc === "")
-      return;
+    $sc = self::GetShortcutPart($name);
+    if ($sc === FALSE)
+      return; // not a shortcut or error
 
-    // add first char to specialchars
-    if (strpos($this->specialChars,$sc[0]) === FALSE) // avoid duplicates
-      $this->specialChars .= $sc[0];
+    if ($this->IsAnySymbolActive($name))
+      {
+      $data = array(0 => $sc,1 => $name);
+      $this->specialStrings->Add($sc,$data);
+      }
+      else
+        $this->specialStrings->Remove($sc);
 
-    $data = array(0 => $sc,1 => $type);
-    
-    $this->specialStrings->Add($sc,$data);
+    // update the specialChars
+    $this->specialChars = CHAR_SPECIAL_DEFAULT.implode($this->specialStrings->GetFirstLettersArray());
     }
 
   public function GetSpecialChars()

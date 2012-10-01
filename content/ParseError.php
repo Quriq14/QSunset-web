@@ -38,6 +38,7 @@ class NParseError
   const ENABLE_EXCEPTION_EMPTY   = 26;
   const ENABLE_UNKNOWN_SUBCMD    = 27;
   const ENABLE_LIST_EMPTY        = 28;
+  const SHORTCUT_WITHOUT_CONTENT = 29;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -76,6 +77,7 @@ class NParseError
     self::ENABLE_EXCEPTION_EMPTY   => "Exception list is empty.",
     self::ENABLE_UNKNOWN_SUBCMD    => "Unknown subcommand: \"#0#\".",
     self::ENABLE_LIST_EMPTY        => "The symbol list for #0# is empty.",
+    self::SHORTCUT_WITHOUT_CONTENT => "Alias symbol not specified for shortcut \"#0#\".",
     );
 
   // sends an error

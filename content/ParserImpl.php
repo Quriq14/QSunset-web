@@ -73,35 +73,23 @@ class NParserImpl
           self::ParseInclude($info);
           break;
         default:
-          // it's a common character. What action will be taken?
+          // it's a common character. Is it a shortcut?
           $specialFinding = $info->FindSpecialString($info->processed,$info->content);
-          $actionParam = FALSE;
+          $scsymbol = FALSE;
           if ($specialFinding !== FALSE) // a special string is found
             {
-            switch ($specialFinding[1])  // find the action parameter from the shortcut prefix
-              {
-              case PREFIX_TOGGLE_SHORTCUT:
-                $actionParam = PARAMETER_TOGGLE;
-                break;
-              case PREFIX_PULSE_SHORTCUT:
-                $actionParam = PARAMETER_PULSE;
-                break;
-              case PREFIX_BEGIN_SHORTCUT:
-                $actionParam = PARAMETER_BEGIN;
-                break;
-              case PREFIX_END_SHORTCUT:
-                $actionParam = PARAMETER_END;
-                break;
-              }
+            $scsymbolname = $specialFinding[1]; // the full shortcut symbol name
+            if ($info->IsSymbolEnabled($scsymbolname))
+              $scsymbol = $info->GetTopActiveSymbol($scsymbolname);
             }
               
-          if ($actionParam !== FALSE) // the action exists
+          if ($scsymbol !== FALSE) // the symbol exists
             {
-            self::ProduceText($info,$buffer);          // flush the buffer and clear it (a command is being executed)
+            self::ProduceText($info,$buffer); // flush the buffer and clear it (a command is being executed)
             $buffer = "";
-            $info->processed += strlen($specialFinding[0]);
-            self::ExecuteSymbol(array(0 => array(0 => $specialFinding[1].$specialFinding[0]),1 => array(0 => $actionParam)),$info);
-              // simulate simple command
+            $info->processed += strlen($specialFinding[0]); // in [0] is the shortcut string
+            if (($sccommand = $scsymbol->ShortcutPulse($info)) !== FALSE)
+              self::ExecuteSymbol($sccommand,$info);
             }
             else
               $buffer .= $info->content[$info->processed++]; // it was a special character, but no action triggered. 

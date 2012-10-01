@@ -236,6 +236,11 @@ class TParamFormatAttribs implements IProduceRedirect
     return $this->format->Pulse($info,$this->attribs);
     }
 
+  public function ShortcutPulse($info)
+    {
+    return $this->format->ShortcutPulse($info,$this->attribs,$this->topsymbattr);
+    }
+
   public function GetName()
     {
     return $this->format->GetName();

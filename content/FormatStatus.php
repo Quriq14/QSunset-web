@@ -71,6 +71,13 @@ abstract class TFormatStatus
     {
     return array();
     }
+
+  // if this format defines a shortcut, this will be called when the shortcut is found in the source
+  // a command (array of array of string) may be returned, or FALSE if none
+  public function ShortcutPulse($info,$attribs,$topsymbattr)
+    {
+    return FALSE;
+    }
   }
 
 ?>
