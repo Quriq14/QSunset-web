@@ -122,7 +122,7 @@ class NParserImpl
   // returns a string to be added to the buffer (because of a PULSE command) or an empty string
   public static function ExecuteSymbol($paramArray,$info)
     {
-    if (!is_array($paramArray) || count($paramArray) === 0 || !isset($paramArray[0][0]))
+    if (count($paramArray) === 0 || !isset($paramArray[0][0]))
       return;
 
     $symbolName = $paramArray[0][0];
@@ -130,6 +130,12 @@ class NParserImpl
       return; // symbol name is empty
 
     $symbolName = strtoupper($symbolName); // symbol name is case-insensitive
+
+    if (NActionParameters::Is($symbolName))
+      {
+      NParseError::Error($info,NParseError::ERROR,NParseError::SYMBOL_RESERVED,array(0 => $symbolName));
+      return; // can't create symbols with same name of actions
+      }
 
     $symbol = $info->GetOrCreateFormatByName($symbolName);
     if (!$info->IsSymbolEnabled($symbolName))
@@ -142,26 +148,18 @@ class NParserImpl
 
     $paramCount = count($paramArray);
 
-    $lastParam = "";
-
-    // if the last parameter is an action, save it and remove it from the parameter array
-    if ($paramCount > 1) // do it only if it's not the symbol name
-      switch (strtoupper($paramArray[$paramCount-1][0]))
-        {
-        case PARAMETER_END:
-        case PARAMETER_BEGIN:
-        case PARAMETER_TOGGLE:
-        case PARAMETER_PULSE:
-        case PARAMETER_DECL:
-          $lastParam = $paramArray[$paramCount-1][0];
-          unset($paramArray[$paramCount-1]);
-          $paramCount--;
-          break;
-        }
+    $actionParam = NActionParameters::DEF; // default action
 
     for ($i = 1; $i < $paramCount; $i++)
       {
       $subsymbolname = strtoupper($paramArray[$i][0]);
+
+      if (NActionParameters::Is($subsymbolname))
+        {
+        $actionParam = $subsymbolname;
+        continue; // is an action
+        }
+
       if (!$info->IsSymbolEnabled($subsymbolname))
         {
         NParseError::Error($info,NParseError::ERROR,NParseError::SYMBOL_DISABLED,array(0 => $subsymbolname));
@@ -177,29 +175,29 @@ class NParserImpl
       }
 
     // execute the command depending on the command type
-    switch (strtoupper($lastParam))
+    switch ($actionParam)
       {
-      case PARAMETER_END:
+      case NActionParameters::END:
         if ($info->IsSymbolActive($symbolName,$symbolName))
           $symbolattr->OnEnd($info,$symbolName);
         break;
-      case PARAMETER_TOGGLE:
+      case NActionParameters::TOGGLE:
         if ($info->IsSymbolActive($symbolName,$symbolName)) // if the symbol is active, deactivate it
           {
           $symbolattr->OnEnd($info,$symbolName);
           break;
           } // else, continue execution into BEGIN
-      case PARAMETER_BEGIN:
+      case NActionParameters::BEGIN:
         if ($symbolattr->NeedChildProc($info,array(),$symbolattr)) // needs child processing?
           $symbolattr->ChildProc($info,array(),$symbolattr);
           else
             if (!$info->IsSymbolActive($symbolName,$symbolName))
               $symbolattr->OnBegin($info,array(),$symbolattr);
         break;
-      case PARAMETER_DECL:
+      case NActionParameters::DECL:
         // nothing to do
         break;
-      case PARAMETER_PULSE:
+      case NActionParameters::PULSE:
       default: // the pulse is the default
         $symbolattr->OnPulse($info,array(),$symbolattr);
         break;

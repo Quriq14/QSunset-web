@@ -47,6 +47,11 @@ class TShortcut extends TFormatStatus
     if (!isset($attribs[1]))
       NParseError::Error($info,NParseError::WARNING,NParseError::SHORTCUT_WITHOUT_CONTENT,
        array(0 => $this->GetName()));
+
+    // if the action is specified, is it valid?
+    if (isset($attribs[2]) && !NActionParameters::Is(strtoupper($attribs[2]))) 
+      NParseError::Error($info,NParseError::WARNING,NParseError::SHORTCUT_UNKNOWN_ACTION,
+        array(0 => $this->GetName(), 1 => $attribs[2]));
     }
 
   public function OnEnd($info,$topsymbname)
@@ -62,9 +67,13 @@ class TShortcut extends TFormatStatus
     if (!isset($attribs[1]) || $attribs[1] === 0)
       return FALSE; // error already sent by OnBegin
 
-    $action = PARAMETER_PULSE;
+    $action = NActionParameters::DEF;
     if (isset($attribs[2]))
-      $action = strtoupper($attribs[2]);
+      {
+      $maybeaction = strtoupper($attribs[2]);
+      if (NActionParameters::Is($maybeaction))
+        $action = $maybeaction; // otherwise, error already sent by OnBegin
+      }
 
     // build a simple command and return it
     return array(0 => array(0 => strtoupper($attribs[1])),1 => array(0 => $action));

@@ -46,7 +46,7 @@ abstract class THtmlProducer
   public function ActiveSymbolsFromInfo($info)
     {
     $sl = $info->GetActiveSymbolList();
-    foreach($sl as $symb)
+    foreach ($sl as $symb)
       $this->AddSymbol($info,$symb);
     }
 

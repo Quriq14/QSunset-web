@@ -39,6 +39,8 @@ class NParseError
   const ENABLE_UNKNOWN_SUBCMD    = 27;
   const ENABLE_LIST_EMPTY        = 28;
   const SHORTCUT_WITHOUT_CONTENT = 29;
+  const SYMBOL_RESERVED          = 30;
+  const SHORTCUT_UNKNOWN_ACTION  = 31;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -78,6 +80,8 @@ class NParseError
     self::ENABLE_UNKNOWN_SUBCMD    => "Unknown subcommand: \"#0#\".",
     self::ENABLE_LIST_EMPTY        => "The symbol list for #0# is empty.",
     self::SHORTCUT_WITHOUT_CONTENT => "Alias symbol not specified for shortcut \"#0#\".",
+    self::SYMBOL_RESERVED          => "Cannot create symbol \"#0#\". That name is reserved.",
+    self::SHORTCUT_UNKNOWN_ACTION  => "Unknown action \"#1#\" for shortcut \"#0#\".",
     );
 
   // sends an error

@@ -1,10 +1,31 @@
 <?php
 
-define("PARAMETER_BEGIN","BEGIN");   // begin area of effect of the symbol
-define("PARAMETER_END","END");       // close area of effect of the symbol
-define("PARAMETER_TOGGLE","TOGGLE"); // toggle area of effect
-define("PARAMETER_PULSE","PULSE");   // send a pulse to the symbol (useful for displaying text) DEFAULT
-define("PARAMETER_DECL","DECL");     // declaration only (no effect, but defines the symbol)
+abstract class NActionParameters
+  {
+  const BEGIN  = "BEGIN";   // begin effect span of the symbol
+  const END    = "END";     // end effect span of the symbol
+  const TOGGLE = "TOGGLE";  // toggle area of effect (BEGIN if not active, END if active)
+  const PULSE  = "PULSE";   // send a pulse to the symbol (useful for displaying text) DEFAULT
+  const DECL   = "DECL";    // declaration only (no effect, but defines the symbol)
+
+  const DEF    = self::PULSE; // default action
+
+  // returns TRUE if $string is an action name
+  public static function Is($string)
+    {
+    switch ($string)
+      {
+      case self::END:
+      case self::BEGIN:
+      case self::TOGGLE:
+      case self::PULSE:
+      case self::DECL:
+        return TRUE;
+      default:
+        return FALSE;
+      }
+    }
+  }  
 
 define("PARAMETER_BOLD","BOLD");
 define("PARAMETER_ITALIC","ITALIC");

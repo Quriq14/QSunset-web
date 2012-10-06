@@ -25,7 +25,8 @@ class TContentParserInfo implements IProduceRedirect
 
   // STATUS (internal use only)
   public $symbols = array();        // defined symbols: name => TSymbol
-  public $activeSymbols = array();  // an array of stacks of active symbols: name => TFormatStack
+  private $activeSymbols = array(); // an array of stacks of active symbols: name => TFormatStack
+  private $topActiveSymbols = array(); // always equal to activeSymbols[..]->Top(): name => TParamFormatAttribs
   public $resultChain = array();    // array of objects, $result = cat($resultChain->Pulse())
   public $producedObjects = 0;      // length of the resultChain
 
@@ -120,6 +121,7 @@ class TContentParserInfo implements IProduceRedirect
     return FALSE;
     }
 
+  // SYMBOL ACTIVATION and DEACTIVATION
   public function ActivateSymbol($name,$topname,$data)
     {
     if ($name === "" || $topname === "")
@@ -129,12 +131,21 @@ class TContentParserInfo implements IProduceRedirect
       $this->activeSymbols[$name] = new TFormatStack();
 
     $this->activeSymbols[$name]->Push($topname,$data);
+    $this->topActiveSymbols[$name] = $data;
     }
 
   public function DeActivateSymbol($name,$topname)
     {
-    if (isset($this->activeSymbols[$name]))
-      $this->activeSymbols[$name]->Remove($topname);
+    if (!isset($this->activeSymbols[$name]))
+      return;
+
+    $this->activeSymbols[$name]->Remove($topname);
+
+    // update the top symbol if any, or remove its entry
+    if (($top = $this->activeSymbols[$name]->Top()) !== FALSE)
+      $this->topActiveSymbols[$name] = $top;
+      else
+        unset($this->topActiveSymbols[$name]);
     }
 
   // FALSE if failed
@@ -149,10 +160,10 @@ class TContentParserInfo implements IProduceRedirect
   // FALSE if failed
   public function GetTopActiveSymbol($name)
     {
-    if (!isset($this->activeSymbols[$name]))
+    if (!isset($this->topActiveSymbols[$name]))
       return FALSE;
 
-    return $this->activeSymbols[$name]->Top();
+    return $this->topActiveSymbols[$name];
     }
 
   public function IsSymbolActive($name,$topname)
@@ -165,17 +176,10 @@ class TContentParserInfo implements IProduceRedirect
     return $this->GetTopActiveSymbol($name) !== FALSE;
     }
 
-  // returns an array of TFormatAttribs, ordered from 0 to n
+  // returns an array of TParamFormatAttribs, ordered by name
   public function GetActiveSymbolList()
     {
-    $result = array();
-    $resultidx = 0;
-
-    foreach($this->activeSymbols as $stack)
-      if (($top = $stack->Top()) !== FALSE)
-        $result[$resultidx++] = $top;
-
-    return $result;
+    return $this->topActiveSymbols;
     }
 
   // MANAGE PRODUCERS
