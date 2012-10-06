@@ -40,7 +40,7 @@ class TContentParserInfo implements IProduceRedirect
                                     // and considered text even before processing (see NParserImpl::Parse)
   private $specialStrings;          // a TSpecialStringTree for multi-character shortcuts
 
-  private $enabledSymbols;          // name => TRUE. Symbols not in this set are disabled.
+  private $enabledSymbols = array();// name => TRUE / FALSE. Symbols not in this set are enabled by default.
 
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
   private $endOfParsingRequest = 0;
@@ -60,8 +60,6 @@ class TContentParserInfo implements IProduceRedirect
     $this->produceRedirectStack = array(0 => $this);
     $this->produceRedirectTop = 0;
     $this->produceRedirectNames = array();
-
-    $this->enabledSymbols = NFormatFactory::GetNameSet(); // enable ALL the default formats
 
     if ($language !== FALSE)
       $this->language = $language;
@@ -221,30 +219,16 @@ class TContentParserInfo implements IProduceRedirect
       $this->produceRedirectTop--; // find the next valid index
     }
 
-  // MANAGE SHORTCUTS and SYMBOL ENABLE/DISABLE
-
-  static private function GetShortcutPart($name)
-    {
-    if (!isset($name[PREFIX_SHORTCUT_LENGTH]))
-      return FALSE; // too short
-
-    $scprefix = strtoupper(substr($name,0,PREFIX_SHORTCUT_LENGTH));
-    if ($scprefix !== PREFIX_SHORTCUT)
-      return FALSE;
-
-    $sc = substr($name,PREFIX_SHORTCUT_LENGTH);
-    if ($sc === FALSE || $sc === "")
-      return FALSE; // shortcut string is empty
-
-    return $sc;
-    }
+  // MANAGE SYMBOL ENABLE/DISABLE
 
   // enables a symbol
-  // if $name is a shortcut symbol, it will be added to the special strings
   public function EnableSymbol($name)
     {
     if (!$this->IsSymbol($name))
       return;
+
+    if (!isset($this->enabledSymbols[$name]))
+      return; // already enabled by default
 
     $this->enabledSymbols[$name] = TRUE;
     }
@@ -254,43 +238,13 @@ class TContentParserInfo implements IProduceRedirect
     if (!$this->IsSymbol($name))
       return;
 
-    if (!isset($this->enabledSymbols[$name]))
-      return;
-
-    unset($this->enabledSymbols[$name]);
+    $this->enabledSymbols[$name] = FALSE;
     }
 
   public function IsSymbolEnabled($name)
     {
-    return isset($this->enabledSymbols[$name]);
-    }
-
-  public function UpdateShortcutStatus($name)
-    {
-    $sc = self::GetShortcutPart($name);
-    if ($sc === FALSE)
-      return; // not a shortcut or error
-
-    if ($this->IsAnySymbolActive($name))
-      {
-      $data = array(0 => $sc,1 => $name);
-      $this->specialStrings->Add($sc,$data);
-      }
-      else
-        $this->specialStrings->Remove($sc);
-
-    // update the specialChars
-    $this->specialChars = CHAR_SPECIAL_DEFAULT.implode($this->specialStrings->GetFirstLettersArray());
-    }
-
-  public function GetSpecialChars()
-    {
-    return $this->specialChars;
-    }
-
-  public function FindSpecialString($startfrom,$content)
-    {
-    return $this->specialStrings->Find($startfrom,$content);
+    // a symbol is enabled if it's not set in the array or it's set to TRUE
+    return !isset($this->enabledSymbols[$name]) || ($this->enabledSymbols[$name]);
     }
 
   // disables all enabled symbols that are not keys in $nameset
@@ -323,6 +277,51 @@ class TContentParserInfo implements IProduceRedirect
     foreach ($this->symbols as $k => $useless)
       if (!isset($nameset[$k]) && !$this->IsSymbolEnabled($k))
         $this->EnableSymbol($k);
+    }
+
+  // MANAGE SHORTCUTS
+  static private function GetShortcutPart($name)
+    {
+    if (!isset($name[PREFIX_SHORTCUT_LENGTH]))
+      return FALSE; // too short
+
+    $scprefix = strtoupper(substr($name,0,PREFIX_SHORTCUT_LENGTH));
+    if ($scprefix !== PREFIX_SHORTCUT)
+      return FALSE;
+
+    $sc = substr($name,PREFIX_SHORTCUT_LENGTH);
+    if ($sc === FALSE || $sc === "")
+      return FALSE; // shortcut string is empty
+
+    return $sc;
+    }
+
+  public function UpdateShortcutStatus($name)
+    {
+    $sc = self::GetShortcutPart($name);
+    if ($sc === FALSE)
+      return; // not a shortcut or error
+
+    if ($this->IsAnySymbolActive($name))
+      {
+      $data = array(0 => $sc,1 => $name);
+      $this->specialStrings->Add($sc,$data);
+      }
+      else
+        $this->specialStrings->Remove($sc);
+
+    // update the specialChars
+    $this->specialChars = CHAR_SPECIAL_DEFAULT.implode($this->specialStrings->GetFirstLettersArray());
+    }
+
+  public function GetSpecialChars()
+    {
+    return $this->specialChars;
+    }
+
+  public function FindSpecialString($startfrom,$content)
+    {
+    return $this->specialStrings->Find($startfrom,$content);
     }
 
   // FORMAT DATA ACCESS
