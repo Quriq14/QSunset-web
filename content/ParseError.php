@@ -41,6 +41,8 @@ class NParseError
   const SHORTCUT_WITHOUT_CONTENT = 29;
   const SYMBOL_RESERVED          = 30;
   const SHORTCUT_UNKNOWN_ACTION  = 31;
+  const TREESTACK_STACK_EMPTY    = 32;
+  const TREESTACK_NOT_MATCH      = 33;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -80,8 +82,10 @@ class NParseError
     self::ENABLE_UNKNOWN_SUBCMD    => "Unknown subcommand: \"#0#\".",
     self::ENABLE_LIST_EMPTY        => "The symbol list for #0# is empty.",
     self::SHORTCUT_WITHOUT_CONTENT => "Alias symbol not specified for shortcut \"#0#\".",
-    self::SYMBOL_RESERVED          => "Cannot create symbol \"#0#\". That name is reserved.",
+    self::SYMBOL_RESERVED          => "Couldn't create symbol \"#0#\". That name is reserved.",
     self::SHORTCUT_UNKNOWN_ACTION  => "Unknown action \"#1#\" for shortcut \"#0#\".",
+    self::TREESTACK_STACK_EMPTY    => "Couldn't close symbol \"#0#\" (top symbol: \"#1#\"): the object stack is empty.",
+    self::TREESTACK_NOT_MATCH      => "Couldn't close symbol \"#0#\" (top symbol: \"#1#\"): expecting symbol \"#2#\" (top symbol: \"#3#\").",
     );
 
   // sends an error

@@ -219,10 +219,15 @@ class TTableFormat extends TFormatStatus
     $data->rowids[$data->currentdepth] = 1;
     $data->columnspans[$data->currentdepth] = 1;
     $data->rowspans[$data->currentdepth] = 1;
+
+    NParserTreeStack::IncDepth($info,$this->GetName(),$topsymbattr->GetName());
     }
 
   public function OnEnd($info,$topsymbname)
     {
+    if (!NParserTreeStack::DecDepth($info,$this->GetName(),$topsymbname))
+      return;
+
     $data = TTableFormatData::Get($info);
 
     $info->RemoveProduceRedirect(self::LISTENER_KEY_PREFIX.$topsymbname);

@@ -3,6 +3,7 @@
 require_once("content/Producer.php");
 require_once("content/defines.php");
 require_once("content/FormatStatus.php");
+require_once("content/formats/TreeStack.php");
 
 class TBoxHolder extends THtmlProducer
   {
@@ -87,10 +88,15 @@ class TBoxFormat extends TFormatStatus
         }
 
     $info->AddToResultChain(new TBoxHolder($info,"<div class=\"bodytextbox".$leftorright.$withborder."\">\r\n"));
+
+    NParserTreeStack::IncDepth($info,$this->GetName(),$topsymbattr->GetName());
     }
 
   public function OnEnd($info,$topsymbname)
     {
+    if (!NParserTreeStack::DecDepth($info,$this->GetName(),$topsymbname))
+      return; // another container is active
+
     $info->AddToResultChain(new TBoxHolder($info,"</div>\r\n"));
 
     parent::OnEnd($info,$topsymbname);

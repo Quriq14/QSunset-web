@@ -4,6 +4,7 @@ require_once("content/FormatStatus.php");
 require_once("content/Producer.php");
 require_once("content/ParseError.php");
 require_once("content/defines.php");
+require_once("content/formats/TreeStack.php");
 
 class TListFormatData
   {
@@ -215,10 +216,15 @@ class TListFormat extends TFormatStatus
     $data->itemcounter[$name]++; // if LISTITEM is called 0 times, the list has 1 item
     $info->AddToResultChain(new TListHolder($info,$name,$reversed,$ordered,$start,
       TListItemFormat::GetClassOnTop($info,$data,$name)));
+
+    NParserTreeStack::IncDepth($info,$this->GetName(),$topsymbattr->GetName());
     }
 
   public function OnEnd($info,$topsymbname)
     {
+    if (!NParserTreeStack::DecDepth($info,$this->GetName(),$topsymbname))
+      return;
+
     $attribs = $info->GetActiveSymbol($this->GetName(),$topsymbname);
     if ($attribs === FALSE)
       return; // error

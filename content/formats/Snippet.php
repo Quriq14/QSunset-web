@@ -45,10 +45,15 @@ class TSnippetFormat extends TFormatStatus
     $key = self::DATA_KEY_PREFIX.$attribs[1];
     $info->PushProduceRedirect($key,new TParamFormatAttribs($this,$attribs,$topsymbattr));
       // start redirecting created objects to this object
+
+    NParserTreeStack::IncDepth($info,$this->GetName(),$topsymbattr->GetName());
     }
 
   public function OnEnd($info,$topsymbname)
     {
+    if (!NParserTreeStack::DecDepth($info,$this->GetName(),$topsymbname))
+      return;
+
     $attribs = $info->GetActiveSymbol($this->GetName(),$topsymbname); // find the symbol
     if ($attribs === FALSE)
       return;
