@@ -24,7 +24,7 @@ abstract class TElementData
 
   abstract public function GetParent();     // build the parent element
   abstract public function IsValid();       // returns FALSE if error occurred during creation, TRUE otherwise
-  abstract public function GetContent();    // returns an array of lines, numbered from 0 to n-1
+  abstract public function GetContent();    // returns a string, empty if no content
 
   abstract public function HasParam($name); // returns TRUE or FALSE
   abstract public function GetParam($name); // returns a string or "" if failed WARNING: use GetParamDefault to obtain a TParam object

@@ -7,6 +7,9 @@ define("DIR_PATH_SEP","/");  // separator for directories
 define("LANGUAGE_FIELD","pl"); // language preferred by user
 define("PATH_ROOT","");      // path of the root directory
 
+define("CHAR_INTERNAL_LINEBREAK","\n"); // this character will be used internally to subdivide a string into lines
+                                        // it has no relation with the current encoding (CRLF, LF, etc)
+
 define("SYSTEM_PATH_SEP","/");                          // separator for folders (from the operating system)
 define("SYSTEM_PATH_ROOT",".".SYSTEM_PATH_SEP."root");  // ROOT folder: directories outside this should NEVER be accessed
 define("SYSTEM_FILE_ROOT",SYSTEM_PATH_ROOT.SYSTEM_PATH_SEP."index.txt"); // FILE in which there is the root folder data

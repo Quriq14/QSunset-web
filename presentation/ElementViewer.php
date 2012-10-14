@@ -230,7 +230,7 @@ class TElementViewer
 
   public function GetContent()
     {
-    return NContentParser::ParseArray($this->Top()->GetContent(),$this->GetContentParserInfo(NPresCacheKeys::CONTENT));
+    return NContentParser::Parse($this->Top()->GetContent(),$this->GetContentParserInfo(NPresCacheKeys::CONTENT));
     }
 
   public function GetFooter()

@@ -53,16 +53,6 @@ class TIndexParser
   {
   function __construct($dir,$section)
     {
-    $this->dir = "";
-    $this->info = FALSE;
-    $this->section = "";
-    $this->content = array();
-
-    $this->index = array();
-
-    $this->addmap = array();
-    $this->idmap = array();
-
     if (!CheckDirectory(dirname($dir)))
       return;
 
@@ -80,10 +70,10 @@ class TIndexParser
       {
       $this->info = $headers[0];
 
-      $rawcontent = $scanner->GetContent($this->info->id);
+      $rawcontent = $scanner->GetContentArray($this->info->id); // load the content: array of lines
       }
 
-    // everything went ok
+    // everything ok
     $this->dir = $dir;
     $this->section = $section;
 
@@ -93,10 +83,10 @@ class TIndexParser
     $rawcontentcount = count($rawcontent);
     $this->ProcessSection($rawcontent,$rawcontentcount,$rawcontentidx,FALSE,$this->index,$prev);
 
-    // everything after the last EndSec is content
-    $contentidx = 0;
+    // everything after the last End is content
+    $extracontentidx = 0;
     for ($rawcontentidx; $rawcontentidx < $rawcontentcount; $rawcontentidx++)
-      $this->content[$contentidx++] = $rawcontent[$rawcontentidx];
+      $this->contentArray[$extracontentidx++] = $rawcontent[$rawcontentidx];
 
     // save timestamp information
     $this->created = $scanner->GetCreationTime();
@@ -107,8 +97,6 @@ class TIndexParser
   private function ProcessSection($rawcontent,$rawcontentcount,&$rawcontentidx,$parent,&$dest,&$prev)
     {
     $indexcount = count($dest);
-
-    $additioncounters = array(); // holds the counters for each element of $this->addmap
 
     for ($rawcontentidx; $rawcontentidx < $rawcontentcount; $rawcontentidx++)
       {
@@ -189,6 +177,9 @@ class TIndexParser
 
   public function GetExtraContent()
     {
+    if ($this->content === FALSE) // if not cached yet, build the string now
+      $this->content = implode(CHAR_INTERNAL_LINEBREAK,$this->contentArray);
+
     return $this->content;
     }
 
@@ -202,15 +193,17 @@ class TIndexParser
     return $this->lastedit;
     }
 
-  private $dir;
-  private $section;
+  private $dir     = "";
+  private $section = "";
 
-  private $index;  // array of TIndexEntry
-  private $info;   // TSectionInfo object
+  private $index   = array();  // array of TIndexEntry
+  private $info    = FALSE;   // TSectionInfo object
 
-  private $idmap;  // id map for fast association id->indexentry
+  private $idmap   = array();  // id map for fast association id->indexentry
 
-  private $content; // everything after the End directive
+  // the content is anything after the last End directive
+  private $contentArray = array(); // an array
+  private $content = FALSE;        // a string (created from the array only if needed), FALSE if not built yet
 
   private $created; // creation timestamp
   private $lastedit;// last edit timestamp

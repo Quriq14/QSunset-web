@@ -9,7 +9,8 @@ class TSectionInfo
   public $title   = "";
   public $params  = array();  // named parameters:   [key]=value
   public $uparams = array();  // unnamed parameters: [random_number]=value
-  public $content = array();  // array of lines: the content
+  public $content = FALSE;    // the content in string format, FALSE if not yet cached
+  public $contentArray = array(); // the content in array format
   }
 
 class TFileParser
@@ -58,16 +59,32 @@ class TFileParser
     }
 
   // $section is the section id
-  // returns an array of strings, empty if failed
+  // returns a string, empty if failed
   public function GetContent($section)
     {
-    if (!isset($section) || !$this->IsValid())
+    if (!$this->IsValid())
+      return "";
+
+    if (!isset($this->cache[$section]))
+      return ""; // not found
+
+    if ($this->cache[$section]->content === FALSE)
+      // if not cached yet, build it from contentArray
+      $this->cache[$section]->content = implode(CHAR_INTERNAL_LINEBREAK,
+        $this->cache[$section]->contentArray);
+
+    return $this->cache[$section]->content;
+    }
+
+  public function GetContentArray($section)
+    {
+    if (!$this->IsValid())
       return array();
 
     if (!isset($this->cache[$section]))
       return array(); // not found
 
-    return $this->cache[$section]->content;
+    return $this->cache[$section]->contentArray;
     }
 
   // TRUE or FALSE
@@ -157,7 +174,7 @@ class TFileParser
         }
         else
           if (isset($this->cache[$csection]))
-            $this->cache[$csection]->content[$linecounter++] = $line;
+            $this->cache[$csection]->contentArray[$linecounter++] = $line;
       }
     }
 

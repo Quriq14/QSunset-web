@@ -48,23 +48,5 @@ class NContentParser
 
     return $result;
     }
-
-  static function ParseArray($carray,$info)
-    {
-    $content = "";
-
-    if (count($carray))
-      $content = self::ArrayToString($carray);
-
-    return self::Parse($content,$info);
-    }
-
-  static function ArrayToString($carray)
-    {
-    return implode("\n",$carray); // concat the array of lines with "\n"
-    }
-
-  static private $infoStackCount = 0;
-  static private $infoStack = array();
   }
 ?>

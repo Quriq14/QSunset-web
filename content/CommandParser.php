@@ -2,6 +2,8 @@
 
 require_once("content/defines.php");
 
+require_once("element/defines.php");
+
 // string utility to parse a command
 class NCommandParser
   {
@@ -140,7 +142,7 @@ class NCommandParser
                 $buffer .= self::CHAR_SPEC_ESC;
                 break;
               case self::CHAR_SPEC_EOL_SUBST:
-                $buffer .= "\n";
+                $buffer .= CHAR_INTERNAL_LINEBREAK;
                 break;
               case self::CHAR_SPEC_TAB_SUBST:
                 $buffer .= "\t";

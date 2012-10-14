@@ -68,7 +68,7 @@ class NInclude
       case self::SUBTITLE:
         return $element->GetSubTitle();
       case self::CONTENT:
-        return NContentParser::ArrayToString($element->GetContent());
+        return $element->GetContent();
       case self::FOOTER:
         return $element->GetFooter();
       case self::HEADER:

@@ -192,14 +192,14 @@ class TDirectoryData extends TElementData
     return TRUE;
     }
 
-  public function GetContent() // returns an array of lines
+  public function GetContent() // a string
     {
     if (!$this->IsValid())
-      return array();
+      return "";
 
     $index = IndexParserFactory($this->physicalpath->Get(),$this->info->id);
     if (!$index->IsValid())
-      return array();
+      return "";
 
     return $index->GetExtraContent();
     }

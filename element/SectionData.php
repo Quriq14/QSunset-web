@@ -166,18 +166,14 @@ class TSectionData extends TElementData
   // empty if failed
   public function GetContent()
     {    
-    $result = array();
-
     if (!$this->IsValid())
-      return $result;
+      return "";
 
     $scanner = FileParserFactory($this->sPhysicalPath->Get());
     if (!$scanner->IsValid())
-      return $result;
+      return "";
 
-    $result = $scanner->GetContent($this->section);
-
-    return $result;
+    return $scanner->GetContent($this->section);
     }
 
   public function IsValid()
