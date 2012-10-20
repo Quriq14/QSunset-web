@@ -4,20 +4,17 @@
 require_once("content/defines.php");
 require_once("content/ParserImpl.php");
 require_once("content/ParserInfo.php");
+require_once("content/Include.php");
 
 require_once("element/defines.php");
+require_once("element/ElementData.php");
 
 require_once("physical/Cache.php");
 
-class NContentParser
+abstract class NContentParser
   {
-  static function Parse($content,$info)
+  static function Parse($info)
     {
-    if (!isset($content) || !isset($info))
-      return ""; // invalid
-
-    $info->content = $content;
-
     // if cache is enabled
     if ($info->cacheKey !== FALSE)
       {
@@ -35,6 +32,9 @@ class NContentParser
       if ($maybeobject !== FALSE)
         return $maybeobject; // result already cached
       }
+
+    // load the content from the element
+    $info->content = NElementParts::GetPartOfElement($info->TopCurrentElement(),$info->TopCurrentPart());
 
     $chainDOM = NParserImpl::Parse($info);
     $result = "";

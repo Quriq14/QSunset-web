@@ -10,8 +10,6 @@ require_once("content/ParseContent.php");
 
 require_once("html/htmlutils.php");
 
-require_once("presentation/defines.php");
-
 define("ELEMENT_VIEWER_MAX_REDIRECT",10);
 
 // this class holds one (or more, if error or silent redirect) TElement object, but transformed so that it is safely viewable
@@ -65,8 +63,7 @@ class TElementViewer
 
   public function GetNotReadableError()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::READABLE_ERROR)->ToString(),
-      $this->GetContentParserInfo(NPresCacheKeys::NOT_READABLE_ERROR));
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::NOT_READABLE_ERROR));
     }
 
   // no links to this page should be created
@@ -106,7 +103,7 @@ class TElementViewer
   public function GetRedirect()
     {
     if ($this->HasRedirectNear())
-      return BuildNearHref($this->GetRedirectNear(),NPresGlobals::GetCurrentLanguage()); // build full path
+      return BuildNearHref($this->GetRedirectNear(),$this->GetLanguage()); // build full path
 
     if ($this->HasRedirectFar())
       return $this->GetRedirectFar();
@@ -129,8 +126,7 @@ class TElementViewer
   // *** CONTENT ACCESS FUNCTIONS ***
   public function GetTitle()
     {
-    return NContentParser::Parse($this->Top()->GetTitle(),
-      $this->GetContentParserInfo(NPresCacheKeys::TITLE));
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::TITLE));
     }
 
   public function GetType()
@@ -140,8 +136,7 @@ class TElementViewer
 
   public function GetSubTitle()
     {
-    return NContentParser::Parse($this->Top()->GetParamDefault(NParams::CONT_SUBTITLE)->ToString(),
-      $this->GetContentParserInfo(NPresCacheKeys::SUBTITLE));
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::SUBTITLE));
     }
 
   public function IsDisplaySubTitle()
@@ -230,12 +225,12 @@ class TElementViewer
 
   public function GetContent()
     {
-    return NContentParser::Parse($this->Top()->GetContent(),$this->GetContentParserInfo(NPresCacheKeys::CONTENT));
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::CONTENT));
     }
 
   public function GetFooter()
     {
-    return NContentParser::Parse($this->Top()->GetFooter(),$this->GetContentParserInfo(NPresCacheKeys::FOOTER));
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::FOOTER));
     }
 
   public function IsDisplayTitle()
@@ -245,7 +240,7 @@ class TElementViewer
 
   public function GetHeaderTitle()
     {
-    return NContentParser::Parse($this->Top()->GetHeaderTitle(),$this->GetContentParserInfo(NPresCacheKeys::HEADER));
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::HEADER));
     }
 
   // an array
@@ -262,6 +257,16 @@ class TElementViewer
   public function GetAvailableLanguages()
     {
     return $this->Top()->GetParamDefault(NParams::LANG_AVAIL)->ToString();
+    }
+
+  public function GetLanguageNotFoundError()
+    {
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::LANG_NOT_FOUND));
+    }
+
+  public function GetLanguageNotAvailError()
+    {
+    return NContentParser::Parse($this->GetContentParserInfo(NElementParts::LANG_NOT_AVAIL));
     }
 
   // *** INDEX FUNCTIONS ***
@@ -311,9 +316,9 @@ class TElementViewer
   // *** PARSER HELPER FUNCTIONS ***
   // produce a new TContentParserInfo to be sent to the parser
   // should never fail, if the object is valid
-  public function GetContentParserInfo($cacheType = FALSE)
+  public function GetContentParserInfo($elementPart = FALSE)
     {
-    return new TContentParserInfo($this->GetLanguage(),$this->GetElement(),$cacheType);
+    return new TContentParserInfo($this->GetElement(),$elementPart,$this->GetLanguage(),$elementPart);
     }
 
   public function SetLanguage($lang)

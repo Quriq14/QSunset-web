@@ -29,8 +29,7 @@ function PrepareLanguageData($view,$autoLang)
     {
     case TAutoLangResult::FAILED_DETECT:
       $langdata->status = TLanguageSelectorData::NOT_FOUND;
-      $langdata->errorStr = NContentParser::Parse("<ERRORS".DIR_PATH_SEP."LANGUAGE".PATH_SEP."NOTFOUND>",
-        $view->GetContentParserInfo(NPresCacheKeys::LANG_NOT_FOUND));
+      $langdata->errorStr = $view->GetLanguageNotFoundError();
       break;
     case TAutoLangResult::REQUESTED_LANG:
       $langdata->status = TLanguageSelectorData::SELECTED_BY_USER;
@@ -40,8 +39,7 @@ function PrepareLanguageData($view,$autoLang)
       break;
     case TAutoLangResult::NOT_AVAIL_LANG:
       $langdata->status = TLanguageSelectorData::NOT_AVAILABLE;
-      $langdata->errorStr = NContentParser::Parse("<ERRORS".DIR_PATH_SEP."LANGUAGE".PATH_SEP."NOTAVAIL>",
-        $view->GetContentParserInfo(NPresCacheKeys::LANG_NOT_AVAIL));
+      $langdata->errorStr = $view->GetLanguageNotAvailError();
       break;
     }
 
@@ -86,8 +84,8 @@ function PrepareHeaderData($view)
               continue; // if not current, skip it
           }
 
-        $hte->names[$i] = NContentParser::Parse($cpv->GetTitle(),
-          new TContentParserInfo($view->GetLanguage(),$cpv,NPresCacheKeys::TITLE));
+        $hte->names[$i] = NContentParser::Parse(
+          new TContentParserInfo($cpv,NElementParts::TITLE,$view->GetLanguage(),NElementParts::TITLE));
         $hte->paths[$i] = $cpv->GetAddress();
         if ($iscurrentelem)                
           $hte->marked = $i; // mark the current element

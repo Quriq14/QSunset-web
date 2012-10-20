@@ -44,15 +44,18 @@ class TContentParserInfo implements IProduceRedirect
 
   private $data = array();          // custom data inserted by the formats, use GetFormatData and SetFormatData to access
   private $endOfParsingRequest = 0;
+
+  public $content = "";             // raw content
   
   // INPUT
   public $language = NLanguages::LANGUAGE_DEFAULT;
   public $cElementStack = array(); // at position 0, the current TElementData
                                    // <includes> will push new elements
-  public $content  = "";
+  public $cPartStack    = array(); // part of the element (see NElementParts), for every entry in $cElementStack
+
   public $cacheKey = FALSE;       // FALSE is "no cache", otherwise a string that will be used as cache key
 
-  public function __construct($language = FALSE,$cElement = FALSE,$cacheKey = FALSE)
+  public function __construct($cElement,$part,$language = FALSE,$cacheKey = FALSE)
     {
     $this->specialStrings = new TSpecialStringTree();
     $this->specialChars = CHAR_SPECIAL_DEFAULT;
@@ -63,8 +66,7 @@ class TContentParserInfo implements IProduceRedirect
 
     if ($language !== FALSE)
       $this->language = $language;
-    if ($cElement !== FALSE)
-      $this->PushCurrentElement($cElement);
+    $this->PushCurrentElement($cElement,$part);
     $this->cacheKey = $cacheKey;
     }
 
@@ -361,16 +363,21 @@ class TContentParserInfo implements IProduceRedirect
   // CURRENT ELEMENT STACK
   // to be used by the include system
   // $elem is a TElementData
-  public function PushCurrentElement($elem)
+  public function PushCurrentElement($elem,$part = NElementParts::DEFAULT_PART)
     {
-    $this->cElementStack[count($this->cElementStack)] = $elem;
+    $pos = count($this->cElementStack);
+    $this->cElementStack[$pos] = $elem;
+    $this->cPartStack[$pos] = $part;
     }
 
   public function PopCurrentElement()
     {
     $count = count($this->cElementStack);
     if ($count > 0)
-      unset($this->cElementStack[$count - 1]);
+      {
+      unset($this->cElementStack[--$count]);
+      unset($this->cPartStack[$count]);
+      }
     }
 
   // FALSE if empty
@@ -391,6 +398,15 @@ class TContentParserInfo implements IProduceRedirect
     if (!isset($this->cElementStack[0]))
       return FALSE;
     return $this->cElementStack[0];
+    }
+
+  public function TopCurrentPart()
+    {
+    $count = count($this->cElementStack);
+    if ($count === 0)
+      return FALSE;
+
+    return $this->cPartStack[$count - 1];
     }
 
   // PARSING END REQUESTS

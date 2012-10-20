@@ -106,17 +106,17 @@ class NParseError
       // ELEMENT NAME
       if ($info->TopCurrentElement() !== FALSE)
         {
-        $err .= "Element: ".$info->TopCurrentElement()->GetAddress()." ";
-      
-        // report include stack
+        // report inclusion stack
         $elementnestcount = count($info->cElementStack) - 1;
         if ($elementnestcount > 0)
           {
           $err .= "Included by: \"";
           for ($i = 0; $i < $elementnestcount; $i++)
-            $err .= ($i === 0 ? "" : "->").$info->cElementStack[$i]->GetAddress();
+            $err .= ($i === 0 ? "" : "->").$info->cElementStack[$i]->GetAddress()."::".$info->cPartStack[$i];
           $err .= "\" ";
           }
+
+        $err .= "Element: \"".$info->TopCurrentElement()->GetAddress()."::".$info->TopCurrentPart()."\" ";
         }
 
       // LINE NUMBER

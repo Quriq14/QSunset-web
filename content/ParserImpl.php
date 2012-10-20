@@ -233,9 +233,7 @@ class NParserImpl
         $include = "";
       }
 
-    if ($part === FALSE)
-      NInclude::DoInclude($info,$include);
-      else NInclude::DoInclude($info,$include,$part);
+    NInclude::DoInclude($info,$include,$part);
     }
   }
 ?>

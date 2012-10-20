@@ -77,6 +77,8 @@ class NParams
   // language
   const LANG_ORIG          = "Lang-orig";   // original language of the element
   const LANG_AVAIL         = "Lang-avail";  // available languages for the element (format: it en fr)
+  const LANG_NOT_AVAIL_ERR = "Lang-not-available-error";
+  const LANG_NOT_FOUND_ERR = "Lang-not-found-error";
 
   // custom footer
   const FOOTER             = "Footer";      // custom footer for the page, "" for none
@@ -126,6 +128,8 @@ class NParams
   private static $DEFAULTS = array(
     self::LANG_ORIG                => NLanguages::LANGUAGE_DEFAULT,
     self::LANG_AVAIL               => NLanguages::LANGUAGE_DEFAULT,
+    self::LANG_NOT_AVAIL_ERR       => DEFAULT_LANG_NOT_AVAIL_ERROR_CONTENT,
+    self::LANG_NOT_FOUND_ERR       => DEFAULT_LANG_NOT_FOUND_ERROR_CONTENT,
     self::FOOTER                   => DEFAULT_FOOTER_CONTENT,
     self::SHOW_CONT_TITLE          => self::TRUE_STR,
     self::SHOW_CONT_SUBTITLE       => self::FALSE_STR,
