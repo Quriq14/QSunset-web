@@ -1,0 +1,67 @@
+.bodytextcode
+  {
+  color: #000000;
+  font-weight: bold;
+  font-family: monospace;
+  }
+
+.bodytextcode.pre
+  {
+  background-color: #FFFFFF;
+  }
+
+.bodytextcode .comment 
+  {
+  color: #00FF00;
+  }
+
+.bodytextcode .comment .todo 
+  {
+  background: #FFFF00;
+  }
+
+.bodytextcode .identifier
+  {
+  color: #AAAA00;
+  }
+
+.bodytextcode .php .tag 
+  {
+  color: #00AAAA;
+  }
+
+.bodytextcode .php .tag .identifier
+  {
+  color: #00AAAA;
+  }
+
+.bodytextcode .identifier 
+  {
+  color: #440000;
+  }
+
+.bodytextcode .keyword 
+  {
+  color: #0000FF;
+  }
+
+.bodytextcode .keyword.builtin 
+  {
+  color: #3333FF;
+  }
+
+.bodytextcode .keyword.operator 
+  {
+  color: #FF0000;
+  }
+
+.bodytextcode .number 
+  {
+  color: #000077;
+  }
+
+.bodytextcode .string 
+  {
+  color: #FF0000;
+  }
+

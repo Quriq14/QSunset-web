@@ -11,6 +11,7 @@ function WriteHead($title)
     <title><?php echo $title; ?></title>
     <link rel="shortcut icon" href="aux/q.ico" />
     <link rel="stylesheet" type="text/css" href="aux/qsunset.css" />
+    <link rel="stylesheet" type="text/css" href="highlighter/hlstyle.css" />
   </head>
 <?php
   }

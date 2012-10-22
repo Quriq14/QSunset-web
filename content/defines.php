@@ -80,6 +80,8 @@ define("PARAMETER_TABLE_COLUMN","COLUMN");   // like row, but for columns
 define("PARAMETER_ENABLE","ENABLE");
 define("PARAMETER_DISABLE","DISABLE");
 
+define("PARAMETER_CODE","CODE");             // [CODE=lang="none"=inline/box=until="\n" BEGIN] \n
+
 define("PREFIX_SHORTCUT_LENGTH",3);
 define("PREFIX_SHORTCUT","SC:");
 

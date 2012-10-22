@@ -43,6 +43,8 @@ class NParseError
   const SHORTCUT_UNKNOWN_ACTION  = 31;
   const TREESTACK_STACK_EMPTY    = 32;
   const TREESTACK_NOT_MATCH      = 33;
+  const CODE_INVALID_PARAM       = 34;
+  const CODE_UNDEFINED_LANGUAGE  = 35;
 
   private static $typestrings = array(
     self::NOTICE  => "Notice: ",
@@ -86,6 +88,8 @@ class NParseError
     self::SHORTCUT_UNKNOWN_ACTION  => "Unknown action \"#1#\" for shortcut \"#0#\".",
     self::TREESTACK_STACK_EMPTY    => "Couldn't close symbol \"#0#\" (top symbol: \"#1#\"): the object stack is empty.",
     self::TREESTACK_NOT_MATCH      => "Couldn't close symbol \"#0#\" (top symbol: \"#1#\"): expecting symbol \"#2#\" (top symbol: \"#3#\").",
+    self::CODE_INVALID_PARAM       => "Code: invalid parameter: \"#0#\".",
+    self::CODE_UNDEFINED_LANGUAGE  => "Code: language undefined.",
     );
 
   // sends an error
