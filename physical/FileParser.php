@@ -115,6 +115,16 @@ class TFileParser
     return filemtime($this->fileName); // returns FALSE if failed
     }
 
+  const CONTENT_SEPARATOR = "----------------------------------------";
+  const MAX_LINE_LENGTH   = 1024;
+
+  const COMMENT_PREFIX = "::FP_COMMENT::"; // when parsing, lines starting with ::FP_COMMENT:: will be completely ignored
+  const WRITE_PREFIX   = "::FP_WRITE::";   // ::FP_WRITE:: at the beginning of a line will be removed
+    /* example: ::FP_WRITE::---------------------------------------- 
+                will become
+                ----------------------------------------
+                and won't count as content separator line */
+
   private function Load($handler)
     {
     $csection = "";
@@ -123,15 +133,26 @@ class TFileParser
 
     $this->cache = array();
 
-    while (($line = fgets($handler,FILE_MAX_LINE_LENGTH)) !== FALSE)
+    while (($line = fgets($handler,self::MAX_LINE_LENGTH)) !== FALSE)
       {
       $line = rtrim($line,"\n\r"); // remove the separator
 
-      if (substr($line,0,strlen(FILE_CONTENT_SEPARATOR)) === FILE_CONTENT_SEPARATOR)
+      if (substr($line,0,strlen(self::CONTENT_SEPARATOR)) === self::CONTENT_SEPARATOR)
         {
         $inHeaderArea = !$inHeaderArea;
         $linecounter = 0;
         continue;
+        }
+
+      if (substr($line,0,strlen(self::COMMENT_PREFIX)) === self::COMMENT_PREFIX)
+        continue; // ignore the comments
+
+      if (substr($line,0,strlen(self::WRITE_PREFIX)) === self::WRITE_PREFIX)
+        {
+        // remove the write prefix if provided
+        $line = substr($line,strlen(self::WRITE_PREFIX));
+        if (!is_string($line))
+          $line = ""; // ignore errors of substr
         }
 
       if ($inHeaderArea)
